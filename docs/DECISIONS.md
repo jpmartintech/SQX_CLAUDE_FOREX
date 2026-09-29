@@ -34,3 +34,10 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Predicados como bitsets** `uint64[n_pred, n_words]` (bit i de la palabra w = barra 64·w+i). La máscara de barras operables va en una fila aparte.
 - **Ejecución M15 o H1** con el mismo kernel: se le pasa el array de barras de ejecución y el mapa H1 → [inicio, fin) en ese array.
 - **`entry_delay` es un parámetro de evaluación**, no de la estrategia (no entra en el hash).
+- **Registro de evaluaciones** (`runs/trial_ledger.jsonl`, append-only). Los tests con datos reales y los benchmarks se registran como
+  `used_for_selection=false`. En la Fase 1 no se ha seleccionado ninguna estrategia.
+- **Tag de fase:** `v0.1` para la Fase 1 (y `v0.0` para la 0), según `CLAUDE.md` ("v0.1, v0.2, …"), que prevalece sobre el `vN.0` de AUTONOMY.md.
+- **Benchmark frente a la referencia:** se importa `reference/SQX_ENGINE/src` sin escribir en él (`NUMBA_CACHE_DIR` en `runs/`, sin bytecode).
+  Cada motor usa su propia gramática; se mide throughput, no equivalencia de resultados.
+- **Rendimiento del kernel rico:** el cuello de botella era convertir timestamps con zona horaria a objetos (0,1 s/estrategia).
+  Se precalcula `Market.ts_utc` (datetime64): de 10 a 190–240 estrategias/s.
