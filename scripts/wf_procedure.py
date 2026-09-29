@@ -75,7 +75,7 @@ def null(cfg: dict, out: Path, shard: int, n_shards: int) -> None:
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"null_shard{shard}.jsonl"
     done = {json.loads(x)["j"] for x in path.read_text().splitlines()} if path.exists() else set()
-    nc = cfg["null"]
+    nc = cfg["null"] if "null" in cfg else cfg[None]  # YAML parses the key `null:` as None
     for j in range(shard, nc["n_permutations"], n_shards):
         if j in done:
             continue
