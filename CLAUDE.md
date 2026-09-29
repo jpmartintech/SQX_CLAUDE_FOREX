@@ -42,15 +42,25 @@ Copia de https://github.com/jpmartintech/SQX_ENGINE (clonada en `reference/`, ig
 5. **Sharpe por trade × √252**, no un Sharpe temporal.
 6. **Fitness genético en muestra** sobre todo Development, con el término de drawdown constante por el bug 2.
 7. **Configs base sin costes** (`spread: 0`, `slippage: 0`).
-8. **Se desvió a cripto/FTMO/prop firms** y acumuló ~75 scripts versionados sin contrato común. Aquí solo forex H1.
+8. **Se desvió a cripto/FTMO/prop firms** y acumuló ~75 scripts versionados sin contrato común. Aquí solo forex (dato base M15, señales en H1).
 9. Tests que no cubren `entry_delay`. Los 14 tests que fallan en ese repo son por artefactos ausentes, salvo `test_crypto_portfolio_v3` (`1.02 <= 1.0`).
 
 ## Datos
 
-- Dataset objetivo: **más de 10 años de H1 de forex** (empezar por EURUSD y ampliar a otros pares).
-- Ubicación: `data/raw/` (ignorado por git). Formato: CSV/parquet con `timestamp` (UTC), `open`, `high`, `low`, `close`, `volume`.
-- **Primera tarea de la primera sesión:** localizar el dataset con Jaime (ruta y pares disponibles) y auditarlo: orden, duplicados, huecos, fines de semana, NaN.
-- Nunca ordenes, dedupliques ni rellenes en silencio: reporta y decide.
+- **Dato base: M15** (2003-05 → 2026-04, ~23 años). **H1 es un derivado** de M15; nunca se descarga ni se edita a mano.
+- Pares: EURUSD, GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD (NZD/CAD desde 2003-08). XAUUSD también está, pero va aparte (horario con pausa diaria, costes propios).
+- Origen (solo lectura, no tocar): `/mnt/c/Users/xaume/Documents/DATOS SQX 15 MINS/FOREX/<PAR>_15M.csv`.
+  Copia de trabajo: `data/raw/` (ignorado por git) con `data/raw/SHA256SUMS.txt`.
+- Formato raw: CSV `,`, cabecera `Date,Time,Open,High,Low,Close,Volume`, `YYYYMMDD` + `HH:MM:SS`, timestamp = **apertura de barra**,
+  zona horaria **EET/EEST (`Europe/Athens`, DST europeo)**: semana lunes 00:00 → viernes 23:45. `Volume` = ticks del proveedor, no fiable.
+- Auditoría completa y problemas conocidos: `docs/DATA_AUDIT.md` (script `scripts/audit_m15.py`).
+- Derivados en `data/derived/` (ignorado por git), regenerables y con SHA256 del origen + versión del código:
+  - M15 canónico: `ts_utc` (apertura, UTC), `ts_eet`, OHLC, `volume`, flags.
+  - H1: barra `t` = M15 con `t <= ts < t+1h`; `O` primero, `H` máx., `L` mín., `C` último, `V` suma, `n_m15`, `close_ts = t+1h`.
+    Sin forward-fill ni barras sintéticas; las horas vacías no existen.
+- **Causalidad H1:** una feature de la barra H1 `t` está disponible en `t+1h`; la entrada más temprana es el open de la primera M15 con `ts >= t+1h`.
+  Señales en H1; SL/TP/salidas se simulan sobre el camino M15 (el kernel rico usa M15).
+- Nunca ordenes, dedupliques ni rellenes en silencio: reporta y decide. El loader falla ante desorden o duplicados.
 
 ## Reglas de corrección (siempre)
 
@@ -95,7 +105,8 @@ SQX_CLAUDE_FOREX/
 - Reescribir el backtest con trades en R, equity con riesgo fraccional y drawdown en %.
 - Arreglar `entry_delay` (la posición no existe hasta la entrada real).
 - Kernel ligero (solo métricas del embudo) y kernel rico (trades/equity) solo para supervivientes; `prange` sobre lotes de estrategias; predicados como bitsets.
-- Tests: causalidad (`exit_idx >= entry_idx`), equivalencia Python/Numba, casos dorados de SL/TP en la misma barra, unidades del drawdown.
+- Construcción H1 desde M15 con tests de oráculo e **invariancia por prefijo** (truncar los datos en `T` no cambia ninguna barra ni feature cerrada antes de `T`).
+- Tests: causalidad (`exit_idx >= entry_idx`), equivalencia Python/Numba, equivalencia ejecución H1 vs M15 cuando no hay ambigüedad intrabarra, casos dorados de SL/TP en la misma barra, unidades del drawdown.
 - *Hecho cuando:* tests en verde y un benchmark documentado (estrategias/segundo) frente al de referencia.
 
 **Fase 2 — Generador y embudo con estadística honesta.**
@@ -134,3 +145,5 @@ SQX_CLAUDE_FOREX/
 1. Tests en verde y commit hecho.
 2. `docs/PROGRESS.md` actualizado (qué se hizo, qué se midió, qué sigue).
 3. Resumen breve a Jaime: lo conseguido, lo que falló y la siguiente fase.
+
+Para trabajo autónomo, sigue AUTONOMY.md

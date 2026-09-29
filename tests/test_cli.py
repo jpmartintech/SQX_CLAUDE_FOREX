@@ -1,0 +1,14 @@
+import subprocess
+import sys
+
+from sqxf.cli import main
+
+
+def test_main_without_command_prints_help(capsys):
+    assert main([]) == 0
+    assert "sqxf" in capsys.readouterr().out
+
+
+def test_help_via_module():
+    out = subprocess.run([sys.executable, "-m", "sqxf.cli", "--help"], capture_output=True, text=True, check=True)
+    assert "usage: sqxf" in out.stdout
