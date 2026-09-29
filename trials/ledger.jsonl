@@ -12,3 +12,7 @@
 {"utc": "2026-09-29T22:08:55.075371+00:00", "purpose": "phase2 genetic discovery", "pair": "EURUSD", "n_strategies": 99000, "used_for_selection": true, "code_version": "0.1.0+ef3843c31029", "run": "phase2_eurusd_g1_r1", "seed": 20260930}
 {"utc": "2026-09-29T22:10:20.053998+00:00", "purpose": "phase2 DSR variance sensitivity (random sample, no selection)", "pair": "EURUSD", "n_strategies": 20000, "used_for_selection": false, "code_version": "0.1.0+ef3843c31029-dirty"}
 {"utc": "2026-09-29T22:11:20.156535+00:00", "purpose": "test_real_data equivalence", "pair": "EURUSD", "n_strategies": 480, "used_for_selection": false, "code_version": "0.1.0+ef3843c31029-dirty"}
+{"utc": "2026-09-29T22:28:40.930780+00:00", "purpose": "phase2b procedure (genetic)", "pair": "EURUSD", "n_strategies": 180000, "used_for_selection": true, "code_version": "0.1.0+ccd14b0ddcfa", "run": "phase2b_wf_eurusd_r1"}
+{"utc": "2026-09-29T22:29:03.842966+00:00", "purpose": "phase2b procedure (random)", "pair": "EURUSD", "n_strategies": 180000, "used_for_selection": true, "code_version": "0.1.0+ccd14b0ddcfa", "run": "phase2b_wf_eurusd_r1"}
+{"utc": "2026-09-29T22:29:51.320045+00:00", "purpose": "phase2b N_eff archive regeneration (same seeds, no selection)", "pair": "EURUSD", "n_strategies": 180000, "used_for_selection": false, "code_version": "0.1.0+ccd14b0ddcfa", "run": "phase2b_wf_eurusd_r1"}
+{"utc": "2026-09-29T23:23:30.215418+00:00", "purpose": "test_real_data equivalence", "pair": "EURUSD", "n_strategies": 480, "used_for_selection": false, "code_version": "0.1.0+3eb92ec1b8dc-dirty"}

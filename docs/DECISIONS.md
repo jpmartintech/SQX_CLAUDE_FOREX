@@ -108,3 +108,11 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Solapamiento a declarar:** el run de la Fase 2 ya usó 2004–2018 (incluidos 2015–2018 para seleccionar). Los años OOS de este
   procedimiento no son vírgenes para el investigador (gramática y forma de la fitness son las mismas que en la Fase 2),
   aunque el procedimiento no usa ninguna estrategia ni resultado de aquel run.
+
+## 2026-09-30 — Fase 2b, después del run `phase2b_wf_eurusd_r1`
+- **Veredicto reportado tal cual:** el procedimiento no demuestra edge (p = 0,109; costes ×2 negativos). No se aflojan umbrales ni se relanza.
+- **Incidente:** los 4 shards del nulo fallaron al arrancar (`KeyError: 'null'`: YAML interpreta la clave `null:` como `None`) sin escribir
+  ningún resultado. Fix solo en el script (`3eb92ec`), config intacto, y los shards se relanzaron con las mismas semillas.
+- **Análisis post hoc** (diferencia genético − control bajo el nulo, p-valor con costes ×2, mean R sin 2012): informativos, fuera del preregistro.
+- **N_eff por correlación:** hubo que regenerar los archivos del genético con las mismas semillas (180.000 evaluaciones de ingeniería,
+  contadas en el contador), porque el procedimiento no los guarda.

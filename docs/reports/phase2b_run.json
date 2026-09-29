@@ -1,0 +1,519 @@
+{
+ "run_name": "phase2b_wf_eurusd_r1",
+ "n_null": 100,
+ "code_version": "0.1.0+3eb92ec1b8dc-dirty",
+ "genetic": {
+  "evaluated": 180000,
+  "oos_trades": 3089,
+  "mean_r_x1": 0.029362861913490003,
+  "mean_r_x2": -0.009161981115855007,
+  "tstat_x1": 1.4896900520596266,
+  "portfolio_sharpe": 0.18409009739260546,
+  "portfolio_return": 0.04267596185430245,
+  "portfolio_max_dd": 0.07327568002424911,
+  "positive_years_x1": 5,
+  "per_year": [
+   {
+    "year": 2010,
+    "selected": 10,
+    "trades": 799,
+    "mean_r_x1": -0.054227181184166647,
+    "mean_r_x2": -0.07044016297211643,
+    "max_dd_mtm_mean_x1": 0.058483918269187994,
+    "evaluated": 20000,
+    "finite_fitness": 18699,
+    "hashes": [
+     "5a8b95b386b96677a1ef0b8bdaa16b85e846554da961ff2f1455ee3857e5ba8a",
+     "eccce7b706cb348500d75a044114f560e362e6bd6237bd73addb94465cc72b8a",
+     "bf20ff514ab4ac7510c146de3b3b1087b8df8e5bf34779aafa337d541aef0636",
+     "20e29f120d75ad832d4c23a0fa0cf6be655e1e236ed3b67ef76e8c61ee7fd55e",
+     "a17ebec007ed3bd1e6437d690b3c4e96c9472e1a239dbc0a74c4b7b549d1bcde",
+     "f8fa883e23d6b747dcb0d55ece86cf3434bab9e4c0eb829c5f627cf17b07de58",
+     "12ef42034b6838660b9b97fd64f82546fe7a75d58ec66c7bd32e21a0186bb254",
+     "35969024aa1ec1d0b47278d2ed64ffd4f4f1903bf8f6c0246a26cf85d06c9f35",
+     "8d6eb0509b496a7949cfe47d798e1a98ee7d304698e8e02af91b1f086869fb1c",
+     "c8deaabaa883e9626f8770cbb0e4ca38cb3dbf86b5774c752192ad0b4267aab3"
+    ]
+   },
+   {
+    "year": 2011,
+    "selected": 10,
+    "trades": 333,
+    "mean_r_x1": 0.04500515374977973,
+    "mean_r_x2": 0.018164851863624026,
+    "max_dd_mtm_mean_x1": 0.025038056611350112,
+    "evaluated": 20000,
+    "finite_fitness": 18735,
+    "hashes": [
+     "de1e1a3d2239f50579e1b7fc5d7fb29077d2efd721425c8d3309c58f22d1d6a3",
+     "a014cc4c74ce063faf3e40bd2b80313d712ea201708c86a93c6f5b9349cf8ecb",
+     "d9dd063df057c3052ef255ebb2da4651a8ac8b33b04f73a59d7fbf450c2b7727",
+     "036a99d166fc9242362f8dfca5979142323218c108caa35bae91b379daf3be11",
+     "685328bed75efe9da0e2e522864560decf8bc500faf6fe3b637f27e9abf93ee0",
+     "17e0ec9ab9191838400c95b323c483ccb9cc5cad051b110274aaf6858a0c2498",
+     "5a71a1bbfafb20cf85130cb650f29a82de86e5f5474de0765fcdf7e98b25fd75",
+     "8f574e2794c36c420bb193a4fee5dc38092086ff0bb96f52406e9cec1603c14c",
+     "ae4eaa32204af40d580d93bfc236c8d8964fbe82f321efe2f823b7833fe8090d",
+     "025dd511ec5dd7e900c70165b070083ef7e41122cec94e9feb4eba177009c66a"
+    ]
+   },
+   {
+    "year": 2012,
+    "selected": 10,
+    "trades": 437,
+    "mean_r_x1": 0.2876448650035695,
+    "mean_r_x2": 0.21039867855050826,
+    "max_dd_mtm_mean_x1": 0.07481341373128836,
+    "evaluated": 20000,
+    "finite_fitness": 18143,
+    "hashes": [
+     "6836d953c0b6716f69f47eb2fc0a8e45816a66a4c5b17112d66415ef2f60070a",
+     "1a48eb5080193f3588a810e56c7c7b1e6a51cf434a96db72852c4168c1925e58",
+     "d7ccb89b84aed8fa396b4c588f0d197feec1280b401eb6bcdda0990bb6dbfbac",
+     "a8da8d7880bbbbb7e6db1c13f151836fafa23dc0bebafa23aed29e02a7341b06",
+     "b23b9e5f37a2b75ba1592dc6e175ca4877351abf76d6cf3ca6f22ce6f60534d0",
+     "2df2be4c9d5152bdb9860fe77eee439b9dfea1eea744062d4116d41514252851",
+     "dafe4eadc8e42207ce890b2fe6347c41049e3777e3c2a7f63978159428f532fc",
+     "4b88016f19fd0d07f5015d42a8cf74f70c3c8705f8da0194b42f4f5ce6e460a1",
+     "59bc8258d934c624ca409656f120c4b0dd8e9920e266926884e2f7921e6a1bf4",
+     "1b99f6b998c5ac7a6162be825365d435ec18c59265c6c39454c4796656d98d37"
+    ]
+   },
+   {
+    "year": 2013,
+    "selected": 10,
+    "trades": 418,
+    "mean_r_x1": -0.10960971165076866,
+    "mean_r_x2": -0.15234047330036027,
+    "max_dd_mtm_mean_x1": 0.03105115886736991,
+    "evaluated": 20000,
+    "finite_fitness": 17667,
+    "hashes": [
+     "33c5c7747d69b6324425af67b4c3f199b26e7578261a9fd6b6b5e1cf148e4d32",
+     "304407e51314f2fe3a9145a23e79c46979f79808d242e1341db52192c0ea7889",
+     "c618d22c512a605421772239e00fcd33170c816dc4081c7291fcda5b18bd4f47",
+     "501107238e6d5150dfec3ce7a675818ec905dd8212d725f1d403a86d218321fb",
+     "fd22e848590000896dbe79289c8006eec4f5763e5431759c3b18fbf1b1d4002c",
+     "2095e1ea8656701f6cf78a1592e0ca7263399fb4fc7272a9891abd8fa845edf8",
+     "496d00432b7ce2df13844d5ff82e8b9a4e911994fb41f96ecfe89e29e5a9bac3",
+     "a0f3b4028f11235a4b5a9ca7c975c6a789dd5c2775985231f52257981b60acb1",
+     "557081689ef72f4554f0f7d5a146192bb85c6d9b2e94595d40f4a282a6ee09fe",
+     "2e928e5f1d62426f0c20f6b37fe47757fea53657f95e62cf945e7760eb5dc024"
+    ]
+   },
+   {
+    "year": 2014,
+    "selected": 10,
+    "trades": 102,
+    "mean_r_x1": -0.06810391092219865,
+    "mean_r_x2": -0.11660834265970152,
+    "max_dd_mtm_mean_x1": 0.014421462251984762,
+    "evaluated": 20000,
+    "finite_fitness": 18358,
+    "hashes": [
+     "d1f66d183db5a1899e3564cb8720030066e3e1cb5678197d30c1d2a9219907f2",
+     "ad87123b9c237b6ce3a7b78ca0af0123783bdab3b17632b8b58e7096754142a8",
+     "d7795ea2f6ead9287556cd467e682bae63c034f43e78fd256b3f85b2351ed3da",
+     "ed7e372bf211cf29601c58e52386c1b197b2423f45fea93aa7bac229eacb61d9",
+     "afe6ab5a14e8c8d4cc1cfbb8753545f5c18863eb6c8f14671df8f0a3c69bf24f",
+     "a54818c1943dc7710b5e06163cbf3b179db5ae9a94620f9e699db8ff5e03a7e3",
+     "d1366898efbb419354d0d733e84ae7426f84fc6631966f44ac915def0e6b10ce",
+     "7848089ca8a0de68118041f162027cc0e485c79e200441db5e402daa3ebb9436",
+     "b12c98a812a0873e1518d3bcc1fd4db37329bd3dfd25fb942cdd1ec17b6c58b2",
+     "d06ebbb5250c8286a0c4088ece23200305825804adb856f1acddc6b1dc747e4e"
+    ]
+   },
+   {
+    "year": 2015,
+    "selected": 10,
+    "trades": 293,
+    "mean_r_x1": 0.16640467351070556,
+    "mean_r_x2": 0.14029989772930865,
+    "max_dd_mtm_mean_x1": 0.00944380481995748,
+    "evaluated": 20000,
+    "finite_fitness": 18362,
+    "hashes": [
+     "0a574362172704e0318c68aa56202e7aa37add1184de2c703e0bdf8212539281",
+     "1cf058924e6ba2dba1fffb944b6d235bcb715911dd3d0844f5f67aa61ecd533a",
+     "2360a7b30e0f72a6e825c9664e6356645095b39bee67940ec2f18450c3d2d659",
+     "1ed22ee4e317f9b0c3a89ab919ad8d522147fa5a5ec85660060d0411a76abdfd",
+     "01ca43736466be0fa4bd1d884c835c37b85937c67897d2f6b6db4e8f7f8388bc",
+     "f16a45827de44a58bedff6e2ba3a1f32ae7c9801fd1e0b17587e132198c7643a",
+     "7aa21c4e0a21275a088b326966218dd77a88b2accd2aa01e58baa710dd09fd36",
+     "989a65ebfd52ff2a069abd62fd645705fdac341899005608f0e9e86559e080a8",
+     "c3345f70d3966abae527173766187b16185c6611faacc0663f66fd16f70679fa",
+     "08e2bdf48b865f21416c909d83b9aa409c89c47587d2a13cfabf39727e063b77"
+    ]
+   },
+   {
+    "year": 2016,
+    "selected": 10,
+    "trades": 189,
+    "mean_r_x1": -0.08535842429168791,
+    "mean_r_x2": -0.11508069141932883,
+    "max_dd_mtm_mean_x1": 0.0322710788772641,
+    "evaluated": 20000,
+    "finite_fitness": 17656,
+    "hashes": [
+     "df8633eeb03b4ac4e7856582f6f56c226cc9720e3cf10673bd9386f23f40b305",
+     "cccf1a2b59b996cd0a7700994dc1d632a1970c2bd663c5097cf6a8057f631253",
+     "4234625be10fc943a226975c82027f7b80ca3be17e817b47e352b63c0819821f",
+     "5031e17883531ff11a6cebe5f35e6adc12355e5fc9925c518c218563062fac92",
+     "1979832b6adefa6466a50519f008bab7fbfe41c7223ea6bc1ea4d4afedc879e3",
+     "b6af8de932ca68c7563ed4393dce353d262295094a36b675ecfeda4ba84abca9",
+     "6e937a80e019da9f53e5b0a881bf3b83975f54dbc041dfa56ec3165dcb900259",
+     "08592692e03b295c0ae85f6f1286403ce1fe8dd8fc0d909c5685c6d06d3d29e8",
+     "9f3cadb211bdc307cbbb4342d905c7e071695c73aafbbcd5bf7507f4dec96119",
+     "9c6de33e37d2727f865b12a135e9f5f5ca478d78ebc66094172460f0810fbb21"
+    ]
+   },
+   {
+    "year": 2017,
+    "selected": 10,
+    "trades": 198,
+    "mean_r_x1": 0.006308768920550777,
+    "mean_r_x2": -0.03068946379922796,
+    "max_dd_mtm_mean_x1": 0.013609807040224308,
+    "evaluated": 20000,
+    "finite_fitness": 17824,
+    "hashes": [
+     "20e75efdf0fbd5b497479b06916ae1cb145a1be954569332afb63cd2c0826bd1",
+     "4e5fb1672c9f2d0b0eb90e2254b3d11ede642f887a9e10227e29a2957ab28e24",
+     "b3dd234c58f5bae1a112d1df5be0eea114b17ff79d10b2071106201d6505752d",
+     "cc3d96610adfea85fa3bb9deb5978a462756ac730b2a829efad1b103dd28d744",
+     "14df588f53c82b81b496fedcaa01543ba16815fb547e6ba7a4bfd17557d32f35",
+     "aca893f4c43628d1162ea3ffe7c2bec57ebca4bb36feec74eb6a0739c400f6a5",
+     "c31b1b00aaf1a81fa66f13e912118eeb912f8ac5df60cd6d37b4bbb77606758d",
+     "deee12b00ff500f2b66491e4da6ba460a7ba564ba3c1698cfc78f4c27c667386",
+     "85ffcb977f693378d5f89f1924c885ec381ac41143f98b84d3223b138a999db4",
+     "1f4b21a3557d51f887e98d99b3d4e541c6aba0be2aab0923aa03816b02bc4093"
+    ]
+   },
+   {
+    "year": 2018,
+    "selected": 10,
+    "trades": 320,
+    "mean_r_x1": 0.03822615938122509,
+    "mean_r_x2": -0.024129763695815626,
+    "max_dd_mtm_mean_x1": 0.02952240573443622,
+    "evaluated": 20000,
+    "finite_fitness": 18312,
+    "hashes": [
+     "dfb4d07016ae1a174a091268f0d35a27c0bdf61429ede8d07e5752014a29c120",
+     "c551e05d1d37527ad126e399f2ea6ac9aad632674e648b7af5a487325f50930c",
+     "065ca6ac5c3968792c7b54d9bd833d7758a7f49a76fdf3899507c44c2fa28247",
+     "10bd571184cd9e116c5e0fee0f7637bf5f48675756e612dbc652e5cd9b514bb0",
+     "b6a9e7eb8a9cd1d4f253accb872b1bf8d93539924877692bf783648dce1d711b",
+     "fa16a5714a0657d773cb8a91bfa3df55d9d4a80a98bd21066e7898e84e04b5aa",
+     "a8b3caea9fe3f7bd7fceca27ba4e7a50f63683ce36ead5f556645980eea9a0b7",
+     "06bca7c2c579f168f3cbba07e89c598170d2b07f5c068461d214e9e4699f0c01",
+     "7ca7c4271d4097e4d12c0851f9af69ff31897a2e3d6fd9ccf1b4e2585b558f51",
+     "b841cd3fd8bd1da3212a145b266d627120ec22ee98bf96e87150ca4485abccd9"
+    ]
+   }
+  ],
+  "p_value_permutation": 0.10891089108910891,
+  "null_mean_r_x1": {
+   "mean": -0.04109622412513387,
+   "p95": 0.05564236450667963,
+   "max": 0.07068568074058094
+  },
+  "portfolio_psr_vs_0": 0.7137076952670499,
+  "portfolio_dsr": 0.5129439293687998,
+  "dsr_n_procedures": 2,
+  "dsr_sr_expected_max_annual": 0.1735026361690753
+ },
+ "random": {
+  "evaluated": 180000,
+  "oos_trades": 5944,
+  "mean_r_x1": -0.03960717063092713,
+  "mean_r_x2": -0.08509756636011158,
+  "tstat_x1": -2.588762301648227,
+  "portfolio_sharpe": -0.5244200740644098,
+  "portfolio_return": -0.11355790756518969,
+  "portfolio_max_dd": 0.1343870061720437,
+  "positive_years_x1": 2,
+  "per_year": [
+   {
+    "year": 2010,
+    "selected": 10,
+    "trades": 1358,
+    "mean_r_x1": -0.07424816251121337,
+    "mean_r_x2": -0.09925683523913,
+    "max_dd_mtm_mean_x1": 0.09616335987559974,
+    "evaluated": 20000,
+    "finite_fitness": 16282,
+    "hashes": [
+     "bbb7dc96549fea9bdbc92f2f540f7c01b6c856007fbcfbf0c1700bff0f2a4b8d",
+     "c1b4a3970810c480b7e5d50db4a03ec14fe7b2c2928bde76ab0ff58b6e1c87ce",
+     "4dce6c27cc0117ec84805883f06efaa8c6592d25ab9da8683232e1bce60659ce",
+     "fcf426a4ab47d87bc26c5af94c14dc8e0428f99f1f8d8af66f2ca3c028b827f9",
+     "17597ad4e730a9117519cce4155226f79e908d579d46813cf4c019abbd3b87d1",
+     "117e1e78a48d8a72333248407a63190c40620107c19f42ead95f064be958f606",
+     "0586ae858579c084a7bd3916378e96fe25ae7743738892e2fe56b187bb1d931c",
+     "da9c81bffa05a65a4ed6dab621121c243fc2a2638b9898443d3630a2b0f3e2ae",
+     "9109b42581c95fe487fe916d8085b4ef721a4aefcbc8ddd9e6ee1f3275b483be",
+     "a029d934d994de5b4901b83650a68d963706194edf353dd6c17affcc72427c97"
+    ]
+   },
+   {
+    "year": 2011,
+    "selected": 10,
+    "trades": 572,
+    "mean_r_x1": 0.03305927165948325,
+    "mean_r_x2": -0.00044341251297725395,
+    "max_dd_mtm_mean_x1": 0.041466789571483045,
+    "evaluated": 20000,
+    "finite_fitness": 16327,
+    "hashes": [
+     "5d8b22f2b064da0446cf577a3b2d1d4a7a9c8b684501ab25d7e53cfbfe9af5ed",
+     "c82e73c08c971f2b39d17654ed0713d71b070a75e365c0099b0f1e060685db72",
+     "bf601478860e2f785e119fab01e97a3a9227afb52689126dfeedf8b95d26cdfc",
+     "33072a822fe74c30978b130665304112233df4750b02666966c1537c8b406600",
+     "01b4f6838d94b56e90e73572f80bdc9aea4634d407653f3206115319cb971083",
+     "17a1e0dbea4f6321cc857af1de5b54aff1d9ac5241634d652dc29a889ee1a304",
+     "661c3a68a7083223cb17e172bdce2f49bbe72fbf654a2f6502223711a03193e7",
+     "97a9572c4ed410fbf79fb0e06957c391227023ff11918c8d8b3d030035eff77c",
+     "837094cdfa5ca557bbe54477dd77365c4e7de05aee8c92f8c6e145077dec8ce4",
+     "e526f4d1bc1b9549065945a9b17df5414d21e6679ab1585131fc5e2f8e016110"
+    ]
+   },
+   {
+    "year": 2012,
+    "selected": 10,
+    "trades": 925,
+    "mean_r_x1": 0.04576796217153447,
+    "mean_r_x2": -0.0006454745593611948,
+    "max_dd_mtm_mean_x1": 0.05466841603467134,
+    "evaluated": 20000,
+    "finite_fitness": 16296,
+    "hashes": [
+     "2900b04a9df975eb06e75b7b3399ffcf24c39fdafae31e0e8967cb2dbee46ee7",
+     "634f863c8070da014e40c2a989400fb3bacd84668dd8b071163571cd59c1be32",
+     "222b5cc32debe6498a9df13d15eb621bf7beab99906b11dbfae427a84d2f0d02",
+     "d3675d62bff3a011d3bdd686e28149cb56d5f62dc33d325763111738742ded80",
+     "2b1ec8afac93d4712d8194f34c77e457f08b3117de21c6e26ea7583e55d8ae78",
+     "a87b08ec180fc633aa9f1f7c771606b1a6d07693af4805cba755c9078d1d0f91",
+     "5c08d42a5cb1de769c6e4c4240274bbbc13ef26bfd9ba8733bd566026f057357",
+     "094444a46b1bc4a047415cfdb845951d961cffed5951f71e844d61d8c821b5d3",
+     "bb346c9a4e7adfcfa4b9590f66871707b1374ad517a98cd33ad6081b1db0859f",
+     "b522354bcdb1256d38a4c419b02f3df81ccccb383e727aedc25af358ac37ebc6"
+    ]
+   },
+   {
+    "year": 2013,
+    "selected": 10,
+    "trades": 559,
+    "mean_r_x1": -0.0899594719673999,
+    "mean_r_x2": -0.1486727153385202,
+    "max_dd_mtm_mean_x1": 0.0602153632893377,
+    "evaluated": 20000,
+    "finite_fitness": 16307,
+    "hashes": [
+     "e89b5364a696b15c628c61042391b9a7c97ecb499d5ecc96a2a31aa65cc2eb85",
+     "8f7d8e22f6156927eaa75f5820cf06e167eff33cce52c48eed0e487425327be6",
+     "428f8b1c15698c59211770dbff708dab9db0110d17f83efbfb06712fa1db9e6a",
+     "e5ed7134bc36fdb7f9c537415854a5a128dad1e7c72d1f6bcbcfe24fc31021ce",
+     "3469030192b9bc9641428471218491f395823bc6de769384ed17f7899bb97233",
+     "f2afd9a967bfbb5e6b4ce5ff710f75f97331853fa850413e02e08d9a38e2a7b5",
+     "e6395f0292d35acdde9c5361022fc6f606486d044ef3eefcf4d826064a3557b3",
+     "e6f2c94019322aa4251ed515a9b7174fe253f428d1b40923aed27c050c7df2c8",
+     "ba67180667a061c86d201e452677e5e2c6a9fbd90f536a72f3dc270bcee11194",
+     "65913e14038bc041a5a2f901e7922836dec6a327f99034bafafd8efa85606e2c"
+    ]
+   },
+   {
+    "year": 2014,
+    "selected": 10,
+    "trades": 598,
+    "mean_r_x1": -0.07919226122265315,
+    "mean_r_x2": -0.14607256830146614,
+    "max_dd_mtm_mean_x1": 0.052977051609228706,
+    "evaluated": 20000,
+    "finite_fitness": 16336,
+    "hashes": [
+     "e3235f10c2753c9248454e5b06fdc0f00dd93dea36f2ac1fdea0c9430e1918b0",
+     "d7c9877f4eacb69918d38a7027ccd55de9e7d639c0f542378e797ef38733ae05",
+     "bacad1e036efb4769fd209652c82e0f6699ca7f6be1c623ab6047b5066d2ca0c",
+     "fe46386f11c2325f676da2cf84fde3339a9edfa894dfb0162e2f39f2d200e73b",
+     "9b7c96fca21c99c185de8bd6dbae842c8628ccd9ee10970e5ab91dc669fd2f25",
+     "54c8430a7fa2c92a5e9bc9777bacf003e9bf3eadd7c4e282d8a57f94e8c852a1",
+     "272cad337a3b9c6c1a0b30eb027262e9df8bb8c3cf6f73be5d77ee55e89f78ff",
+     "945ac48e230048bef05b77c233d21d1db82d836ce087791ccedd50f7eb8bdec9",
+     "f95e7b07aa71bbb3e335889d64646990d80ecc58be58f499b69685f30da8252b",
+     "c037d6dd54ce38ea6437e3e20fcb8aaa862207dc23c3ce9a88c866ed4e99fb6a"
+    ]
+   },
+   {
+    "year": 2015,
+    "selected": 10,
+    "trades": 513,
+    "mean_r_x1": -0.02439185355830437,
+    "mean_r_x2": -0.06317016818506357,
+    "max_dd_mtm_mean_x1": 0.05215076216709043,
+    "evaluated": 20000,
+    "finite_fitness": 16430,
+    "hashes": [
+     "b0d23804879bb58a1500f8f18c7b16af6fb30fc3090b200525aadef7c6d8aa10",
+     "49077aa67fe464843dba22bba2182ac8dc0b6010757f82a1d2f8c0a5d6979888",
+     "6f380577771baa088bdc87ba4ceaa96336da62c933c2f6294668a6527bda73de",
+     "7f0e34517466d9d45e1503dfc58dbf36b2febc36866661d8fabc52df99971baf",
+     "d27310336ebaea044af6cf67af37b028918d530fbd62e6108122cef5d54c5186",
+     "90e7535dffdd16f728655d24cf47b09cc8e84a25f57becda65113cca372dabf7",
+     "46ee39f37fe814915c3db65c40987e841a7f73f99e3d15c9f6029c8adf499f77",
+     "282b98304f5e0fcb963783eba393c9abee4698910c2ac3ba711e615380197d5b",
+     "05fe4808057432565a4a1747f7514b8442a0f52f6e2d592574c51616daedd96d",
+     "376bd7569702f7bde58694d159d9f757153dabdd05500a1c8cc6ff49416a9b82"
+    ]
+   },
+   {
+    "year": 2016,
+    "selected": 10,
+    "trades": 407,
+    "mean_r_x1": -0.040604439285017495,
+    "mean_r_x2": -0.0904312907755764,
+    "max_dd_mtm_mean_x1": 0.04395732338280445,
+    "evaluated": 20000,
+    "finite_fitness": 16427,
+    "hashes": [
+     "acc0c74de8060a7670dd5357b64e61735630f8fbe4d8850119bf2240d84d78fa",
+     "82b4cd6c6efab023f8ea32866b94f56dd212ec6fbfea5e0de018a68ca4b094fa",
+     "e21a7561abc450de91ab49c49060d95a495e77bdf5df934b303e03636203356b",
+     "4c5f2b77daac2e9b1b01e6d80241e3bc892b7a46bb0edeac219ad998d07c320c",
+     "2c4ecdef3a7cb253b6fd3c304267b732ed6477081422706efd3d720316aeddf3",
+     "e655e8fc8b9c641abe7af58ffe66c3534df8768982ddd364df1adf7a3dbf3158",
+     "ad9adab4d9b37be59f163136df0ff0e646f0eb12b6dc8a7856746756f3a8bedf",
+     "49aea844b00964891de6efb0f2d6693a8c29fab409d24faf4591525e9ef4d5ca",
+     "69af1b0c089a250807da09cca12eacd2b77d43a4a1d49b718d1734ae76e4ce2a",
+     "7038ca28f30fad2e723252ac7b51a85475c03bd05be55bd0b136bdb30a141255"
+    ]
+   },
+   {
+    "year": 2017,
+    "selected": 10,
+    "trades": 460,
+    "mean_r_x1": -0.10608439945369062,
+    "mean_r_x2": -0.15975704063973467,
+    "max_dd_mtm_mean_x1": 0.052773806679342485,
+    "evaluated": 20000,
+    "finite_fitness": 16416,
+    "hashes": [
+     "2ac3b4ee9438aa81b8e6fae7abca99b75c48a86e7ff8dd6ba85da34f63e306fc",
+     "6896bc31bffe937dccb4fd9ca7d675c175258edad90bb9244d653bd1e44f4d71",
+     "1ecd253e022696d5bd5a0f52cea1f7d1249a60414355124e397677780437eaaf",
+     "ec38e125903d2269a39d22042f7df7db345e7fb43c1a557ff99a23fc0c876163",
+     "790a6a2f0191edb036f02ec75f50e2e09304d63b1d872104455f6521ac2a184f",
+     "8d5444dd50e878d76dac685140db6998b88f2f8c828c9071e3d17398fb46ad0e",
+     "32ff7aa31ff8b3bea9ce4b7b8cf509dd8092afa940cf276fe28e93dd86179732",
+     "6dbc705d8db642e29f0bb7bce8146e7764ecd37474ca9617eb6717f735e86ddd",
+     "fb181c14ffbfedccd5e41bd6f9fc499a0bc1f404f92f4ff19fd1abe18d46171d",
+     "db01e382190f98d34c910ff48fc574af29c1b02e0d5c8fabb7825af9656daac8"
+    ]
+   },
+   {
+    "year": 2018,
+    "selected": 10,
+    "trades": 552,
+    "mean_r_x1": -0.036882459209898175,
+    "mean_r_x2": -0.1032951851948332,
+    "max_dd_mtm_mean_x1": 0.04739564879280456,
+    "evaluated": 20000,
+    "finite_fitness": 16353,
+    "hashes": [
+     "5eb3df28f2dc3b0a710802e15067617f425f61380753199b9eb3c3308301023d",
+     "db245587309c006e5e6c5f5c8b03cb4246ed5f23cfd63f0bc686cb722a53c1a0",
+     "3da3b040e51b9a51fceb70b3f67e64a28398ccfc2911b72d6b11e21d52bf71bc",
+     "cd193828bb650a9b4f2602ea27ca0683e4f58ca3daba9a4eebb007c0889a8395",
+     "7a4d77b6829927a89c1193b461607a7a4cec1d990d5e95d964f660f4d78bb979",
+     "350dbdefda92bb02f6f346b472a5d49624f6f06aeb57e1c9154c31463256cb1e",
+     "d63f99ef8ed54b9804d10232000d0f32b12e8491773d07a88c895d166e664d31",
+     "46c40c55bfff9bc6a1009c76681955d49b5f2efb72fc3eb5704abd7fd68c4230",
+     "6f7c1c16482123c3a25f7a15067c1c067767246ccd2cac9c76fd506bd612a04c",
+     "7b149cb0f73601faecdb0a76c491e7208f2c717646331dfc3bef0dc52ed4acff"
+    ]
+   }
+  ],
+  "p_value_permutation": 0.49504950495049505,
+  "null_mean_r_x1": {
+   "mean": -0.04305203008882753,
+   "p95": -0.008856683791760078,
+   "max": -0.0013628590823347988
+  },
+  "portfolio_psr_vs_0": 0.060001000445183195,
+  "portfolio_dsr": 0.019164910856190653,
+  "dsr_n_procedures": 2,
+  "dsr_sr_expected_max_annual": 0.17422987186152752
+ },
+ "acceptance_checks": {
+  "oos_mean_r_x1_gt": true,
+  "oos_mean_r_x2_gt": false,
+  "permutation_p_value_le": false,
+  "beats_random_control": true
+ },
+ "procedure_has_edge": false,
+ "strategy_level_effective_trials": [
+  {
+   "year": 2010,
+   "rho": 0.21154665592459387,
+   "n": 20000,
+   "n_eff": 15769.278428164047,
+   "sample": 294
+  },
+  {
+   "year": 2011,
+   "rho": 0.17357425869634457,
+   "n": 20000,
+   "n_eff": 16528.688400331805,
+   "sample": 295
+  },
+  {
+   "year": 2012,
+   "rho": 0.25490125228161387,
+   "n": 20000,
+   "n_eff": 14902.229855620004,
+   "sample": 281
+  },
+  {
+   "year": 2013,
+   "rho": 0.048790980777156205,
+   "n": 20000,
+   "n_eff": 19024.229175437657,
+   "sample": 271
+  },
+  {
+   "year": 2014,
+   "rho": 0.17115512057802956,
+   "n": 20000,
+   "n_eff": 16577.068743559987,
+   "sample": 286
+  },
+  {
+   "year": 2015,
+   "rho": 0.12166102507261985,
+   "n": 20000,
+   "n_eff": 17566.901159572677,
+   "sample": 291
+  },
+  {
+   "year": 2016,
+   "rho": 0.21551613367317293,
+   "n": 20000,
+   "n_eff": 15689.892842670215,
+   "sample": 277
+  },
+  {
+   "year": 2017,
+   "rho": 0.15973169926156205,
+   "n": 20000,
+   "n_eff": 16805.52574646802,
+   "sample": 280
+  },
+  {
+   "year": 2018,
+   "rho": 0.13577704492778547,
+   "n": 20000,
+   "n_eff": 17284.594878489217,
+   "sample": 291
+  }
+ ]
+}

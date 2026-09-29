@@ -1,0 +1,1 @@
+{"utc": "2026-09-29T22:29:51.320349+00:00", "run_name": "phase2b_wf_eurusd_r1", "oos_years": [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018], "procedures": ["genetic", "random"], "code_version": "0.1.0+ccd14b0ddcfa"}
