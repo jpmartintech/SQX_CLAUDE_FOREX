@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 from sqxf import __version__
 
@@ -23,6 +24,34 @@ def cmd_build_data(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_funnel(args: argparse.Namespace) -> int:
+    """Run the pre-registered discovery funnel described by a committed YAML config."""
+    import json
+    import subprocess
+
+    import yaml
+
+    from sqxf.backtest.evaluator import load_market
+    from sqxf.funnel.pipeline import run_funnel
+    from sqxf.provenance import PROJECT_ROOT
+
+    cfg_path = Path(args.config).resolve()
+    rel = cfg_path.relative_to(PROJECT_ROOT)
+    dirty = subprocess.run(["git", "status", "--porcelain", "--", str(rel)], cwd=PROJECT_ROOT, capture_output=True,
+                           text=True).stdout.strip()
+    tracked = subprocess.run(["git", "ls-files", "--error-unmatch", str(rel)], cwd=PROJECT_ROOT, capture_output=True).returncode
+    if dirty or tracked != 0:
+        print(f"refusing to run: {rel} must be committed before any run (pre-registration)")
+        return 2
+    cfg = yaml.safe_load(cfg_path.read_text())
+    market = load_market(cfg["pair"])
+    out = PROJECT_ROOT / "runs" / cfg["run_name"]
+    report = run_funnel(market, cfg, out_dir=out)
+    print(json.dumps({"counts": report["counts"], "dsr_inputs": report["dsr_inputs"],
+                      "too_good_flags": report["too_good_flags"], "report": str(out / "report.json")}, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sqxf", description="Forex strategy factory (M15 base data, H1 signals).")
     parser.add_argument("--version", action="version", version=f"sqxf {__version__}")
@@ -31,6 +60,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("pairs", nargs="*", help="pairs (default: configs/data.yaml)")
     p.add_argument("--rebuild", action="store_true", help="ignore the parquet cache")
     p.set_defaults(func=cmd_build_data)
+    p = sub.add_parser("funnel", help="run the pre-registered discovery funnel (config must be committed)")
+    p.add_argument("--config", default="configs/funnel.yaml")
+    p.set_defaults(func=cmd_funnel)
     return parser
 
 

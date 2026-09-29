@@ -22,6 +22,11 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
     """Return ``(trades, agg)``: list of trade dicts and the aggregate vector (numpy float64)."""
     trades = []
     equity = 1.0
+    peak_m, dd_m = 1.0, 0.0
+
+    def mark(eq, price, entry, risk):
+        return eq * (1.0 + risk_frac * ((direction * (price - entry) - cost) / risk))
+
     t = t0
     while t < t1:
         if not signal[t]:
@@ -65,17 +70,25 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
                     reason, px = TARGET, target
             if reason:
                 break
+            dd_m = max(dd_m, 1.0 - mark(equity, l[k] if direction == 1 else h[k], entry, risk) / peak_m)
+            peak_m = max(peak_m, mark(equity, c[k], entry, risk))
         if not reason:
             k = kend - 1
             reason, px = time_reason, float(c[k])
+        adverse = px if reason in (STOP, STOP_GAP, TARGET_GAP) else (l[k] if direction == 1 else h[k])
+        dd_m = max(dd_m, 1.0 - mark(equity, adverse, entry, risk) / peak_m)
         x = int(h1_of[k])
         r = (direction * (px - entry) - cost) / risk
         equity = equity * (1.0 + risk_frac * r)
+        peak_m = max(peak_m, equity)
+        dd_m = max(dd_m, 1.0 - equity / peak_m)
         trades.append({"signal_idx": t, "entry_idx": e, "exit_idx": x, "entry_exec": k0, "exit_exec": k,
                        "entry_price": entry, "exit_price": px, "stop": stop, "target": target, "risk": risk,
                        "r": r, "reason": reason, "equity_after": equity, "day": int(day_id[k])})
         t = x
-    return trades, aggregate_trades(trades, day_id, h1_start, h1_end, days_per_year, t0, t1)
+    agg = aggregate_trades(trades, day_id, h1_start, h1_end, days_per_year, t0, t1)
+    agg[AGG["max_dd_mtm"]] = dd_m
+    return trades, agg
 
 
 def aggregate_trades(trades, day_id, h1_start, h1_end, days_per_year, t0, t1) -> np.ndarray:

@@ -22,6 +22,7 @@ AGG_FIELDS = (
     "bars_held",         # sum over trades of H1 bars held (exit_idx - entry_idx + 1)
     "n_days",            # trading days in the evaluation window
     "max_consec_losses",
+    "max_dd_mtm",        # max drawdown of mark-to-market equity on execution bars (adverse extreme of each bar), fraction
 )
 AGG = {name: i for i, name in enumerate(AGG_FIELDS)}
 N_AGG = len(AGG_FIELDS)
