@@ -1,0 +1,15 @@
+# Base dataset: M15 CSVs exported by SQX (bar-open timestamps, Europe/Athens local time). See docs/DATA_AUDIT.md.
+raw_dir: data/raw
+derived_dir: data/derived
+source_tz: Europe/Athens
+pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD]
+# Sealed holdout (AUTONOMY.md 4.3): everything from this local timestamp on is never returned by the loader.
+holdout_start_local: "2023-01-01 00:00:00"
+# First bar of the Development window (earlier bars are feature warm-up only).
+dev_start_local: "2004-01-01 00:00:00"
+# No new signals/entries inside these local-time windows (MM-DD HH:MM, end exclusive). Prices are kept untouched.
+holiday_no_trade:
+  - ["12-24 20:00", "12-27 00:00"]
+  - ["12-31 20:00", "01-02 00:00"]
+# Provider volume overflow (USDJPY 2008-01-30 20:30 = 92233720368547): values >= this become NaN.
+volume_overflow_threshold: 9.0e13

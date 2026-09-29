@@ -1,0 +1,65 @@
+{
+  "pair": "EURUSD",
+  "h1_bars_total": 122817,
+  "window_bars": 118675,
+  "m15_bars_total": 491185,
+  "window": [
+    "2004-01-01 00:00:00",
+    "2022-12-30 23:00:00"
+  ],
+  "round_trip_cost": 0.00015000000000000001,
+  "n_strategies": 20000,
+  "seed": 1,
+  "market_build_seconds": 0.5626783720217645,
+  "numba_threads": 12,
+  "sqxf": {
+    "light_H1_12threads": {
+      "seconds": 1.0498141309944913,
+      "strategies_per_sec": 19050.991417932197
+    },
+    "light_M15_12threads": {
+      "seconds": 2.086949946009554,
+      "strategies_per_sec": 9583.363529270022
+    },
+    "light_H1_1thread": {
+      "seconds": 1.8938122550025582,
+      "strategies_per_sec": 2640.177233404399
+    },
+    "light_M15_1thread": {
+      "seconds": 4.539774995006155,
+      "strategies_per_sec": 1101.3761707353563
+    },
+    "rich_M15_1thread": {
+      "seconds": 1.5739838349982165,
+      "strategies_per_sec": 190.59916203036477
+    }
+  },
+  "sanity_random_h1": {
+    "strategies_with_30plus_trades": 17477,
+    "median_mean_r": -0.05969089381820483,
+    "share_profit_factor_gt_1": 0.04468730331292556,
+    "median_trades": 2825.0
+  },
+  "code_version": "0.0.0+b4296b556b03",
+  "source_sha256": "fec7a62567a21d1db313aead2886208cfe655c30d2277a262d6f98937c7c5444",
+  "machine": {
+    "cpu_count": 12,
+    "python": "3.12.3",
+    "numba": "0.67.0",
+    "numpy": "2.5.3",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  },
+  "reference": {
+    "features_seconds": 0.33185815502656624,
+    "fast_evaluator_1process": {
+      "seconds": 4.86770926695317,
+      "strategies_per_sec": 616.3063230515779
+    },
+    "parallel_evaluator_11workers": {
+      "seconds": 2.4605434280238114,
+      "strategies_per_sec": 1219.2428574241642
+    }
+  },
+  "speedup_light_H1_vs_best_reference": 15.6252639102437,
+  "speedup_light_M15_vs_best_reference": 7.86009405010281
+}

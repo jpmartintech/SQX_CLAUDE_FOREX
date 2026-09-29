@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sqxf"
-version = "0.0.0"
+version = "0.1.0"
 description = "Forex strategy factory: causal evaluator, genetic generator, stress funnel, library and portfolio engine"
 requires-python = ">=3.12"
 dependencies = ["numpy>=2", "pandas>=2.2", "pyarrow>=15", "numba>=0.60", "PyYAML>=6"]
@@ -21,10 +21,11 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+pythonpath = ["tests"]
 markers = ["data: needs data/raw CSVs (skipped if absent)", "slow: longer tests"]
 
 [tool.ruff]
-line-length = 120
+line-length = 130
 target-version = "py312"
 src = ["src", "tests", "scripts"]
 

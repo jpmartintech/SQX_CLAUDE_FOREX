@@ -1,0 +1,5 @@
+# Evaluator defaults (Phase 1). Not thresholds: no result depends on them being tuned.
+risk_per_trade: 0.005      # fraction of equity risked per trade (1R) for the money/drawdown view
+days_per_year: 260         # trading days per year for Sharpe annualisation (5-day FX week)
+atr_period: 14             # ATR on H1 used for SL/TP distances
+exec_timeframe: M15        # rich kernel walks M15 inside each H1 bar; H1 is the cheap approximation

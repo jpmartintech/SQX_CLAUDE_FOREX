@@ -1,0 +1,10 @@
+# Round-trip cost per trade in price units = (spread_pips + 2 * slippage_pips_per_side) * pip.
+# Retail ECN-like all-in spreads (raw spread + commission) at H1 trading hours, rounded up. Not fitted to results.
+default_slippage_pips_per_side: 0.25
+pairs:
+  EURUSD: {pip: 0.0001, spread_pips: 1.0}
+  GBPUSD: {pip: 0.0001, spread_pips: 1.5}
+  USDJPY: {pip: 0.01, spread_pips: 1.2}
+  USDCHF: {pip: 0.0001, spread_pips: 1.7}
+  USDCAD: {pip: 0.0001, spread_pips: 1.8}
+  NZDUSD: {pip: 0.0001, spread_pips: 1.8}
