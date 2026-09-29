@@ -41,3 +41,26 @@ Formato: fecha — decisión. Alternativas. Motivo.
   Cada motor usa su propia gramática; se mide throughput, no equivalencia de resultados.
 - **Rendimiento del kernel rico:** el cuello de botella era convertir timestamps con zona horaria a objetos (0,1 s/estrategia).
   Se precalcula `Market.ts_utc` (datetime64): de 10 a 190–240 estrategias/s.
+
+## 2026-09-30 — Fase 2 (compacta), antes de cualquier run
+- **Instrucción de Jaime (texto pegado en la conversación):** Fase 2 compacta: drawdown MTM con M15, contador versionado, umbrales
+  preregistrados, genético con fitness solo en ventanas de entrenamiento, bloque 2019–2022 invisible al genético, estrés de costes ×2,
+  walk-forward, Deflated Sharpe. Se toma como aprobación del inicio de la Fase 2.
+- **Drawdown a mercado:** en cada barra de ejecución con la posición abierta, equity marcada al extremo adverso (low en largos, high en
+  cortos) para el drawdown y al close para el pico; en la barra de salida, el extremo adverso previo (el propio precio en stops y gaps).
+  Nuevo agregado `max_dd_mtm`; `max_dd` (trades cerrados) se conserva. El embudo usa `max_dd_mtm` con ejecución M15.
+- **Contador versionado:** `trials/ledger.jsonl` (en git) con todo el historial de `runs/trial_ledger.jsonl`: 69.110 evaluaciones
+  (67.190 del informe de Fase 1 más 4 ejecuciones posteriores de los tests con datos reales). El DSR usa el total general,
+  incluidas las evaluaciones de ingeniería (N más grande = corrección más dura).
+- **Periodos:** fitness 2004–2014 en 3 bloques; walk-forward de estrategias fijas en 2015, 2016, 2017 y 2018; bloque final 2019–2022.
+  Alternativa descartada: walk-forward con re-optimización del genético por ventana (evalúa el procedimiento, no estrategias
+  concretas; queda para la Fase 3). Limitación asumida: 2015–2018 se usa para seleccionar (etapa walk-forward), así que el DSR
+  se calcula sobre 2004–2018 completo y solo 2019–2022 es realmente fuera de muestra respecto a toda la selección.
+- **Fitness** = peor t-estadístico de R entre los 3 bloques (costes ×1, ejecución H1), −inf con menos de 30 trades en algún bloque.
+  Premia la consistencia frente a un único periodo bueno.
+- **Var[SR] del DSR:** varianza del Sharpe diario 2004–2018 de todas las estrategias evaluadas por el genético con ≥ 30 trades.
+- **Un solo par (EURUSD)** en esta fase compacta; la validación en otros pares queda para la Fase 3.
+- **Sin Monte Carlo ni ruido de precios** en esta versión compacta (no pedidos); pendientes para completar la Fase 2.
+- **Sin swap** (sigue siendo una limitación); el estrés de costes ×2 lo cubre solo en parte.
+- **Umbrales:** fijados en `configs/funnel.yaml` antes de cualquier run con datos reales. El CLI (`sqxf funnel`) se niega a correr
+  si el YAML no está commiteado. Un run que ya miró el bloque final no puede repetirse con el mismo `run_name`.

@@ -1,0 +1,63 @@
+# Phase 2 discovery funnel — PRE-REGISTERED. Committed before any run on real data (AUTONOMY.md 4.1).
+# Changing any value requires a DECISIONS.md entry whose reason does not depend on out-of-sample results, and a new run_name.
+run_name: phase2_eurusd_g1_r1
+pair: EURUSD
+seed: 20260930
+exec_timeframe_fitness: H1      # cheap and conservative (stop wins every ambiguous H1 bar)
+exec_timeframe_funnel: M15      # every funnel stage walks the M15 path (MTM drawdown on M15 bars)
+
+periods:                         # local EET dates, end exclusive. Holdout (>= 2023-01-01) is sealed and never loaded.
+  fitness_blocks:                # the ONLY data the genetic fitness sees
+    - ["2004-01-01", "2008-01-01"]
+    - ["2008-01-01", "2012-01-01"]
+    - ["2012-01-01", "2015-01-01"]
+  walk_forward_years: [2015, 2016, 2017, 2018]   # fixed-strategy forward windows, never in the fitness
+  dsr_window: ["2004-01-01", "2019-01-01"]       # everything used to select (fitness + walk-forward)
+  final_block: ["2019-01-01", "2023-01-01"]      # never seen by the GA; looked at once per run
+
+genetic:
+  population: 1000
+  generations: 100
+  max_unique_evaluations: 100000
+  elite: 20
+  tournament: 4
+  crossover_rate: 0.7
+  mutation_rate: 0.4
+  immigrant_rate: 0.1
+  max_predicates: 4
+
+fitness:                         # worst per-block t-statistic of R after costs (x1)
+  min_trades_per_block: 30
+
+stages:                          # applied in this order; counts reported after each
+  basic:                         # fitness period, M15 execution, costs x1
+    min_trades: 200
+    min_profit_factor: 1.15
+    min_mean_r: 0.05
+    max_dd_mtm: 0.25             # 25 % of equity at 0.5 % risk per trade
+  stability:
+    min_positive_blocks: 3       # mean R > 0 in all 3 fitness blocks
+  cost_stress:
+    cost_multiplier: 2.0
+    min_profit_factor: 1.05
+    min_mean_r: 0.0
+  execution_stress:
+    entry_delay: 1
+    min_profit_factor: 1.05
+    min_mean_r: 0.0
+  walk_forward:                  # 2015..2018, costs x1
+    min_positive_years: 3        # mean R > 0 in at least 3 of 4 years
+    min_trades_total: 40
+    min_profit_factor: 1.10
+    min_mean_r: 0.0
+  deflated_sharpe:               # daily returns 2004-2018, N = grand total of trials/ledger.jsonl
+    min_dsr: 0.95
+  final_block:                   # 2019-2022, costs x1 (x2 also reported)
+    min_trades: 20
+    min_profit_factor: 1.05
+    min_mean_r: 0.0
+
+too_good:                        # AUTONOMY.md 3: stop and look for a bug before believing it
+  max_profit_factor: 2.0
+  min_trades_for_pf_check: 50
+  max_sharpe: 3.0

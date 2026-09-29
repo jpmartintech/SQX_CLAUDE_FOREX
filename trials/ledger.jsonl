@@ -8,3 +8,4 @@
 {"utc": "2026-09-29T21:55:31.898246+00:00", "purpose": "test_real_data equivalence", "pair": "EURUSD", "n_strategies": 480, "used_for_selection": false, "code_version": "0.1.0+b4296b556b03-dirty"}
 {"utc": "2026-09-29T21:56:26.567226+00:00", "purpose": "test_real_data equivalence", "pair": "EURUSD", "n_strategies": 480, "used_for_selection": false, "code_version": "0.1.0+5d661f4a3312"}
 {"utc": "2026-09-29T22:03:14.883789+00:00", "purpose": "test_real_data equivalence", "pair": "EURUSD", "n_strategies": 480, "used_for_selection": false, "code_version": "0.1.0+5d661f4a3312-dirty"}
+{"utc": "2026-09-29T22:07:43.582943+00:00", "purpose": "test_real_data equivalence", "pair": "EURUSD", "n_strategies": 480, "used_for_selection": false, "code_version": "0.1.0+3009709e7ed0-dirty"}
