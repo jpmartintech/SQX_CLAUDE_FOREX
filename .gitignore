@@ -11,3 +11,4 @@ runs/
 *.sqlite-*
 *.db
 .env
+logs/

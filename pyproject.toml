@@ -21,10 +21,11 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+pythonpath = ["tests"]
 markers = ["data: needs data/raw CSVs (skipped if absent)", "slow: longer tests"]
 
 [tool.ruff]
-line-length = 120
+line-length = 130
 target-version = "py312"
 src = ["src", "tests", "scripts"]
 
