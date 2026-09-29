@@ -1,0 +1,64 @@
+# Phase 2b — walk-forward evaluation of the discovery PROCEDURE. PRE-REGISTERED: committed before any real-data run.
+# Changing any value requires a DECISIONS.md entry (reason not based on results) and a new run_name. No relaunch with another seed.
+run_name: phase2b_wf_eurusd_r1
+pair: EURUSD
+seed: 20260930                  # fold i uses seed + i (genetic and random control alike)
+data_end_local: "2019-01-01 00:00:00"   # M15 truncated here: 2019-2022 and the holdout are never loaded into the market
+days_per_year: 260
+exec_timeframe_train: H1        # generation + selection inside the training window
+exec_timeframe_oos: M15         # frozen strategies traded in the OOS year (MTM drawdown on M15 bars)
+
+folds:
+  oos_years: [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]   # only these years are concatenated
+  train_years: 4                # rolling: OOS year Y is trained on Y-4 .. Y-1
+  train_blocks: 2               # fitness blocks of 2 years each
+
+genetic:                        # per fold
+  population: 500
+  generations: 40
+  max_unique_evaluations: 20000
+  elite: 10
+  tournament: 4
+  crossover_rate: 0.7
+  mutation_rate: 0.4
+  immigrant_rate: 0.1
+  max_predicates: 4
+
+fitness:                        # worst per-block t-statistic of R after costs x1 (same form as Phase 2)
+  min_trades_per_block: 20
+
+selection:                      # inside the training window only (H1 execution)
+  min_trades: 60
+  min_profit_factor: 1.10
+  min_mean_r: 0.03
+  cost_x2_min_mean_r: 0.0       # mean R > 0 with costs x2 in the training window
+  top_k: 10                     # highest fitness among those passing; fewer if fewer pass, none if none pass
+  rank_by: fitness
+
+control_random:                 # random search, same grammar, same number of unique evaluations per fold,
+  budget: same_as_genetic       # same fitness, same selection gates and top-K
+
+null:
+  method: m15_bar_permutation   # joint (open gap, high/low/close vs open) tuples permuted over all bars before data_end
+  n_permutations: 100
+  seed_base: 777000             # permutation j uses seed_base + j; the procedure seeds are the same as in the observed run
+
+statistic:
+  primary: pooled_oos_mean_r_cost_x1   # mean R over every OOS trade of every selected strategy, 2010-2018
+  p_value: "(1 + #{null >= observed}) / (1 + n_permutations)"
+
+acceptance:                     # the procedure "has edge" only if ALL hold (genetic procedure)
+  oos_mean_r_x1_gt: 0.0
+  oos_mean_r_x2_gt: 0.0
+  permutation_p_value_le: 0.05
+  must_beat_random_control: true        # genetic pooled OOS mean R (x1) > random-control pooled OOS mean R (x1)
+
+effective_trials:
+  procedure_level:              # multiple testing at the level that is being judged: procedures evaluated on the OOS years
+    method: count_procedures    # N = 2 x lines in trials/procedure_ledger.jsonl (genetic + control per logged config)
+    dsr_var_sr: null_runs       # Var[SR] of the OOS equal-weight portfolio across the permutation null runs
+    report_only_min_dsr: 0.95   # reported, not an acceptance gate
+  strategy_level:               # informational: N_eff = rho + (1 - rho) * N on each fold's genetic archive
+    method: mean_pairwise_correlation_of_daily_returns
+    sample: 300
+    seed: 4242
