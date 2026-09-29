@@ -12,7 +12,7 @@ from sqxf.backtest.kernels import evaluate_batch_light, simulate_rich
 from sqxf.backtest.oracle import simulate_oracle
 from sqxf.backtest.semantics import AGG, AGG_FIELDS, REASON_NAMES, TRADE_FIELDS
 from sqxf.data.h1 import build_h1
-from sqxf.data.m15 import DataConfig, load_m15
+from sqxf.data.m15 import DataConfig, load_m15, utc_int_ns
 from sqxf.features.bank import ATR_PERIOD, compute_features
 from sqxf.features.predicates import pack_bits, predicate_mask, predicate_matrix
 from sqxf.grammar import CATALOG, PREDICATE_INDEX
@@ -72,6 +72,7 @@ class Market:
     risk_per_trade: float
     days_per_year: float
     meta: dict = field(default_factory=dict)
+    ts_utc: np.ndarray = field(default=None)  # datetime64[ns] (naive UTC) of every H1 bar
 
     @property
     def n_h1(self) -> int:
@@ -109,7 +110,8 @@ def build_market(pair: str, m15: pd.DataFrame, costs: Costs, dev_start_local: pd
                   execs={tf: exec_data(h1, m15, tf) for tf in EXEC_TIMEFRAMES}, costs=costs, t0=t0, t1=len(h1),
                   risk_per_trade=float(risk_per_trade if risk_per_trade is not None else ev["risk_per_trade"]),
                   days_per_year=float(days_per_year if days_per_year is not None else ev["days_per_year"]),
-                  meta={k: v for k, v in m15.attrs.items()})
+                  meta={k: v for k, v in m15.attrs.items()},
+                  ts_utc=utc_int_ns(h1["ts_utc"]).astype("datetime64[ns]"))
 
 
 def load_market(pair: str, cfg: DataConfig | None = None) -> Market:
@@ -208,7 +210,7 @@ def trades_frame(market: Market, rec: np.ndarray) -> pd.DataFrame:
         df[col] = df[col].astype(np.int64)
     df["bars_held"] = df["exit_idx"] - df["entry_idx"] + 1
     df["reason"] = df["reason"].map(REASON_NAMES)
-    ts = market.h1["ts_utc"].to_numpy()
+    ts = market.ts_utc
     df["entry_time"] = ts[df["entry_idx"].to_numpy()]
     df["exit_bar_time"] = ts[df["exit_idx"].to_numpy()]
     return df
