@@ -1,0 +1,1597 @@
+{
+  "run_name": "phase2_eurusd_g1_r1",
+  "pair": "EURUSD",
+  "seed": 20260930,
+  "config": {
+    "run_name": "phase2_eurusd_g1_r1",
+    "pair": "EURUSD",
+    "seed": 20260930,
+    "exec_timeframe_fitness": "H1",
+    "exec_timeframe_funnel": "M15",
+    "periods": {
+      "fitness_blocks": [
+        [
+          "2004-01-01",
+          "2008-01-01"
+        ],
+        [
+          "2008-01-01",
+          "2012-01-01"
+        ],
+        [
+          "2012-01-01",
+          "2015-01-01"
+        ]
+      ],
+      "walk_forward_years": [
+        2015,
+        2016,
+        2017,
+        2018
+      ],
+      "dsr_window": [
+        "2004-01-01",
+        "2019-01-01"
+      ],
+      "final_block": [
+        "2019-01-01",
+        "2023-01-01"
+      ]
+    },
+    "genetic": {
+      "population": 1000,
+      "generations": 100,
+      "max_unique_evaluations": 100000,
+      "elite": 20,
+      "tournament": 4,
+      "crossover_rate": 0.7,
+      "mutation_rate": 0.4,
+      "immigrant_rate": 0.1,
+      "max_predicates": 4
+    },
+    "fitness": {
+      "min_trades_per_block": 30
+    },
+    "stages": {
+      "basic": {
+        "min_trades": 200,
+        "min_profit_factor": 1.15,
+        "min_mean_r": 0.05,
+        "max_dd_mtm": 0.25
+      },
+      "stability": {
+        "min_positive_blocks": 3
+      },
+      "cost_stress": {
+        "cost_multiplier": 2.0,
+        "min_profit_factor": 1.05,
+        "min_mean_r": 0.0
+      },
+      "execution_stress": {
+        "entry_delay": 1,
+        "min_profit_factor": 1.05,
+        "min_mean_r": 0.0
+      },
+      "walk_forward": {
+        "min_positive_years": 3,
+        "min_trades_total": 40,
+        "min_profit_factor": 1.1,
+        "min_mean_r": 0.0
+      },
+      "deflated_sharpe": {
+        "min_dsr": 0.95
+      },
+      "final_block": {
+        "min_trades": 20,
+        "min_profit_factor": 1.05,
+        "min_mean_r": 0.0
+      }
+    },
+    "too_good": {
+      "max_profit_factor": 2.0,
+      "min_trades_for_pf_check": 50,
+      "max_sharpe": 3.0
+    }
+  },
+  "code_version": "0.1.0+ef3843c31029",
+  "source_sha256": "fec7a62567a21d1db313aead2886208cfe655c30d2277a262d6f98937c7c5444",
+  "started_utc": "2026-09-29T22:08:27.349245+00:00",
+  "windows_h1_idx": {
+    "fitness_blocks": [
+      [
+        4142,
+        29169
+      ],
+      [
+        29169,
+        54221
+      ],
+      [
+        54221,
+        72942
+      ]
+    ],
+    "walk_forward": [
+      [
+        72942,
+        79169
+      ],
+      [
+        79169,
+        85409
+      ],
+      [
+        85409,
+        91634
+      ],
+      [
+        91634,
+        97860
+      ]
+    ],
+    "dsr": [
+      4142,
+      97860
+    ],
+    "final": [
+      97860,
+      122817
+    ]
+  },
+  "genetic": {
+    "evaluated_unique": 99000,
+    "history": [
+      {
+        "generation": 1,
+        "evaluated": 1980,
+        "best": 1.0940667476748416,
+        "median": -1.8245509860873275
+      },
+      {
+        "generation": 2,
+        "evaluated": 2960,
+        "best": 1.0940667476748416,
+        "median": -1.4918245797407774
+      },
+      {
+        "generation": 3,
+        "evaluated": 3940,
+        "best": 1.1809882892405283,
+        "median": -1.3510009770601292
+      },
+      {
+        "generation": 4,
+        "evaluated": 4920,
+        "best": 1.3407341144632674,
+        "median": -1.2537898881987082
+      },
+      {
+        "generation": 5,
+        "evaluated": 5900,
+        "best": 1.433932828188146,
+        "median": -1.1179969577725888
+      },
+      {
+        "generation": 6,
+        "evaluated": 6880,
+        "best": 1.433932828188146,
+        "median": -1.063762246478234
+      },
+      {
+        "generation": 7,
+        "evaluated": 7860,
+        "best": 1.433932828188146,
+        "median": -0.892762475191178
+      },
+      {
+        "generation": 8,
+        "evaluated": 8840,
+        "best": 1.5341351582000382,
+        "median": -0.8700792115179463
+      },
+      {
+        "generation": 9,
+        "evaluated": 9820,
+        "best": 1.5341351582000382,
+        "median": -0.7561487167917393
+      },
+      {
+        "generation": 10,
+        "evaluated": 10800,
+        "best": 1.5607575183686286,
+        "median": -0.7284087064537286
+      },
+      {
+        "generation": 11,
+        "evaluated": 11780,
+        "best": 1.666327435251703,
+        "median": -0.7592622791079642
+      },
+      {
+        "generation": 12,
+        "evaluated": 12760,
+        "best": 1.666327435251703,
+        "median": -0.6900813755896896
+      },
+      {
+        "generation": 13,
+        "evaluated": 13740,
+        "best": 1.666327435251703,
+        "median": -0.6803007783270705
+      },
+      {
+        "generation": 14,
+        "evaluated": 14720,
+        "best": 1.666327435251703,
+        "median": -0.6609492162211053
+      },
+      {
+        "generation": 15,
+        "evaluated": 15700,
+        "best": 1.8276948512065982,
+        "median": -0.6090005633717488
+      },
+      {
+        "generation": 16,
+        "evaluated": 16680,
+        "best": 1.8276948512065982,
+        "median": -0.38716125043951183
+      },
+      {
+        "generation": 17,
+        "evaluated": 17660,
+        "best": 1.8276948512065982,
+        "median": -0.5004186867399694
+      },
+      {
+        "generation": 18,
+        "evaluated": 18640,
+        "best": 1.8276948512065982,
+        "median": -0.471468860086936
+      },
+      {
+        "generation": 19,
+        "evaluated": 19620,
+        "best": 1.8276948512065982,
+        "median": -0.4979956903215962
+      },
+      {
+        "generation": 20,
+        "evaluated": 20600,
+        "best": 1.8276948512065982,
+        "median": -0.4325782270219554
+      },
+      {
+        "generation": 21,
+        "evaluated": 21580,
+        "best": 1.8276948512065982,
+        "median": -0.3940217875387783
+      },
+      {
+        "generation": 22,
+        "evaluated": 22560,
+        "best": 1.8276948512065982,
+        "median": -0.5048154801040136
+      },
+      {
+        "generation": 23,
+        "evaluated": 23540,
+        "best": 1.884397210285929,
+        "median": -0.5143541399720193
+      },
+      {
+        "generation": 24,
+        "evaluated": 24520,
+        "best": 1.884397210285929,
+        "median": -0.5319760336661987
+      },
+      {
+        "generation": 25,
+        "evaluated": 25500,
+        "best": 1.884397210285929,
+        "median": -0.3781457497136083
+      },
+      {
+        "generation": 26,
+        "evaluated": 26480,
+        "best": 1.884397210285929,
+        "median": -0.4483817099162824
+      },
+      {
+        "generation": 27,
+        "evaluated": 27460,
+        "best": 1.884397210285929,
+        "median": -0.46010816075382777
+      },
+      {
+        "generation": 28,
+        "evaluated": 28440,
+        "best": 2.020799710406401,
+        "median": -0.3352506137834041
+      },
+      {
+        "generation": 29,
+        "evaluated": 29420,
+        "best": 2.020799710406401,
+        "median": -0.4641776993596686
+      },
+      {
+        "generation": 30,
+        "evaluated": 30400,
+        "best": 2.020799710406401,
+        "median": -0.383294425939814
+      },
+      {
+        "generation": 31,
+        "evaluated": 31380,
+        "best": 2.020799710406401,
+        "median": -0.37685155933620423
+      },
+      {
+        "generation": 32,
+        "evaluated": 32360,
+        "best": 2.020799710406401,
+        "median": -0.3306324972267457
+      },
+      {
+        "generation": 33,
+        "evaluated": 33340,
+        "best": 2.020799710406401,
+        "median": -0.35249794608709295
+      },
+      {
+        "generation": 34,
+        "evaluated": 34320,
+        "best": 2.020799710406401,
+        "median": -0.4107764517447955
+      },
+      {
+        "generation": 35,
+        "evaluated": 35300,
+        "best": 2.020799710406401,
+        "median": -0.41128274631413847
+      },
+      {
+        "generation": 36,
+        "evaluated": 36280,
+        "best": 2.020799710406401,
+        "median": -0.347650605493719
+      },
+      {
+        "generation": 37,
+        "evaluated": 37260,
+        "best": 2.1323830632789793,
+        "median": -0.40443487351178226
+      },
+      {
+        "generation": 38,
+        "evaluated": 38240,
+        "best": 2.1323830632789793,
+        "median": -0.37292258506241743
+      },
+      {
+        "generation": 39,
+        "evaluated": 39220,
+        "best": 2.1323830632789793,
+        "median": -0.4404515924512369
+      },
+      {
+        "generation": 40,
+        "evaluated": 40200,
+        "best": 2.1323830632789793,
+        "median": -0.3358612545950917
+      },
+      {
+        "generation": 41,
+        "evaluated": 41180,
+        "best": 2.1323830632789793,
+        "median": -0.34130723652003525
+      },
+      {
+        "generation": 42,
+        "evaluated": 42160,
+        "best": 2.1323830632789793,
+        "median": -0.3004753458319734
+      },
+      {
+        "generation": 43,
+        "evaluated": 43140,
+        "best": 2.1323830632789793,
+        "median": -0.27615286760372876
+      },
+      {
+        "generation": 44,
+        "evaluated": 44120,
+        "best": 2.1323830632789793,
+        "median": -0.4160091347744725
+      },
+      {
+        "generation": 45,
+        "evaluated": 45100,
+        "best": 2.1323830632789793,
+        "median": -0.38902201510591844
+      },
+      {
+        "generation": 46,
+        "evaluated": 46080,
+        "best": 2.1323830632789793,
+        "median": -0.36117173836745076
+      },
+      {
+        "generation": 47,
+        "evaluated": 47060,
+        "best": 2.1323830632789793,
+        "median": -0.3458514069049978
+      },
+      {
+        "generation": 48,
+        "evaluated": 48040,
+        "best": 2.1323830632789793,
+        "median": -0.4250062529341601
+      },
+      {
+        "generation": 49,
+        "evaluated": 49020,
+        "best": 2.1323830632789793,
+        "median": -0.38662177350055643
+      },
+      {
+        "generation": 50,
+        "evaluated": 50000,
+        "best": 2.1323830632789793,
+        "median": -0.37661133261058877
+      },
+      {
+        "generation": 51,
+        "evaluated": 50980,
+        "best": 2.1323830632789793,
+        "median": -0.39167695831058413
+      },
+      {
+        "generation": 52,
+        "evaluated": 51960,
+        "best": 2.1323830632789793,
+        "median": -0.3406159236584058
+      },
+      {
+        "generation": 53,
+        "evaluated": 52940,
+        "best": 2.1323830632789793,
+        "median": -0.2600091892604691
+      },
+      {
+        "generation": 54,
+        "evaluated": 53920,
+        "best": 2.1323830632789793,
+        "median": -0.35027214657337197
+      },
+      {
+        "generation": 55,
+        "evaluated": 54900,
+        "best": 2.2018724376638863,
+        "median": -0.3766928271805195
+      },
+      {
+        "generation": 56,
+        "evaluated": 55880,
+        "best": 2.2018724376638863,
+        "median": -0.43300575267642666
+      },
+      {
+        "generation": 57,
+        "evaluated": 56860,
+        "best": 2.2018724376638863,
+        "median": -0.5172924055330104
+      },
+      {
+        "generation": 58,
+        "evaluated": 57840,
+        "best": 2.2018724376638863,
+        "median": -0.46459592250183246
+      },
+      {
+        "generation": 59,
+        "evaluated": 58820,
+        "best": 2.2018724376638863,
+        "median": -0.3683199936868532
+      },
+      {
+        "generation": 60,
+        "evaluated": 59800,
+        "best": 2.2018724376638863,
+        "median": -0.30769687399790374
+      },
+      {
+        "generation": 61,
+        "evaluated": 60780,
+        "best": 2.2018724376638863,
+        "median": -0.422857591148189
+      },
+      {
+        "generation": 62,
+        "evaluated": 61760,
+        "best": 2.2018724376638863,
+        "median": -0.383978726644631
+      },
+      {
+        "generation": 63,
+        "evaluated": 62740,
+        "best": 2.2018724376638863,
+        "median": -0.367162141504911
+      },
+      {
+        "generation": 64,
+        "evaluated": 63720,
+        "best": 2.2018724376638863,
+        "median": -0.3924682195294376
+      },
+      {
+        "generation": 65,
+        "evaluated": 64700,
+        "best": 2.2018724376638863,
+        "median": -0.2603136496519236
+      },
+      {
+        "generation": 66,
+        "evaluated": 65680,
+        "best": 2.2018724376638863,
+        "median": -0.3617492855954614
+      },
+      {
+        "generation": 67,
+        "evaluated": 66660,
+        "best": 2.2018724376638863,
+        "median": -0.31050079571622663
+      },
+      {
+        "generation": 68,
+        "evaluated": 67640,
+        "best": 2.2018724376638863,
+        "median": -0.3366890278399268
+      },
+      {
+        "generation": 69,
+        "evaluated": 68620,
+        "best": 2.2018724376638863,
+        "median": -0.35781838490230294
+      },
+      {
+        "generation": 70,
+        "evaluated": 69600,
+        "best": 2.2018724376638863,
+        "median": -0.36753716395691033
+      },
+      {
+        "generation": 71,
+        "evaluated": 70580,
+        "best": 2.2018724376638863,
+        "median": -0.29763841978057554
+      },
+      {
+        "generation": 72,
+        "evaluated": 71560,
+        "best": 2.2018724376638863,
+        "median": -0.3980542637044815
+      },
+      {
+        "generation": 73,
+        "evaluated": 72540,
+        "best": 2.2018724376638863,
+        "median": -0.4483476832752976
+      },
+      {
+        "generation": 74,
+        "evaluated": 73520,
+        "best": 2.2018724376638863,
+        "median": -0.3825546071415729
+      },
+      {
+        "generation": 75,
+        "evaluated": 74500,
+        "best": 2.2018724376638863,
+        "median": -0.3706775567468793
+      },
+      {
+        "generation": 76,
+        "evaluated": 75480,
+        "best": 2.2018724376638863,
+        "median": -0.4663018405532702
+      },
+      {
+        "generation": 77,
+        "evaluated": 76460,
+        "best": 2.2018724376638863,
+        "median": -0.4532005480850933
+      },
+      {
+        "generation": 78,
+        "evaluated": 77440,
+        "best": 2.2018724376638863,
+        "median": -0.41948634140217056
+      },
+      {
+        "generation": 79,
+        "evaluated": 78420,
+        "best": 2.2018724376638863,
+        "median": -0.47881935248949603
+      },
+      {
+        "generation": 80,
+        "evaluated": 79400,
+        "best": 2.2018724376638863,
+        "median": -0.44216567782168403
+      },
+      {
+        "generation": 81,
+        "evaluated": 80380,
+        "best": 2.2018724376638863,
+        "median": -0.3908267764023641
+      },
+      {
+        "generation": 82,
+        "evaluated": 81360,
+        "best": 2.2018724376638863,
+        "median": -0.33658197715186683
+      },
+      {
+        "generation": 83,
+        "evaluated": 82340,
+        "best": 2.2018724376638863,
+        "median": -0.3716361783655127
+      },
+      {
+        "generation": 84,
+        "evaluated": 83320,
+        "best": 2.2018724376638863,
+        "median": -0.3554483509483678
+      },
+      {
+        "generation": 85,
+        "evaluated": 84300,
+        "best": 2.2018724376638863,
+        "median": -0.37723573684369155
+      },
+      {
+        "generation": 86,
+        "evaluated": 85280,
+        "best": 2.2018724376638863,
+        "median": -0.377383945796009
+      },
+      {
+        "generation": 87,
+        "evaluated": 86260,
+        "best": 2.2018724376638863,
+        "median": -0.38001963066077604
+      },
+      {
+        "generation": 88,
+        "evaluated": 87240,
+        "best": 2.2018724376638863,
+        "median": -0.4393443864622183
+      },
+      {
+        "generation": 89,
+        "evaluated": 88220,
+        "best": 2.3649833222369163,
+        "median": -0.4728868555860319
+      },
+      {
+        "generation": 90,
+        "evaluated": 89200,
+        "best": 2.3649833222369163,
+        "median": -0.4076991410768294
+      },
+      {
+        "generation": 91,
+        "evaluated": 90180,
+        "best": 2.3649833222369163,
+        "median": -0.39476857278250954
+      },
+      {
+        "generation": 92,
+        "evaluated": 91160,
+        "best": 2.4006348499074974,
+        "median": -0.5256241367698347
+      },
+      {
+        "generation": 93,
+        "evaluated": 92140,
+        "best": 2.4006348499074974,
+        "median": -0.5227382412633548
+      },
+      {
+        "generation": 94,
+        "evaluated": 93120,
+        "best": 2.4006348499074974,
+        "median": -0.48473441993318334
+      },
+      {
+        "generation": 95,
+        "evaluated": 94100,
+        "best": 2.4006348499074974,
+        "median": -0.4023824921827838
+      },
+      {
+        "generation": 96,
+        "evaluated": 95080,
+        "best": 2.4006348499074974,
+        "median": -0.4003529018377065
+      },
+      {
+        "generation": 97,
+        "evaluated": 96060,
+        "best": 2.4006348499074974,
+        "median": -0.4202283753349598
+      },
+      {
+        "generation": 98,
+        "evaluated": 97040,
+        "best": 2.4006348499074974,
+        "median": -0.42565271131544824
+      },
+      {
+        "generation": 99,
+        "evaluated": 98020,
+        "best": 2.4006348499074974,
+        "median": -0.5070772234777359
+      },
+      {
+        "generation": 100,
+        "evaluated": 99000,
+        "best": 2.4006348499074974,
+        "median": -0.4183464657978661
+      }
+    ],
+    "finite_fitness": 92224
+  },
+  "dsr_inputs": {
+    "n_trials": 168590,
+    "var_sr_daily": 0.000947858059191072,
+    "strategies_in_var": 95149
+  },
+  "counts": {
+    "generated": 99000,
+    "basic": 20159,
+    "stability": 16985,
+    "cost_stress": 16568,
+    "execution_stress": 16433,
+    "walk_forward": 415,
+    "deflated_sharpe": 0,
+    "final_block": 0
+  },
+  "too_good_flags": [],
+  "survivors": [],
+  "dsr_candidates": [
+    {
+      "hash": "8d7aa5ca02b1bfea3cfc513a614706462d35b8b7b93f05bc616de991a75ad403",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 24,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.roc_atr.8",
+            "operator": ">",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.rsi.14",
+            "operator": ">",
+            "value": 50.0
+          },
+          {
+            "feature": "trend.ema_slope.10.3",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 2.0,
+        "timeframe": "H1",
+        "tp_atr": 2.0
+      },
+      "sr": 0.06925243810620617,
+      "skew": 0.20434376029942694,
+      "kurt": 11.635299531689999,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 7.066625169360741e-06
+    },
+    {
+      "hash": "55716c5abf3ecad3752879663f28f7b33c36b35da44a7cac7bedeb9598f76fb0",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "structure.fractal_high.3",
+            "operator": "==",
+            "value": 1.0
+          },
+          {
+            "feature": "trend.ema_slope.10.6",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.06541308027930075,
+      "skew": 0.21716026704986877,
+      "kurt": 8.950899340745487,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 2.1959200212084973e-06
+    },
+    {
+      "hash": "c82bbf8a08a04f60519ccaedfcd6e60fde529bc8e1c975e37b53866e8f58eec9",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 48,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "structure.last.5",
+            "operator": "==",
+            "value": 4.0
+          },
+          {
+            "feature": "trend.ema_slope.10.6",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 1.5,
+        "timeframe": "H1",
+        "tp_atr": 2.0
+      },
+      "sr": 0.06145051702094953,
+      "skew": 0.22762316166630484,
+      "kurt": 13.228787389068305,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 6.741401741283681e-07
+    },
+    {
+      "hash": "9bc238c6b38c35f124e78d3aaaca5ff10adfa8efcb931c5bbf4b161c19f8055e",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 12,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "structure.fractal_high.2",
+            "operator": "==",
+            "value": 1.0
+          },
+          {
+            "feature": "structure.last.5",
+            "operator": "==",
+            "value": 3.0
+          },
+          {
+            "feature": "trend.ema_slope.20.1",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.060669985841093406,
+      "skew": 0.2843664245470836,
+      "kurt": 17.423638141746373,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 5.287513082374851e-07
+    },
+    {
+      "hash": "27964be4ee04a590e5bd53b3cc017d27cf823495a29dc3230bbaaa080e8fcd79",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": ">",
+            "value": -1.0
+          },
+          {
+            "feature": "trend.ema_slope.10.1",
+            "operator": ">",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.100.3",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.20.6",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 4.0
+      },
+      "sr": 0.061619855550242415,
+      "skew": 0.6146062657984521,
+      "kurt": 5.896872687351692,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 4.839399503908659e-07
+    },
+    {
+      "hash": "4c43a88c051edc8f702ca025b885a6c09309337dff66f028504ec742612191c1",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 48,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "structure.last.5",
+            "operator": "==",
+            "value": 4.0
+          },
+          {
+            "feature": "trend.ema_slope.10.6",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 2.0,
+        "timeframe": "H1",
+        "tp_atr": 2.0
+      },
+      "sr": 0.05887780549476239,
+      "skew": -0.3426321412063314,
+      "kurt": 13.608403822599561,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 4.515114622183347e-07
+    },
+    {
+      "hash": "82b0b8e5f537384b4291f459c03326125e63112cb36e7348afe21eb4306de040",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "structure.last.5",
+            "operator": "==",
+            "value": 4.0
+          },
+          {
+            "feature": "trend.ema_slope.10.3",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.20.3",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 2.0
+      },
+      "sr": 0.05621185132411085,
+      "skew": -1.1053617803487465,
+      "kurt": 13.217344425006676,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 3.2027739482742845e-07
+    },
+    {
+      "hash": "3be442144b6942ec38e2a43f15da2f432aff77eddfe9c2f33defdfea74ddb54f",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 24,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.roc_atr.8",
+            "operator": ">",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.rsi.14",
+            "operator": ">",
+            "value": 50.0
+          },
+          {
+            "feature": "trend.ema_slope.10.3",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 2.0,
+        "timeframe": "H1",
+        "tp_atr": 1.5
+      },
+      "sr": 0.056347017567370775,
+      "skew": -0.9308647752965971,
+      "kurt": 13.264630358828423,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 2.975274910888004e-07
+    },
+    {
+      "hash": "f8cbce912dec2f841f996a84f8d687f6cfd9d8cb881729e5181cb8df600a6820",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.willr.28",
+            "operator": ">",
+            "value": -80.0
+          },
+          {
+            "feature": "momentum.willr.7",
+            "operator": ">",
+            "value": -50.0
+          },
+          {
+            "feature": "trend.ema_pair.100.200",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.058162174958173336,
+      "skew": 0.054766876082754726,
+      "kurt": 5.924124856916453,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 2.4555554695160353e-07
+    },
+    {
+      "hash": "1a0794bad185e847a53c209825069bdf9318aaf9c7102d65894749f2fc57506e",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 12,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.roc_atr.8",
+            "operator": "<",
+            "value": 1.0
+          },
+          {
+            "feature": "momentum.roc_atr.8",
+            "operator": ">",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.close_ema.50",
+            "operator": ">",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 1.5,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.060964494967840364,
+      "skew": 1.304354793830027,
+      "kurt": 9.946329710956594,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 2.3309411945060532e-07
+    },
+    {
+      "hash": "961146b5050453edf93d8fd266c8f2fcc96a539484452c9d03dc505d5d31facf",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 48,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.willr.7",
+            "operator": ">",
+            "value": -50.0
+          },
+          {
+            "feature": "trend.ema_pair.100.200",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.50.3",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.057026088970615944,
+      "skew": -0.11348175155457696,
+      "kurt": 5.7615392130378575,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 1.9165282522104476e-07
+    },
+    {
+      "hash": "f38514db4a23353e7e474242613c775923de002a46e56a9e889dae908a0adde2",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 24,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.roc_atr.8",
+            "operator": ">",
+            "value": 0.0
+          },
+          {
+            "feature": "momentum.rsi.14",
+            "operator": ">",
+            "value": 50.0
+          },
+          {
+            "feature": "trend.ema_slope.10.3",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 1.5,
+        "timeframe": "H1",
+        "tp_atr": 1.5
+      },
+      "sr": 0.05616415212946841,
+      "skew": -0.12471832231335019,
+      "kurt": 11.610657430803352,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 1.544258899088824e-07
+    },
+    {
+      "hash": "186b3eaf41ba8acb4b829df093d8fd8791c850d31ef6ce92ac6e979500fa2dc9",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 48,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": ">",
+            "value": -1.0
+          },
+          {
+            "feature": "momentum.willr.7",
+            "operator": ">",
+            "value": -50.0
+          },
+          {
+            "feature": "trend.ema_pair.10.100",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.20.6",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.05623058296656588,
+      "skew": -0.029334309412714067,
+      "kurt": 5.870552708394366,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 1.3818597588421966e-07
+    },
+    {
+      "hash": "cb74f74eaac920dcdd65ad2de15cf7d6fc04adf00882ecb1f81a232214641a51",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "structure.last.5",
+            "operator": "==",
+            "value": 4.0
+          },
+          {
+            "feature": "trend.ema_slope.10.6",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 2.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.05794658430225451,
+      "skew": 0.9181465740282192,
+      "kurt": 11.588132778009662,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 1.2258438414347594e-07
+    },
+    {
+      "hash": "29ae474105b032c9ee02a3d95cf78aa29d9f8646fb8e4505062917db808a17fa",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 24,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.rsi.14",
+            "operator": ">",
+            "value": 50.0
+          },
+          {
+            "feature": "trend.ema_pair.20.100",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.10.3",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.atr_regime.28.50",
+            "operator": ">",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 2.0
+      },
+      "sr": 0.052408998267911046,
+      "skew": -1.028386667600121,
+      "kurt": 22.256305359936505,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 9.127593297852954e-08
+    },
+    {
+      "hash": "290dca61dae09d5b597b89f1c1b380c46d9ca78368cf05eb9478d113b51db2fb",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "structure.last.5",
+            "operator": "==",
+            "value": 4.0
+          },
+          {
+            "feature": "trend.ema_slope.10.6",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.0550030526407059,
+      "skew": 0.08276750706707418,
+      "kurt": 11.424654057111807,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 8.894921704749592e-08
+    },
+    {
+      "hash": "55b805b52b5e3607f175c66bb09919bd9a644bfb9d6c9f42bf018d4272117e7e",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 12,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.8",
+            "operator": ">",
+            "value": -1.0
+          },
+          {
+            "feature": "momentum.willr.28",
+            "operator": ">",
+            "value": -80.0
+          },
+          {
+            "feature": "structure.break_high.2",
+            "operator": ">",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.10.3",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 1.5,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.06079018605999082,
+      "skew": 2.52401867151387,
+      "kurt": 19.132429337001255,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 8.068771628622073e-08
+    },
+    {
+      "hash": "fb33eb7d8dd5564bcbdbb2477759ec8d344e0532852240c48db4c8ba4939dec7",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 12,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.8",
+            "operator": ">",
+            "value": -1.0
+          },
+          {
+            "feature": "momentum.willr.28",
+            "operator": ">",
+            "value": -80.0
+          },
+          {
+            "feature": "structure.break_high.2",
+            "operator": ">",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.10.3",
+            "operator": "<",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 2.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.057835074428569756,
+      "skew": 1.565813394940465,
+      "kurt": 17.971272662014083,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 7.305267396562343e-08
+    },
+    {
+      "hash": "37737b77c319eb34839f85069a29caa2caac3cd4273dc9e5dcb6df73e7b2e3dd",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 1.0
+          },
+          {
+            "feature": "trend.ema_pair.10.200",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.20.6",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "trend.ema_slope.50.1",
+            "operator": ">",
+            "value": 0.0
+          }
+        ],
+        "sl_atr": 3.0,
+        "timeframe": "H1",
+        "tp_atr": 4.0
+      },
+      "sr": 0.05651250272192132,
+      "skew": 1.1502720891421798,
+      "kurt": 11.463650916435288,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 6.206186414781101e-08
+    },
+    {
+      "hash": "1205121b009531b5c12ba901d6e550cb516c8c588d5c646f8dd1a11dfa191007",
+      "strategy": {
+        "direction": "LONG",
+        "grammar_version": "g1",
+        "max_bars": 96,
+        "pair": "EURUSD",
+        "predicates": [
+          {
+            "feature": "momentum.roc_atr.32",
+            "operator": "<",
+            "value": 0.0
+          },
+          {
+            "feature": "structure.last.5",
+            "operator": "==",
+            "value": 4.0
+          },
+          {
+            "feature": "volatility.compression.20.2.1.5",
+            "operator": "==",
+            "value": 1.0
+          }
+        ],
+        "sl_atr": 2.0,
+        "timeframe": "H1",
+        "tp_atr": 3.0
+      },
+      "sr": 0.05509003843436349,
+      "skew": 0.7006024714878103,
+      "kurt": 8.46714629592651,
+      "n_obs": 3911,
+      "sr_expected_max": 0.1386389936926495,
+      "n_trials": 168590.0,
+      "var_sr": 0.000947858059191072,
+      "dsr": 5.4059697329744694e-08
+    }
+  ],
+  "finished_utc": "2026-09-29T22:09:46.064289+00:00"
+}

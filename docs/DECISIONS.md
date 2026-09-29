@@ -64,3 +64,10 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Sin swap** (sigue siendo una limitación); el estrés de costes ×2 lo cubre solo en parte.
 - **Umbrales:** fijados en `configs/funnel.yaml` antes de cualquier run con datos reales. El CLI (`sqxf funnel`) se niega a correr
   si el YAML no está commiteado. Un run que ya miró el bloque final no puede repetirse con el mismo `run_name`.
+
+## 2026-09-30 — Fase 2, después del run `phase2_eurusd_g1_r1`
+- **Resultado reportado tal cual:** 0 supervivientes. No se aflojan umbrales ni se relanza con otra semilla.
+- **Análisis de sensibilidad del DSR** (20.000 estrategias aleatorias, `used_for_selection=false`, contado en el contador):
+  solo informativo, no cambia ningún umbral.
+- **Sin merge ni tag `v0.2`:** la versión compacta no cubre todas las etapas de la Fase 2 de CLAUDE.md (plateau, Monte Carlo,
+  ruido, PBO). La rama `phase-2-funnel` queda para revisión.
