@@ -71,3 +71,13 @@ Formato: fecha — decisión. Alternativas. Motivo.
   solo informativo, no cambia ningún umbral.
 - **Sin merge ni tag `v0.2`:** la versión compacta no cubre todas las etapas de la Fase 2 de CLAUDE.md (plateau, Monte Carlo,
   ruido, PBO). La rama `phase-2-funnel` queda para revisión.
+
+## 2026-09-30 — Cierre de la Fase 2 compacta (instrucción de Jaime, texto pegado)
+- **Resultado del DSR de la Fase 2: 0 supervivientes** (run `phase2_eurusd_g1_r1`: 99.000 generadas → 415 tras walk-forward → 0 tras DSR).
+  El bloque final 2019–2022 no se evaluó (0 accesos). Merge a `main` con tag `v0.2-compact` por instrucción de Jaime.
+- **Reconciliación 168.590 frente a 189.070 ensayos** (según `trials/ledger.jsonl`):
+  - 69.590 antes del run: 67.190 del informe de la Fase 1 (benchmarks 5.450 + 56.300, comparación H1/M15 4.000, 3 ejecuciones de
+    tests con datos reales × 480) + 5 ejecuciones más de los tests con datos reales (5 × 480 = 2.400) antes del run.
+  - +99.000 del genético = **168.590**, el total del contador cuando se calculó el DSR (el N usado).
+  - +20.000 del análisis de sensibilidad del DSR (aleatorias, sin selección) + 480 de la ejecución final de `pytest` = **189.070**.
+  - Las evaluaciones posteriores al cálculo del DSR no cambian el resultado; con N = 189.070 el listón sube (1,17 frente a 1,13 anual con la nula de ruido puro).
