@@ -145,3 +145,5 @@ SQX_CLAUDE_FOREX/
 1. Tests en verde y commit hecho.
 2. `docs/PROGRESS.md` actualizado (qué se hizo, qué se midió, qué sigue).
 3. Resumen breve a Jaime: lo conseguido, lo que falló y la siguiente fase.
+
+Para trabajo autónomo, sigue AUTONOMY.md
