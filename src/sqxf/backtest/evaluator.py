@@ -235,6 +235,7 @@ def derive_metrics(agg: np.ndarray, days_per_year: float = 260.0) -> dict:
         "return": ret,
         "cagr": cagr,
         "max_dd": a["max_dd"],
+        "max_dd_mtm": a["max_dd_mtm"],
         "calmar": cagr / a["max_dd"] if a["max_dd"] > 0 and not math.isnan(cagr) else float("nan"),
         "sharpe": a["sharpe"],
         "mean_bars_held": a["bars_held"] / n if n else 0.0,

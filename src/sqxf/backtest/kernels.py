@@ -77,6 +77,8 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
     bars_held = 0
     streak = 0
     max_streak = 0
+    peak_m = 1.0
+    max_dd_m = 0.0
     cur_day = -1
     day_start_eq = 1.0
     s_daily = 0.0
@@ -134,11 +136,27 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
                     px = target
             if reason != 0:
                 break
+            # Still open after bar k: mark to market (adverse extreme for drawdown, close for the peak).
+            adv = l[k] if direction == 1 else h[k]
+            mtm = equity * (1.0 + risk_frac * ((direction * (adv - entry) - cost) / risk))
+            if 1.0 - mtm / peak_m > max_dd_m:
+                max_dd_m = 1.0 - mtm / peak_m
+            mtm = equity * (1.0 + risk_frac * ((direction * (c[k] - entry) - cost) / risk))
+            if mtm > peak_m:
+                peak_m = mtm
             k += 1
         if reason == 0:
             k = kend - 1
             reason = time_reason
             px = c[k]
+        # Exit bar: worst price seen before leaving (the exit price itself for stops and gaps).
+        if reason == 1 or reason == 2 or reason == 4:
+            adv = px
+        else:
+            adv = l[k] if direction == 1 else h[k]
+        mtm = equity * (1.0 + risk_frac * ((direction * (adv - entry) - cost) / risk))
+        if 1.0 - mtm / peak_m > max_dd_m:
+            max_dd_m = 1.0 - mtm / peak_m
         x = h1_of[k]
         r = (direction * (px - entry) - cost) / risk
         d = day_id[k]
@@ -150,6 +168,10 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
             cur_day = d
             day_start_eq = equity
         equity = equity * (1.0 + risk_frac * r)
+        if equity > peak_m:
+            peak_m = equity
+        if 1.0 - equity / peak_m > max_dd_m:
+            max_dd_m = 1.0 - equity / peak_m
         if equity > peak:
             peak = equity
         dd = 1.0 - equity / peak
@@ -210,6 +232,7 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
     agg[9] = bars_held
     agg[10] = n_days
     agg[11] = max_streak
+    agg[12] = max_dd_m
     return n
 
 

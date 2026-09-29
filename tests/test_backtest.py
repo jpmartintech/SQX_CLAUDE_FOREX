@@ -275,3 +275,21 @@ def test_h1_and_m15_execution_agree_until_an_ambiguous_bar():
                (ex.h[x] >= tr["stop"] and ex.l[x] <= tr["target"])
         assert tr["reason"] == "STOP" and both, (s, j)
     assert identical > 0 and diverged > 0
+
+
+def test_mark_to_market_drawdown_sees_intratrade_losses():
+    """A trade that dips to -0.9R and then hits the target has 0 closed-trade drawdown but ~0.45 % MTM drawdown."""
+    o, h, l, c = flat_bars(8)
+    l[2], c[2] = 0.991, 0.995   # bar 2: adverse extreme -0.9R (risk 0.01), closes at -0.5R
+    h[4] = 1.03                 # bar 4: target (+2R)
+    sig = np.zeros(8, bool)
+    sig[1] = True
+    trades, agg = run_both(sig, o, h, l, c, atr=np.full(8, 0.01), sl=1.0, tp=2.0)
+    assert trades[0]["reason"] == TARGET
+    assert agg[AGG["max_dd"]] == 0.0
+    assert agg[AGG["max_dd_mtm"]] == pytest.approx(1 - (1 - RISK * 0.9), rel=1e-12)
+
+
+def test_mtm_drawdown_is_at_least_closed_trade_drawdown(market, strategies):
+    agg = evaluate_light(market, strategies, exec_tf="M15")
+    assert (agg[:, AGG["max_dd_mtm"]] >= agg[:, AGG["max_dd"]] - 1e-15).all()

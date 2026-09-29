@@ -1,7 +1,8 @@
 """Persistent evaluation ledger (AUTONOMY.md 4.2: every evaluated strategy is counted, never reset).
 
-Append-only JSONL at ``runs/trial_ledger.jsonl``. Phase 1 only records engineering evaluations (tests on real data,
-benchmarks) that select nothing; Phase 2 adds the discovery counter that feeds the Deflated Sharpe / PBO.
+Append-only JSONL at ``trials/ledger.jsonl`` (versioned in git; moved from ``runs/`` in Phase 2 with its full history).
+Every evaluation of a real-data strategy is recorded: engineering (tests, benchmarks) and discovery (generator, funnel).
+The Deflated Sharpe uses the grand total (conservative: engineering evaluations also inflate N).
 """
 from __future__ import annotations
 
@@ -10,7 +11,7 @@ from datetime import UTC, datetime
 
 from sqxf.provenance import PROJECT_ROOT, code_version
 
-LEDGER = PROJECT_ROOT / "runs" / "trial_ledger.jsonl"
+LEDGER = PROJECT_ROOT / "trials" / "ledger.jsonl"
 
 
 def record_evaluations(purpose: str, pair: str, n_strategies: int, selection: bool, **extra) -> None:
