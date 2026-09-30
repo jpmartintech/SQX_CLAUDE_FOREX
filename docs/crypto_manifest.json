@@ -1,0 +1,141 @@
+{
+ "generated_utc": "2026-09-30T07:16:22.213394+00:00",
+ "holdout_months": 18,
+ "files": {
+  "ADAUSDT_15M.csv": {
+   "sha256": "96f45b70520aba212f8f0e18e49775562a89f8e76c2a8ee0b3c23ef31f978238",
+   "rows": 284811,
+   "first_utc": "2018-04-17 04:00:00",
+   "last_utc": "2026-06-04 23:45:00",
+   "bytes": 16003597,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "ADAUSDT_1H.csv": {
+   "sha256": "a8c3e2fb569ee79dffaaea7eb2dbe6cdd9dc9e69d5cd1564e1554afff97c9b84",
+   "rows": 71212,
+   "first_utc": "2018-04-17 04:00:00",
+   "last_utc": "2026-06-04 23:00:00",
+   "bytes": 4044468
+  },
+  "AVAXUSDT_15M.csv": {
+   "sha256": "a3932892676bfc5a7d29ee62b355634edfa2929f4c7e0f75d4abcd0317b0d580",
+   "rows": 199752,
+   "first_utc": "2020-09-22 06:30:00",
+   "last_utc": "2026-06-04 23:45:00",
+   "bytes": 9957635,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "AVAXUSDT_1H.csv": {
+   "sha256": "48ce2bced1ff5bdbbe8685dcd7e5b8870bb91b5fa784c210f17181021ff27701",
+   "rows": 49942,
+   "first_utc": "2020-09-22 06:00:00",
+   "last_utc": "2026-06-04 23:00:00",
+   "bytes": 2518796
+  },
+  "BNBUSDT_15M.csv": {
+   "sha256": "04bf24b8fe69645a28ab3b7ae1b41c7360a22553a781726d3506e22d05ce6799",
+   "rows": 300215,
+   "first_utc": "2017-11-06 03:45:00",
+   "last_utc": "2026-06-04 23:45:00",
+   "bytes": 15754783,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "BNBUSDT_1H.csv": {
+   "sha256": "e2e9f90a0ce9e1fc9e9dfff215161212291a242a6b56b52c00ee427ced88651b",
+   "rows": 75067,
+   "first_utc": "2017-11-06 03:00:00",
+   "last_utc": "2026-06-04 23:00:00",
+   "bytes": 3979571
+  },
+  "BTCUSDT_15M.csv": {
+   "sha256": "f2ddfd9b85f4e7556474e1ef10f78eebd927a0f0e330785d48b4d08e5b69a20a",
+   "rows": 304759,
+   "first_utc": "2017-08-17 04:00:00",
+   "last_utc": "2026-05-02 14:45:00",
+   "bytes": 19673436,
+   "holdout_start_utc": "2024-11-02 00:00:00"
+  },
+  "BTCUSDT_1H.csv": {
+   "sha256": "20a6be4db8406bb58bfde2e618fe415af7b34958f3525632ed875eb00eacb589",
+   "rows": 76203,
+   "first_utc": "2017-08-17 04:00:00",
+   "last_utc": "2026-05-02 14:00:00",
+   "bytes": 5063055
+  },
+  "DOGEUSDT_15M.csv": {
+   "sha256": "7183e860004a0f35b631c89f574a732d8db1883eba05be533ae4155fddf38ade",
+   "rows": 242342,
+   "first_utc": "2019-07-05 12:00:00",
+   "last_utc": "2026-06-04 23:45:00",
+   "bytes": 14834319,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "DOGEUSDT_1H.csv": {
+   "sha256": "848967e6bed2b9051cd02474ab4d7355269b02c49d549e39343a62bfb3e47c11",
+   "rows": 60592,
+   "first_utc": "2019-07-05 12:00:00",
+   "last_utc": "2026-06-04 23:00:00",
+   "bytes": 3748651
+  },
+  "ETHUSDT_15M.csv": {
+   "sha256": "9d171eb4a7c246bc137cbafa48476d76f3b9050c6ce9e4b88ed0014d79a10852",
+   "rows": 307963,
+   "first_utc": "2017-08-17 04:00:00",
+   "last_utc": "2026-06-04 23:45:00",
+   "bytes": 16856540,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "ETHUSDT_1H.csv": {
+   "sha256": "891934e3fc9c9e2693b14e9398d0d05b9c18f2fd2e20798634668741195985d0",
+   "rows": 77004,
+   "first_utc": "2017-08-17 04:00:00",
+   "last_utc": "2026-06-04 23:00:00",
+   "bytes": 4261154
+  },
+  "LINKUSDT_15M.csv": {
+   "sha256": "03ab8610945b84615d55c2bebdea4b3fcdb02b119f5c6833c226c9bbd1162e72",
+   "rows": 258592,
+   "first_utc": "2019-01-16 10:00:00",
+   "last_utc": "2026-06-04 21:15:00",
+   "bytes": 13287156,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "LINKUSDT_1H.csv": {
+   "sha256": "b43cb79615fc97da992157a9dd13dfac028b2737699b7771f67d1b989b2be070",
+   "rows": 64656,
+   "first_utc": "2019-01-16 10:00:00",
+   "last_utc": "2026-06-04 21:00:00",
+   "bytes": 3362808
+  },
+  "SOLUSDT_15M.csv": {
+   "sha256": "838c982acc819fb7c6c42e83a59360c8c60650339fbf08ca96609eea5531395c",
+   "rows": 203776,
+   "first_utc": "2020-08-11 06:00:00",
+   "last_utc": "2026-06-04 21:15:00",
+   "bytes": 10595814,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "SOLUSDT_1H.csv": {
+   "sha256": "fd5f02f673aba119a7ff9dbe98e154ac5255af68056785b22bf970068ebc7653",
+   "rows": 50948,
+   "first_utc": "2020-08-11 06:00:00",
+   "last_utc": "2026-06-04 21:00:00",
+   "bytes": 2678591
+  },
+  "TRXUSDT_15M.csv": {
+   "sha256": "6a61bb17e80628de861b5b030b6e6959a44937f83b27f4369b2ea2ac0d53dc94",
+   "rows": 279501,
+   "first_utc": "2018-06-11 11:30:00",
+   "last_utc": "2026-06-04 23:45:00",
+   "bytes": 16420527,
+   "holdout_start_utc": "2024-12-04 00:00:00"
+  },
+  "TRXUSDT_1H.csv": {
+   "sha256": "337c67a6b2ca83bf3bf2027ea7cee8246fe384ebb852d008f196685ce2301079",
+   "rows": 69885,
+   "first_utc": "2018-06-11 11:00:00",
+   "last_utc": "2026-06-04 23:00:00",
+   "bytes": 4149915
+  }
+ }
+}

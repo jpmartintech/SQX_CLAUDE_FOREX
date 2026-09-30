@@ -1,0 +1,39 @@
+--- a/CLAUDE.md
++++ b/CLAUDE.md (PROPUESTO, no aplicado)
+@@ -42,7 +42,7 @@
+ 5. **Sharpe por trade × √252**, no un Sharpe temporal.
+ 6. **Fitness genético en muestra** sobre todo Development, con el término de drawdown constante por el bug 2.
+ 7. **Configs base sin costes** (`spread: 0`, `slippage: 0`).
+-8. **Se desvió a cripto/FTMO/prop firms** y acumuló ~75 scripts versionados sin contrato común. Aquí solo forex (dato base M15, señales en H1).
++8. **Se desvió a cripto/FTMO/prop firms** y acumuló ~75 scripts versionados sin contrato común. Aquí el núcleo es forex (dato base M15, señales en H1); cripto solo como **módulo aparte** con su propio contrato (ver "Cripto").
+ 9. Tests que no cubren `entry_delay`. Los 14 tests que fallan en ese repo son por artefactos ausentes, salvo `test_crypto_portfolio_v3` (`1.02 <= 1.0`).
+ 
+ ## Datos
+@@ -62,6 +62,27 @@
+   Señales en H1; SL/TP/salidas se simulan sobre el camino M15 (el kernel rico usa M15).
+ - Nunca ordenes, dedupliques ni rellenes en silencio: reporta y decide. El loader falla ante desorden o duplicados.
+ 
++## Cripto (módulo aparte)
++
++- **Separación:** código en `src/sqxf/crypto/` (datos, splits, costes); reutiliza evaluador, features y embudo, pero **ninguna lógica EET,
++  ni máscara de festivos, ni `trading_date` de forex**. Configs propios en `configs/crypto_*.yaml`. Auditoría: `docs/CRYPTO_DATA_AUDIT.md`.
++- **Datos:** M15 spot de Binance (inferido; USDT) en `data/raw/crypto/<COIN>USDT_15M.csv` (ignorado por git) con `SHA256SUMS.txt` y
++  manifiesto `docs/crypto_manifest.json`. CSV `datetime,open,high,low,close,volume`, timestamp = apertura de barra, **UTC** (verificado).
++  Volumen en moneda base (redondeado a enteros salvo BTC). Los `*_1H.csv` del proveedor no se usan.
++- **Universo:** BTC, ETH, BNB, ADA, AVAX, DOGE, LINK, SOL, TRX (supervivientes: sesgo de supervivencia declarado en todo resultado de cartera).
++  Validación por moneda solo en monedas con ≥ 3 años de liquidez; SOL/DOGE/AVAX solo en agregado (hasta que Jaime decida otra cosa).
++- **Holdout cripto sellado:** desde 2024-11-01 00:00 UTC para todas las monedas (≥ 18 últimos meses de cada una). Calidad puede leerlo;
++  rendimiento no. Accesos en `trials/crypto_holdout_access.jsonl`. Bloque de selección 2023-11-01 → 2024-10-31; walk-forward OOS
++  2021-05 → 2023-10 (24 m entrenamiento / 6 m prueba).
++- **Barras derivadas:** H1 `[t, t+1h)`, H4 `[t, t+4h)` con t múltiplo de 4 h, D1 `[00:00, 24:00)` UTC (cierre 00:00 UTC), W1 lunes 00:00 UTC.
++  Completa = todas sus M15; incompleta se conserva y no genera señales; sin rellenar huecos (las paradas del exchange son huecos reales).
++  Multi-marco: solo barras del marco mayor con `close_ts ≤` cierre de la barra de señal.
++- **Liquidez:** una moneda solo genera señales si la mediana móvil de 90 días (hasta el día anterior) del volumen diario en USD ≥ $20M.
++- **Costes cripto siempre presentes:** comisión por lado (0,10 % por defecto, verificar nivel/BNB/maker-taker) + slippage por tramo de
++  liquidez; funding solo si se opera perpetuo (sin datos hoy). Estrés ×2 como en forex.
++- **Barras sospechosas:** flag `suspect_wick` (p. ej. LINKUSDT 2020-03-12 10:45, low 0,0001); no se editan precios.
++- **Ensayos:** el número efectivo de series independientes entre monedas es ~2,4 de 9 (PCA); validar en "9 monedas" no son 9 pruebas.
++
+ ## Reglas de corrección (siempre)
+ 
+ 1. **Causalidad:** una señal en la barra `t` solo usa información cerrada en `t`; la entrada es al open de `t+1` como mínimo. Con `entry_delay = d`, la posición **no existe** hasta la barra de entrada real: ni SL, ni TP, ni salida por tiempo antes de ella. Invariante testeado: `exit_idx >= entry_idx` y `bars_held >= 1`.
