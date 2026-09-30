@@ -1,6 +1,8 @@
 # PROGRESS
 
 ## Fase actual
+**Auditoría cripto hecha (rama `phase-c0-crypto-audit`, sin merge): `docs/CRYPTO_DATA_AUDIT.md`. Esperando revisión de Jaime.**
+
 **Fase 2c hecha (rama `phase-2c-6pairs`, sin merge).** Ninguna variante del procedimiento cumple los criterios. Esperando revisión de Jaime.
 Informes: `docs/reports/phase-2.md` (`v0.2-compact`), `phase-2b.md` (`v0.2b`), `phase-2c.md`.
 
@@ -14,6 +16,7 @@ Informes: `docs/reports/phase-2.md` (`v0.2-compact`), `phase-2b.md` (`v0.2b`), `
 - 2019–2022: sin cargar. Holdout: 0 accesos. `pytest -q`: 83 passed (ya no escribe en el contador).
 
 ## Pendiente de decisión (Jaime)
+0. Cripto: las 7 decisiones al final de `docs/CRYPTO_DATA_AUDIT.md` y el diff propuesto `docs/proposals/CLAUDE_md_crypto.diff`.
 1. Cambiar de hipótesis (sesión/hora, horizontes diarios, fuerza relativa entre divisas) o parar la búsqueda con esta gramática.
 2. Swap y validación de costes por par con un broker real antes de cualquier búsqueda nueva.
 3. Merge de `phase-2c-6pairs`.

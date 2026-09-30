@@ -154,3 +154,11 @@ Formato: fecha — decisión. Alternativas. Motivo.
   entrenamiento R medios de 0,25–0,6 muy por encima de los umbrales incluso con costes ×2. Se sigue contando como procedimiento
   en el DSR (N = 6), según el preregistro.
 - **Diagnóstico post hoc** (una ventana de GBPUSD, solo datos de entrenamiento): 169 de las 200 mejores pasan ambos filtros; informativo.
+
+## 2026-09-30 — Auditoría de datos cripto (instrucción de Jaime, texto pegado; rama `phase-c0-crypto-audit`)
+- Rama creada desde `phase-2c-6pairs` (último estado, sin merge), para conservar la infraestructura y la documentación más recientes.
+- **Holdout cripto fijado antes de cualquier estadístico:** los últimos 18 meses de cada moneda (BTC desde 2024-11-02, el resto desde
+  2024-12-04). La auditoría lo leyó **solo para calidad**; los estadísticos de rendimiento son solo anteriores al holdout.
+  Accesos en `trials/crypto_holdout_access.jsonl` (2 ejecuciones del script). Propuesta pendiente: holdout común desde 2024-11-01.
+- No se ha ejecutado ninguna estrategia ni ningún backtest cripto; nada se suma a `trials/ledger.jsonl`.
+- `CLAUDE.md` no se modifica: la sección cripto queda como diff propuesto en `docs/proposals/CLAUDE_md_crypto.diff`.
