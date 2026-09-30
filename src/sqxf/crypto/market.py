@@ -53,13 +53,15 @@ def build_crypto_market(coin: str, m15: pd.DataFrame, cfg: CryptoConfig, freq: s
     m15x = ExecData(*(m15[k].to_numpy(np.float64) for k in ("open", "high", "low", "close")),
                     day_id=m15["day_id"].to_numpy(np.int64), h1_of=np.repeat(idx, ends - starts), h1_start=starts,
                     h1_end=ends, fr=fr_m, fr_abs=fra_m)
+    # Funding events must fall on execution-bar opens: true for M15/H1/H4 (events at 00/04/08/... UTC), not for D1.
+    execs = {"M15": m15x} if freq == "1D" else {"SIG": sig, "H1": sig, "M15": m15x}
     pred_bool = predicate_matrix(feats, CATALOG)
     ex = cfg["execution"]
     meta = {**m15.attrs, "freq": freq, "calendar": "utc", "funding_unplaced_m15": miss_m, "funding_unplaced_sig": miss_s,
             "funding_mean_abs": funding_mean_abs}
     return Market(pair=coin, h1=bars, features=feats, atr=atr, tradable=tradable, pred_bool=pred_bool,
                   pred_bits=pack_bits(pred_bool), base_bits=pack_bits(tradable),
-                  execs={"SIG": sig, "H1": sig, "M15": m15x}, costs=NO_COST, t0=0, t1=len(bars),
+                  execs=execs, costs=NO_COST, t0=0, t1=len(bars),
                   risk_per_trade=float(ex["risk_per_trade"]), days_per_year=float(ex["days_per_year"]), meta=meta,
                   ts_utc=utc_int_ns(bars["ts_utc"]).astype("datetime64[ns]"), cost_rel=cost_rel,
                   max_lev=float(ex["max_leverage"]))

@@ -1,6 +1,12 @@
 # PROGRESS
 
 ## Fase actual
+**Fase C1 (cripto), Parte 1 hecha (rama `phase-c1-crypto`):** módulo cripto, datos de perpetuos y funding, informe spot frente a perpetuo
+(`docs/reports/crypto_spot_vs_perp.md`) y preregistro `configs/crypto_c1.yaml` commiteado. **No se ha ejecutado ninguna búsqueda.**
+Pendiente: revisión de Jaime de los umbrales propuestos y de la recomendación de usar precios de perpetuo.
+Remoto GitHub pendiente: `sudo apt install gh` → `gh auth login` → `gh repo create SQX_CLAUDE_FOREX --private --source . --remote origin`
+→ `git push origin --all && git push origin --tags`.
+
 **Auditoría cripto hecha (rama `phase-c0-crypto-audit`, sin merge): `docs/CRYPTO_DATA_AUDIT.md`. Esperando revisión de Jaime.**
 
 **Fase 2c hecha (rama `phase-2c-6pairs`, sin merge).** Ninguna variante del procedimiento cumple los criterios. Esperando revisión de Jaime.

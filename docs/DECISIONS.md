@@ -162,3 +162,21 @@ Formato: fecha — decisión. Alternativas. Motivo.
   Accesos en `trials/crypto_holdout_access.jsonl` (2 ejecuciones del script). Propuesta pendiente: holdout común desde 2024-11-01.
 - No se ha ejecutado ninguna estrategia ni ningún backtest cripto; nada se suma a `trials/ledger.jsonl`.
 - `CLAUDE.md` no se modifica: la sección cripto queda como diff propuesto en `docs/proposals/CLAUDE_md_crypto.diff`.
+
+## 2026-09-30 — Fase C1, Parte 1 (instrucción de Jaime vía /goal)
+- Merges: `phase-2c-6pairs` → `main` (tag `v0.2c`) y `phase-c0-crypto-audit` → `main` (tag `v0.c0`). Rama `phase-c1-crypto`.
+- **Remoto:** no hay `origin` y `gh` no está instalado en WSL; crear el repo requiere autenticación interactiva de Jaime (ver PROGRESS).
+- **CLAUDE.md:** aplicada la sección "Cripto (módulo aparte)" del diff propuesto, actualizada con las decisiones de Jaime (universo sin TRX,
+  holdout común 2024-11-01, perpetuos con spot como proxy, comisión 0,05 %, reparación de LINK solo en la copia derivada).
+- **Datos de perpetuos:** API pública de Binance sin claves (instrucción expresa de Jaime, excepción a AUTONOMY §3 "red externa"),
+  solo < 2024-11-01; exposición accidental de 3 tasas de funding de 2026 en la prueba de conectividad, registrada.
+- **Contrato del evaluador ampliado** (retrocompatible, forex bit a bit idéntico sobre 300 estrategias H1/M15 y 65.981 trades):
+  `cost_rel` por barra de señal, funding con signo y `fr_abs` a ambos lados en la apertura de cada barra de ejecución posterior a la de
+  entrada (conservador: una salida en la apertura de la barra del evento también paga), estrés de funding solo sobre pagos,
+  `frac = min(risk_per_trade, max_lev · riesgo/entrada)`.
+- **Funding antes del listado:** media de |tasa| del perpetuo de cada moneda antes del bloque de selección, en cada hora 00/08/16 UTC
+  anterior al primer evento real, a largos y cortos.
+- **D1:** la ejecución solo puede ser M15 (los eventos de 08/16 UTC caen dentro de la barra diaria).
+- **Veredicto del proxy:** válido para retornos H4/D1 (corr ≥ 0,9988 salvo SOL 0,9945), algo optimista en stops (perp toca un 3–8 % más);
+  se añade al preregistro un chequeo informativo con precios de perpetuo. Recomendación a Jaime: usar precios de perpetuo donde existan.
+- **Preregistro `configs/crypto_c1.yaml`:** umbrales de aceptación PROPUESTOS por Claude, pendientes de revisión de Jaime; nada se ejecuta en la Parte 1.
