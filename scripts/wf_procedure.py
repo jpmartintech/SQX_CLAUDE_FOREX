@@ -15,12 +15,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy as np
-import yaml
 
 from sqxf.backtest.evaluator import Costs, build_market
 from sqxf.data.m15 import DataConfig, load_m15
 from sqxf.funnel.wf_procedure import effective_trials_rho, folds, generate, null_market, run_procedure, truncate_m15
-from sqxf.provenance import PROJECT_ROOT, code_version, require_committed
+from sqxf.provenance import PROJECT_ROOT, code_version, load_yaml_strict, require_committed
 from sqxf.stats.dsr import expected_max_sharpe, moments, probabilistic_sharpe
 from sqxf.trials import record_evaluations
 
@@ -75,7 +74,7 @@ def null(cfg: dict, out: Path, shard: int, n_shards: int) -> None:
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"null_shard{shard}.jsonl"
     done = {json.loads(x)["j"] for x in path.read_text().splitlines()} if path.exists() else set()
-    nc = cfg["null"] if "null" in cfg else cfg[None]  # YAML parses the key `null:` as None
+    nc = cfg["null"]
     for j in range(shard, nc["n_permutations"], n_shards):
         if j in done:
             continue
@@ -137,7 +136,7 @@ def main() -> None:
     ap.add_argument("--n-shards", type=int, default=1)
     args = ap.parse_args()
     require_committed(Path(args.config))
-    cfg = yaml.safe_load(Path(args.config).read_text())
+    cfg = load_yaml_strict(Path(args.config))
     out = PROJECT_ROOT / "runs" / cfg["run_name"]
     if args.mode == "observed":
         observed(cfg, out)

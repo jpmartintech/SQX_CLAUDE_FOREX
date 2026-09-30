@@ -116,3 +116,41 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Análisis post hoc** (diferencia genético − control bajo el nulo, p-valor con costes ×2, mean R sin 2012): informativos, fuera del preregistro.
 - **N_eff por correlación:** hubo que regenerar los archivos del genético con las mismas semillas (180.000 evaluaciones de ingeniería,
   contadas en el contador), porque el procedimiento no los guarda.
+
+## 2026-09-30 — Fase 2c: infraestructura (instrucción de Jaime vía /goal)
+- Merge de `phase-2b-wf-procedure` a `main` con tag `v0.2b`.
+- **pytest ya no escribe en `trials/ledger.jsonl`:** un fixture autouse redirige el contador, el log del bloque final y el del holdout
+  a un directorio temporal, y `record_evaluations` lanza un error si se intenta escribir en el contador versionado bajo pytest.
+  Las evaluaciones de los tests son sobre datos reales pero no seleccionan nada; las ya registradas (11 × 480) se quedan en el
+  historial, que nunca se reescribe.
+- **Cargador YAML estricto** (`provenance.load_yaml_strict`, usado por `load_config` y los scripts): falla si una clave no se carga
+  como el texto escrito (`null:`, `yes:`, `on:`, `1:`…). Test sobre todos los `configs/*.yaml`.
+- **`configs/wf_procedure.yaml`:** la clave `null:` pasa a `"null":` (entrecomillada) para cumplir el cargador estricto. Solo cambia
+  el formato; todos los valores son idénticos a los preregistrados en `ccd14b0` y el run de la Fase 2b ya estaba hecho.
+
+## 2026-09-30 — Fase 2c: preregistro (`configs/wf_6pairs.yaml`), antes de cualquier run con datos reales
+- **Mismo procedimiento que la 2b sin cambios** (ventanas, genético, fitness, selección base, top-10) en los 6 pares, OOS 2010–2018,
+  con reglas por par (un genético por par y ventana). Semillas: EURUSD usa las de la 2b (debe reproducir su resultado base);
+  el resto, desplazamientos fijos de 1.000.
+- **Una única variante preregistrada** `x2robust`: los mismos filtros de selección deben cumplirse con costes ×2 en entrenamiento
+  (PF ≥ 1,10 y mean R > 0,03). Motivo: en la 2b el procedimiento perdía con costes ×2 fuera de muestra. Se aplica al mismo archivo
+  generado, así que no añade evaluaciones.
+- **Aceptación sobre el agregado** de los 6 pares, por variante del genético: mean R ×1 > 0, ×2 > 0, p ≤ 0,025 (Bonferroni por
+  2 variantes), bate al control aleatorio con la misma variante, DSR de la cartera ≥ 0,95. El resultado por par se reporta pero no decide.
+- **DSR:** N = procedimientos evaluados sobre 2010–2018 según `trials/procedure_ledger.jsonl` = 2 (2b) + 4 (este run) = 6;
+  Var[SR] de las carteras del mismo procedimiento en los nulos.
+- **Nulo:** permutación de días completos dentro de su mes natural, con el mismo mapeo en los 6 pares. Conserva la trayectoria
+  intradía, la volatilidad realizada mensual (clustering a escala de mes) y la correlación entre pares; destruye el orden de los días
+  dentro del mes. Alternativas descartadas: permutación por barras (2b), que destruye el clustering; bloques semanales, que conservan
+  estructura multi-día que el grammar podría explotar (nulo con edge). Limitación: todo edge puramente intradía sobrevive en el
+  nulo, así que el test es conservador para ese tipo de edge.
+- **60 permutaciones** (resolución 1/61 ≈ 0,016 < 0,025), elegidas por coste: ~7 min por permutación de los 6 pares medido sobre
+  datos permutados, sin mirar resultados reales.
+
+## 2026-09-30 — Fase 2c, después del run `phase2c_wf_6pairs_r1`
+- **Veredicto reportado tal cual:** ninguna variante cumple los criterios (agregado negativo con costes ×1 y ×2, p = 0,066 > 0,025,
+  DSR 0,01). No se aflojan umbrales ni se relanza.
+- **Hallazgo:** la variante `x2robust` no cambia ninguna selección del genético (54/54 idénticas), porque sus candidatos tienen en
+  entrenamiento R medios de 0,25–0,6 muy por encima de los umbrales incluso con costes ×2. Se sigue contando como procedimiento
+  en el DSR (N = 6), según el preregistro.
+- **Diagnóstico post hoc** (una ventana de GBPUSD, solo datos de entrenamiento): 169 de las 200 mejores pasan ambos filtros; informativo.

@@ -1,19 +1,20 @@
 # PROGRESS
 
 ## Fase actual
-**Fase 2b hecha (rama `phase-2b-wf-procedure`, sin merge).** El procedimiento no demuestra edge. Esperando revisión de Jaime.
-Informes: `docs/reports/phase-2.md` (tag `v0.2-compact`), `docs/reports/phase-2b.md`.
+**Fase 2c hecha (rama `phase-2c-6pairs`, sin merge).** Ninguna variante del procedimiento cumple los criterios. Esperando revisión de Jaime.
+Informes: `docs/reports/phase-2.md` (`v0.2-compact`), `phase-2b.md` (`v0.2b`), `phase-2c.md`.
 
 ## Resultados medidos
-- Fase 2 (`phase2_eurusd_g1_r1`): 99.000 → walk-forward 415 → DSR 0 supervivientes.
-- Fase 2b (`phase2b_wf_eurusd_r1`), walk-forward con re-optimización 2010–2018, EURUSD:
-  - genético: mean R OOS +0,0294 (×1), −0,0092 (×2), p = 0,109 frente a 100 nulos permutados; 3.089 trades; 5/9 años positivos.
-  - control aleatorio: −0,0396 (×1), p = 0,495. Diferencia genético − control p = 0,129 (post hoc).
-  - Veredicto preregistrado: sin edge (falla costes ×2 y p-valor).
-- Contador: 729.070 evaluaciones sobre datos reales (459.000 de selección). Procedimientos evaluados en OOS: 2.
-- 2019–2022: 0 accesos. Holdout: 0 accesos. `pytest -q`: 65 passed.
+- Fase 2: 99.000 → walk-forward 415 → DSR 0.
+- Fase 2b (EURUSD): genético +0,0294R OOS, p = 0,109; sin edge.
+- Fase 2c (6 pares, run `phase2c_wf_6pairs_r1`): genético agregado −0,0317R (×1), −0,0848R (×2), p = 0,066 frente a 60 nulos por
+  bloques, DSR 0,010 (N = 6); control aleatorio −0,0511R. La variante `x2robust` da la misma selección que la base en el genético.
+  Solo EURUSD (+0,029) y USDCAD (+0,004) quedan en positivo.
+- Contador: 2.889.550 evaluaciones sobre datos reales (2.619.000 de selección). Procedimientos sobre 2010–2018: 6.
+- 2019–2022: sin cargar. Holdout: 0 accesos. `pytest -q`: 83 passed (ya no escribe en el contador).
 
 ## Pendiente de decisión (Jaime)
-1. Siguiente paso (propuestas en `phase-2b.md`): multi-par, gramática reducida, selección más estricta, completar el embudo + swap.
-2. Merge de `phase-2b-wf-procedure` a `main`.
-3. Decisiones anteriores aún abiertas: valores por defecto de datos, exposición del holdout en la auditoría, costes por par.
+1. Cambiar de hipótesis (sesión/hora, horizontes diarios, fuerza relativa entre divisas) o parar la búsqueda con esta gramática.
+2. Swap y validación de costes por par con un broker real antes de cualquier búsqueda nueva.
+3. Merge de `phase-2c-6pairs`.
+4. Decisiones anteriores abiertas: valores por defecto de datos, exposición del holdout en la auditoría.

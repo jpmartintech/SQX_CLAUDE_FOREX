@@ -1,0 +1,72 @@
+# Phase 2c — the Phase 2b procedure, unchanged, on six pairs. PRE-REGISTERED: committed before any real-data run.
+# Changing any value requires a DECISIONS.md entry (reason not based on results) and a new run_name. No relaunch with another seed.
+run_name: phase2c_wf_6pairs_r1
+pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD]   # no XAUUSD
+pair_seed_offsets: {EURUSD: 0, GBPUSD: 1000, USDJPY: 2000, USDCHF: 3000, USDCAD: 4000, NZDUSD: 5000}
+seed: 20260930                  # fold i of pair p uses seed + offset[p] + i (EURUSD reproduces the Phase 2b seeds)
+data_end_local: "2019-01-01 00:00:00"   # M15 truncated here for every pair: 2019-2022 and the holdout are never loaded
+days_per_year: 260
+exec_timeframe_train: H1
+exec_timeframe_oos: M15
+
+# ---- identical to configs/wf_procedure.yaml (Phase 2b) ----
+folds:
+  oos_years: [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]
+  train_years: 4
+  train_blocks: 2
+genetic:
+  population: 500
+  generations: 40
+  max_unique_evaluations: 20000
+  elite: 10
+  tournament: 4
+  crossover_rate: 0.7
+  mutation_rate: 0.4
+  immigrant_rate: 0.1
+  max_predicates: 4
+fitness:
+  min_trades_per_block: 20
+
+# ---- selection: the Phase 2b rule ("base") and ONE pre-registered variant ("x2robust") ----
+# Both are applied to the same generated archive of each pair/fold. Rules are per pair (each pair has its own GA run).
+selection_variants:
+  base:                         # exactly the Phase 2b selection
+    min_trades: 60
+    min_profit_factor: 1.10
+    min_mean_r: 0.03
+    cost_x2_min_mean_r: 0.0
+    top_k: 10
+  x2robust:                     # the same gates must also hold with costs x2 inside the training window
+    min_trades: 60
+    min_profit_factor: 1.10
+    min_mean_r: 0.03
+    cost_x2_min_profit_factor: 1.10
+    cost_x2_min_mean_r: 0.03
+    top_k: 10
+
+control_random:                 # random search, same budget per pair/fold, same fitness, same selection variant
+  budget: same_as_genetic
+
+"null":
+  method: day_block_permutation_within_month   # complete trading days (96 M15 bars in all 6 pairs) permuted within their
+                                               # calendar month, SAME mapping for all pairs: keeps intraday paths, monthly
+                                               # volatility clustering and cross-pair correlation; destroys day-to-day order
+  n_permutations: 60
+  seed_base: 881000             # permutation j uses seed_base + j; procedure seeds identical to the observed run
+
+statistic:
+  primary: pooled_oos_mean_r_cost_x1   # mean R over every OOS trade of every selected strategy of every pair, 2010-2018
+  p_value: "(1 + #{null >= observed}) / (1 + n_permutations)"
+  per_pair: reported only (mean R x1/x2, trades, t-stat, positive years, informative p-value), not an acceptance gate
+
+acceptance:                     # evaluated on the AGGREGATE of the six pairs, separately for each genetic variant;
+  pooled_mean_r_x1_gt: 0.0      # a variant "has edge" only if ALL hold
+  pooled_mean_r_x2_gt: 0.0
+  p_value_le: 0.025             # Bonferroni over the 2 genetic variants (0.05 / 2)
+  beats_random_control: true    # genetic pooled mean R x1 > random-control pooled mean R x1 with the same variant
+  portfolio_dsr_ge: 0.95        # DSR of the equal-weight OOS portfolio (pairs averaged by date)
+
+effective_trials:
+  method: count_procedures      # N = every procedure evaluated on OOS 2010-2018 in trials/procedure_ledger.jsonl:
+                                # 2 (Phase 2b) + 4 (this run: genetic/random x base/x2robust) = 6
+  dsr_var_sr: null_runs         # Var[SR] of the same procedure's OOS portfolio across the null permutations

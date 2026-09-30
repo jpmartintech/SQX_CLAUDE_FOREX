@@ -7,6 +7,7 @@ The Deflated Sharpe uses the grand total (conservative: engineering evaluations 
 from __future__ import annotations
 
 import json
+import os
 from datetime import UTC, datetime
 
 from sqxf.provenance import PROJECT_ROOT, code_version
@@ -14,7 +15,12 @@ from sqxf.provenance import PROJECT_ROOT, code_version
 LEDGER = PROJECT_ROOT / "trials" / "ledger.jsonl"
 
 
+PROJECT_LEDGER = LEDGER
+
+
 def record_evaluations(purpose: str, pair: str, n_strategies: int, selection: bool, **extra) -> None:
+    if os.environ.get("PYTEST_CURRENT_TEST") and LEDGER.resolve() == PROJECT_LEDGER.resolve():
+        raise RuntimeError("tests must not write to the versioned trial ledger (conftest redirects it)")
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
     row = {"utc": datetime.now(UTC).isoformat(), "purpose": purpose, "pair": pair, "n_strategies": int(n_strategies),
            "used_for_selection": bool(selection), "code_version": code_version(), **extra}
