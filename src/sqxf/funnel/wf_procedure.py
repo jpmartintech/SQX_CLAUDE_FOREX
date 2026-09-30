@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from sqxf.backtest.evaluator import Market, build_market, evaluate_light, evaluate_rich
+from sqxf.data.m15 import trading_date
 from sqxf.funnel.pipeline import daily_returns, make_fitness, stats, window
 from sqxf.generators.genetic import GAConfig, run_genetic
 from sqxf.grammar import random_strategy
@@ -28,25 +29,62 @@ def truncate_m15(m15: pd.DataFrame, end_local: str) -> pd.DataFrame:
     return out
 
 
-def permute_m15(m15: pd.DataFrame, seed: int) -> pd.DataFrame:
-    """Null market: permute bar shapes jointly (open gap, high/low/close relative to open) over all bars.
-
-    Keeps timestamps, flags, the multiset of bar shapes and the total log drift; destroys every temporal dependence
-    (trend, momentum, mean reversion, volatility clustering, intraday seasonality).
-    """
+def rebuild_from_shapes(m15: pd.DataFrame, source: np.ndarray) -> pd.DataFrame:
+    """Rebuild prices so that bar ``p`` has the shape (open gap, high/low/close vs open) of original bar ``source[p]``."""
     o, h, l, c = (m15[k].to_numpy(np.float64) for k in ("open", "high", "low", "close"))
     prev_c = np.r_[o[0], c[:-1]]
     shape = np.stack([np.log(o / prev_c), np.log(h / o), np.log(l / o), np.log(c / o)], axis=1)
-    perm = np.random.default_rng(seed).permutation(len(o))
-    g, hh, ll, cc = (x.copy() for x in shape[perm].T)
-    g[0] = 0.0  # the first bar opens at the original first open
-    log_open = np.log(o[0]) + np.r_[0.0, np.cumsum(cc)[:-1]] + np.cumsum(g)
-    opn = np.exp(log_open)
+    g, hh, ll, cc = (x.copy() for x in shape[source].T)
+    g[0] = 0.0
+    opn = np.exp(np.log(o[0]) + np.r_[0.0, np.cumsum(cc)[:-1]] + np.cumsum(g))
     out = m15.copy()
     out["open"], out["close"] = opn, opn * np.exp(cc)
     out["high"] = np.maximum(opn * np.exp(hh), np.maximum(out["open"], out["close"]))
     out["low"] = np.minimum(opn * np.exp(ll), np.minimum(out["open"], out["close"]))
     return out
+
+
+def full_day_dates(m15: pd.DataFrame, bars_per_day: int = 96) -> set:
+    counts = trading_date(m15["ts_local"]).value_counts()
+    return set(counts.index[counts == bars_per_day])
+
+
+def day_block_mapping(m15s: dict[str, pd.DataFrame], seed: int) -> dict:
+    """Target date -> source date: complete trading days (96 M15 bars in EVERY pair) permuted within each calendar month.
+
+    One mapping for all pairs (cross-pair correlation kept); monthly strata keep volatility clustering at the month scale and
+    every intraday pattern; day-to-day sequencing inside a month is destroyed. Other days stay in place.
+    """
+    common = set.intersection(*(full_day_dates(m) for m in m15s.values()))
+    dates = sorted(common)
+    rng = np.random.default_rng(seed)
+    mapping = {}
+    months = pd.Series(dates).dt.to_period("M")
+    for _, grp in pd.Series(dates).groupby(months.to_numpy()):
+        d = list(grp)
+        for tgt, src in zip(d, [d[i] for i in rng.permutation(len(d))], strict=True):
+            mapping[tgt] = src
+    return mapping
+
+
+def block_permute_m15(m15: pd.DataFrame, mapping: dict) -> pd.DataFrame:
+    """Apply a day mapping: the 96 bars of each mapped target day take the shapes of its source day, bar by bar."""
+    td = trading_date(m15["ts_local"]).to_numpy()
+    starts = pd.Series(np.arange(len(td))).groupby(td).first()
+    source = np.arange(len(td))
+    for tgt, src in mapping.items():
+        a, b = int(starts[np.datetime64(tgt)]), int(starts[np.datetime64(src)])
+        source[a:a + 96] = np.arange(b, b + 96)
+    return rebuild_from_shapes(m15, source)
+
+
+def permute_m15(m15: pd.DataFrame, seed: int) -> pd.DataFrame:
+    """Null market (Phase 2b): permute bar shapes jointly (open gap, high/low/close relative to open) over all bars.
+
+    Keeps timestamps, flags, the multiset of bar shapes and the total log drift; destroys every temporal dependence
+    (trend, momentum, mean reversion, volatility clustering, intraday seasonality).
+    """
+    return rebuild_from_shapes(m15, np.random.default_rng(seed).permutation(len(m15)))
 
 
 # ------------------------------------------------------------------ folds
@@ -94,6 +132,8 @@ def select_top_k(market: Market, fold: dict, strategies: list[StrategyDefinition
     s2 = stats(evaluate_light(market, cand, exec_tf=tf, window=fold["train"], cost_multiplier=2.0))
     ok = ((s1["n"] >= sel["min_trades"]) & (s1["pf"] >= sel["min_profit_factor"]) & (s1["mean_r"] > sel["min_mean_r"])
           & (s2["mean_r"] > sel["cost_x2_min_mean_r"]))
+    if "cost_x2_min_profit_factor" in sel:
+        ok &= s2["pf"] >= sel["cost_x2_min_profit_factor"]
     idx = idx[ok]
     order = idx[np.argsort(-fit[idx], kind="stable")]
     return [strategies[i] for i in order[: sel["top_k"]]]
@@ -120,6 +160,8 @@ def trade_oos(market: Market, fold: dict, chosen: list[StrategyDefinition], cfg:
     for s in chosen:
         daily += daily_returns(market, s, tf, w) / len(chosen)
     out["daily_x1"] = daily
+    first = int(ex.day_id[ex.h1_start[w[0]]])
+    out["dates"] = day_dates(market)[first:first + n_days]
     return out
 
 
@@ -188,3 +230,72 @@ def effective_trials_rho(market: Market, strategies: list[StrategyDefinition], w
     cm = np.corrcoef(mat)
     rho = float(cm[np.triu_indices(len(cm), 1)].mean())
     return {"rho": rho, "n": len(strategies), "n_eff": rho + (1 - rho) * len(strategies), "sample": int(len(mat))}
+
+
+# ------------------------------------------------------------------ Phase 2c: several pairs, selection variants
+def day_dates(market: Market) -> np.ndarray:
+    """Trading date (datetime64[D]) of every ``day_id``."""
+    h1 = market.h1
+    d = trading_date(h1["ts_local"]).to_numpy().astype("datetime64[D]")
+    ids = h1["day_id"].to_numpy()
+    out = np.empty(ids.max() + 1, dtype="datetime64[D]")
+    out[ids] = d
+    return out
+
+
+def run_multi(markets: dict[str, Market], cfg: dict, variants: dict[str, dict], generators=("genetic", "random"),
+              pair_seed_offsets: dict[str, int] | None = None, log: Callable[[str], None] | None = None) -> dict:
+    """For each pair and fold: generate once per generator, then select with every variant and trade the OOS year.
+
+    Returns ``{generator: {variant: summary}}`` with the pooled (all pairs) statistics and a per-pair breakdown.
+    """
+    offsets = pair_seed_offsets or {p: 1000 * i for i, p in enumerate(markets)}
+    per = {g: {v: {p: [] for p in markets} for v in variants} for g in generators}
+    evaluated = {g: 0 for g in generators}
+    for pair, market in markets.items():
+        for i, fold in enumerate(folds(market, cfg)):
+            for gen in generators:
+                strategies, fit = generate(market, fold, cfg, gen, cfg["seed"] + offsets[pair] + i)
+                evaluated[gen] += len(strategies)
+                for v, sel in variants.items():
+                    chosen = select_top_k(market, fold, strategies, fit, {**cfg, "selection": sel})
+                    res = trade_oos(market, fold, chosen, cfg)
+                    res["evaluated"] = len(strategies)
+                    res["finite_fitness"] = int(np.isfinite(fit).sum())
+                    per[gen][v][pair].append(res)
+                    if log:
+                        r = res["r_x1"]
+                        log(f"{pair} {fold['year']} {gen}/{v}: selected {len(chosen)} trades {len(r)} "
+                            f"mean R {r.mean() if len(r) else float('nan'):+.4f}")
+    return {g: {v: summarize_multi(per[g][v], evaluated[g], cfg) for v in variants} for g in generators}
+
+
+def summarize_multi(per_pair: dict[str, list[dict]], evaluated: int, cfg: dict) -> dict:
+    pooled = summarize([f for folds_ in per_pair.values() for f in folds_], evaluated, cfg)
+    series = {}
+    for pair, folds_ in per_pair.items():
+        series[pair] = pd.Series(np.concatenate([f["daily_x1"] for f in folds_]),
+                                 index=np.concatenate([f["dates"] for f in folds_]))
+    port = pd.concat(series, axis=1).sort_index().mean(axis=1, skipna=True).to_numpy()
+    eq = np.cumprod(1.0 + port)
+    peak = np.maximum.accumulate(np.r_[1.0, eq])[1:]
+    sd = port.std()
+    dpy = float(cfg.get("days_per_year", 260))
+    out = {k: v for k, v in pooled.items() if k not in ("_daily_x1", "portfolio_sharpe", "portfolio_return",
+                                                        "portfolio_max_dd", "per_year", "positive_years_x1")}
+    out.update({"portfolio_sharpe": float(port.mean() / sd * math.sqrt(dpy)) if sd > 0 else 0.0,
+                "portfolio_return": float(eq[-1] - 1.0), "portfolio_max_dd": float((1 - eq / peak).max()),
+                "portfolio_days": int(len(port)), "_daily_portfolio": port})
+    out["per_pair"] = {}
+    for pair, folds_ in per_pair.items():
+        sp = summarize(folds_, sum(f["evaluated"] for f in folds_), cfg)
+        out["per_pair"][pair] = {k: sp[k] for k in ("oos_trades", "mean_r_x1", "mean_r_x2", "tstat_x1", "portfolio_sharpe",
+                                                   "positive_years_x1")}
+        out["per_pair"][pair]["per_year"] = sp["per_year"]
+    yrs = {}
+    for folds_ in per_pair.values():
+        for f in folds_:
+            yrs.setdefault(f["year"], []).append(f["r_x1"])
+    out["per_year_pooled_mean_r_x1"] = {int(y): float(np.concatenate(v).mean()) if sum(map(len, v)) else None
+                                        for y, v in sorted(yrs.items())}
+    return out

@@ -127,3 +127,22 @@ Formato: fecha — decisión. Alternativas. Motivo.
   como el texto escrito (`null:`, `yes:`, `on:`, `1:`…). Test sobre todos los `configs/*.yaml`.
 - **`configs/wf_procedure.yaml`:** la clave `null:` pasa a `"null":` (entrecomillada) para cumplir el cargador estricto. Solo cambia
   el formato; todos los valores son idénticos a los preregistrados en `ccd14b0` y el run de la Fase 2b ya estaba hecho.
+
+## 2026-09-30 — Fase 2c: preregistro (`configs/wf_6pairs.yaml`), antes de cualquier run con datos reales
+- **Mismo procedimiento que la 2b sin cambios** (ventanas, genético, fitness, selección base, top-10) en los 6 pares, OOS 2010–2018,
+  con reglas por par (un genético por par y ventana). Semillas: EURUSD usa las de la 2b (debe reproducir su resultado base);
+  el resto, desplazamientos fijos de 1.000.
+- **Una única variante preregistrada** `x2robust`: los mismos filtros de selección deben cumplirse con costes ×2 en entrenamiento
+  (PF ≥ 1,10 y mean R > 0,03). Motivo: en la 2b el procedimiento perdía con costes ×2 fuera de muestra. Se aplica al mismo archivo
+  generado, así que no añade evaluaciones.
+- **Aceptación sobre el agregado** de los 6 pares, por variante del genético: mean R ×1 > 0, ×2 > 0, p ≤ 0,025 (Bonferroni por
+  2 variantes), bate al control aleatorio con la misma variante, DSR de la cartera ≥ 0,95. El resultado por par se reporta pero no decide.
+- **DSR:** N = procedimientos evaluados sobre 2010–2018 según `trials/procedure_ledger.jsonl` = 2 (2b) + 4 (este run) = 6;
+  Var[SR] de las carteras del mismo procedimiento en los nulos.
+- **Nulo:** permutación de días completos dentro de su mes natural, con el mismo mapeo en los 6 pares. Conserva la trayectoria
+  intradía, la volatilidad realizada mensual (clustering a escala de mes) y la correlación entre pares; destruye el orden de los días
+  dentro del mes. Alternativas descartadas: permutación por barras (2b), que destruye el clustering; bloques semanales, que conservan
+  estructura multi-día que el grammar podría explotar (nulo con edge). Limitación: todo edge puramente intradía sobrevive en el
+  nulo, así que el test es conservador para ese tipo de edge.
+- **60 permutaciones** (resolución 1/61 ≈ 0,016 < 0,025), elegidas por coste: ~7 min por permutación de los 6 pares medido sobre
+  datos permutados, sin mirar resultados reales.
