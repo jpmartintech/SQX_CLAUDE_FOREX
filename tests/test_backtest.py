@@ -38,7 +38,8 @@ def run_both(signal, o, h, l, c, atr, direction=1, sl=1.0, tp=2.0, max_bars=10, 
                                   max_bars, delay, cost, RISK, DPY, t0, t1)
     rec, kagg = simulate_rich(pack_bits(np.asarray(signal, bool)[None, :]), np.array([0, -1, -1, -1]), 1,
                               pack_bits(np.ones(n, bool)), atr, idx, idx + 1, idx, *arrs, day_id, direction, sl, tp,
-                              max_bars, delay, cost, RISK, DPY, t0, t1)
+                              max_bars, delay, cost, RISK, DPY, t0, t1, np.zeros(n), np.zeros(n), np.zeros(n), 1.0,
+                              np.inf)
     assert len(rec) == len(trades)
     for row, tr in zip(rec, trades, strict=True):
         for name, j in TRADE.items():

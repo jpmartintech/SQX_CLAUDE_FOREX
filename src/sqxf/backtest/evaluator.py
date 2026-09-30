@@ -34,6 +34,12 @@ class ExecData:
     h1_of: np.ndarray
     h1_start: np.ndarray
     h1_end: np.ndarray
+    fr: np.ndarray | None = None       # signed funding rate charged at the open of each execution bar (crypto)
+    fr_abs: np.ndarray | None = None   # funding rate charged to BOTH sides at the bar open (before a perpetual existed)
+
+    def funding_arrays(self) -> tuple[np.ndarray, np.ndarray]:
+        z = np.zeros(len(self.o))
+        return (z if self.fr is None else self.fr), (z if self.fr_abs is None else self.fr_abs)
 
 
 @dataclass(frozen=True)
@@ -73,6 +79,11 @@ class Market:
     days_per_year: float
     meta: dict = field(default_factory=dict)
     ts_utc: np.ndarray = field(default=None)  # datetime64[ns] (naive UTC) of every H1 bar
+    cost_rel: np.ndarray | None = None        # round-trip cost as a fraction of the entry price, per signal bar (crypto)
+    max_lev: float = math.inf                 # max nominal exposure as a multiple of equity (crypto 1.0)
+
+    def cost_rel_array(self) -> np.ndarray:
+        return np.zeros(self.n_h1) if self.cost_rel is None else self.cost_rel
 
     @property
     def n_h1(self) -> int:
@@ -147,9 +158,16 @@ def _cost(market: Market, cost_multiplier: float) -> float:
     return market.costs.round_trip * float(cost_multiplier)
 
 
+def _extra(market: Market, ex: ExecData, cost_multiplier: float, funding_multiplier: float) -> tuple:
+    """Crypto-aware kernel arguments (all neutral for forex): relative costs, funding, funding stress, leverage cap."""
+    fr, fr_abs = ex.funding_arrays()
+    return (market.cost_rel_array() * float(cost_multiplier), fr, fr_abs, float(funding_multiplier), float(market.max_lev))
+
+
 # ------------------------------------------------------------------ evaluation
 def evaluate_light(market: Market, strategies: Sequence[StrategyDefinition], exec_tf: str = "H1", delay: int = 0,
-                   cost_multiplier: float = 1.0, window: tuple[int, int] | None = None) -> np.ndarray:
+                   cost_multiplier: float = 1.0, window: tuple[int, int] | None = None,
+                   funding_multiplier: float = 1.0) -> np.ndarray:
     """Aggregate matrix ``float64[len(strategies), N_AGG]`` (Numba, parallel over strategies)."""
     enc = encode(strategies)
     ex = market.execs[exec_tf]
@@ -157,7 +175,8 @@ def evaluate_light(market: Market, strategies: Sequence[StrategyDefinition], exe
     return evaluate_batch_light(market.pred_bits, enc["rows"], enc["n_rows"], market.base_bits, market.atr,
                                 ex.h1_start, ex.h1_end, ex.h1_of, ex.o, ex.h, ex.l, ex.c, ex.day_id,
                                 enc["directions"], enc["sl_atr"], enc["tp_atr"], enc["max_bars"], int(delay),
-                                _cost(market, cost_multiplier), market.risk_per_trade, market.days_per_year, t0, t1)
+                                _cost(market, cost_multiplier), market.risk_per_trade, market.days_per_year, t0, t1,
+                                *_extra(market, ex, cost_multiplier, funding_multiplier))
 
 
 @dataclass
@@ -173,7 +192,8 @@ class RichResult:
 
 
 def evaluate_rich(market: Market, strategy: StrategyDefinition, exec_tf: str = "M15", delay: int = 0,
-                  cost_multiplier: float = 1.0, window: tuple[int, int] | None = None) -> RichResult:
+                  cost_multiplier: float = 1.0, window: tuple[int, int] | None = None,
+                  funding_multiplier: float = 1.0) -> RichResult:
     enc = encode([strategy])
     ex = market.execs[exec_tf]
     t0, t1 = _window(market, window)
@@ -181,7 +201,8 @@ def evaluate_rich(market: Market, strategy: StrategyDefinition, exec_tf: str = "
                              ex.h1_start, ex.h1_end, ex.h1_of, ex.o, ex.h, ex.l, ex.c, ex.day_id,
                              int(enc["directions"][0]), float(enc["sl_atr"][0]), float(enc["tp_atr"][0]),
                              int(enc["max_bars"][0]), int(delay), _cost(market, cost_multiplier),
-                             market.risk_per_trade, market.days_per_year, t0, t1)
+                             market.risk_per_trade, market.days_per_year, t0, t1,
+                             *_extra(market, ex, cost_multiplier, funding_multiplier))
     return RichResult(strategy, trades_frame(market, rec), agg, market.days_per_year)
 
 
@@ -194,13 +215,14 @@ def strategy_signal(market: Market, strategy: StrategyDefinition) -> np.ndarray:
 
 
 def evaluate_oracle(market: Market, strategy: StrategyDefinition, exec_tf: str = "M15", delay: int = 0,
-                    cost_multiplier: float = 1.0, window: tuple[int, int] | None = None) -> tuple[list[dict], np.ndarray]:
+                    cost_multiplier: float = 1.0, window: tuple[int, int] | None = None,
+                    funding_multiplier: float = 1.0) -> tuple[list[dict], np.ndarray]:
     ex = market.execs[exec_tf]
     t0, t1 = _window(market, window)
     return simulate_oracle(strategy_signal(market, strategy), market.atr, ex.h1_start, ex.h1_end, ex.h1_of,
                            ex.o, ex.h, ex.l, ex.c, ex.day_id, strategy.sign, strategy.sl_atr, strategy.tp_atr,
                            strategy.max_bars, int(delay), _cost(market, cost_multiplier), market.risk_per_trade,
-                           market.days_per_year, t0, t1)
+                           market.days_per_year, t0, t1, *_extra(market, ex, cost_multiplier, funding_multiplier))
 
 
 # ------------------------------------------------------------------ outputs

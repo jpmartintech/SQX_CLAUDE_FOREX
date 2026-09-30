@@ -44,8 +44,15 @@ def rebuild_from_shapes(m15: pd.DataFrame, source: np.ndarray) -> pd.DataFrame:
     return out
 
 
+def calendar_dates(m15: pd.DataFrame) -> pd.Series:
+    """Trading date of each bar: UTC date for crypto (``attrs['calendar'] == 'utc'``), FX trading date (EET) otherwise."""
+    if m15.attrs.get("calendar") == "utc":
+        return m15["ts_local"].dt.normalize()
+    return trading_date(m15["ts_local"])
+
+
 def full_day_dates(m15: pd.DataFrame, bars_per_day: int = 96) -> set:
-    counts = trading_date(m15["ts_local"]).value_counts()
+    counts = calendar_dates(m15).value_counts()
     return set(counts.index[counts == bars_per_day])
 
 
@@ -69,7 +76,7 @@ def day_block_mapping(m15s: dict[str, pd.DataFrame], seed: int) -> dict:
 
 def block_permute_m15(m15: pd.DataFrame, mapping: dict) -> pd.DataFrame:
     """Apply a day mapping: the 96 bars of each mapped target day take the shapes of its source day, bar by bar."""
-    td = trading_date(m15["ts_local"]).to_numpy()
+    td = calendar_dates(m15).to_numpy()
     starts = pd.Series(np.arange(len(td))).groupby(td).first()
     source = np.arange(len(td))
     for tgt, src in mapping.items():
@@ -236,7 +243,10 @@ def effective_trials_rho(market: Market, strategies: list[StrategyDefinition], w
 def day_dates(market: Market) -> np.ndarray:
     """Trading date (datetime64[D]) of every ``day_id``."""
     h1 = market.h1
-    d = trading_date(h1["ts_local"]).to_numpy().astype("datetime64[D]")
+    if market.meta.get("calendar") == "utc":
+        d = h1["ts_local"].dt.normalize().to_numpy().astype("datetime64[D]")
+    else:
+        d = trading_date(h1["ts_local"]).to_numpy().astype("datetime64[D]")
     ids = h1["day_id"].to_numpy()
     out = np.empty(ids.max() + 1, dtype="datetime64[D]")
     out[ids] = d
