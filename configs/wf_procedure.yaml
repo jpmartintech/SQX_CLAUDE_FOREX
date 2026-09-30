@@ -38,7 +38,7 @@ selection:                      # inside the training window only (H1 execution)
 control_random:                 # random search, same grammar, same number of unique evaluations per fold,
   budget: same_as_genetic       # same fitness, same selection gates and top-K
 
-null:
+"null":
   method: m15_bar_permutation   # joint (open gap, high/low/close vs open) tuples permuted over all bars before data_end
   n_permutations: 100
   seed_base: 777000             # permutation j uses seed_base + j; the procedure seeds are the same as in the observed run

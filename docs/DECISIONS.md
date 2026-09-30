@@ -116,3 +116,14 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Análisis post hoc** (diferencia genético − control bajo el nulo, p-valor con costes ×2, mean R sin 2012): informativos, fuera del preregistro.
 - **N_eff por correlación:** hubo que regenerar los archivos del genético con las mismas semillas (180.000 evaluaciones de ingeniería,
   contadas en el contador), porque el procedimiento no los guarda.
+
+## 2026-09-30 — Fase 2c: infraestructura (instrucción de Jaime vía /goal)
+- Merge de `phase-2b-wf-procedure` a `main` con tag `v0.2b`.
+- **pytest ya no escribe en `trials/ledger.jsonl`:** un fixture autouse redirige el contador, el log del bloque final y el del holdout
+  a un directorio temporal, y `record_evaluations` lanza un error si se intenta escribir en el contador versionado bajo pytest.
+  Las evaluaciones de los tests son sobre datos reales pero no seleccionan nada; las ya registradas (11 × 480) se quedan en el
+  historial, que nunca se reescribe.
+- **Cargador YAML estricto** (`provenance.load_yaml_strict`, usado por `load_config` y los scripts): falla si una clave no se carga
+  como el texto escrito (`null:`, `yes:`, `on:`, `1:`…). Test sobre todos los `configs/*.yaml`.
+- **`configs/wf_procedure.yaml`:** la clave `null:` pasa a `"null":` (entrecomillada) para cumplir el cargador estricto. Solo cambia
+  el formato; todos los valores son idénticos a los preregistrados en `ccd14b0` y el run de la Fase 2b ya estaba hecho.

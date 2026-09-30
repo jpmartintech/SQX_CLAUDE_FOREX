@@ -63,3 +63,14 @@ def raw_available(pair: str = "EURUSD") -> bool:
 
 
 needs_data = pytest.mark.skipif(not raw_available(), reason="data/raw not present")
+
+
+@pytest.fixture(autouse=True)
+def _isolate_ledgers(tmp_path, monkeypatch):
+    """Tests never write to trials/ or runs/: every ledger/access log is redirected to a temporary directory."""
+    import sqxf.data.holdout as holdout
+    import sqxf.funnel.pipeline as pipeline
+    import sqxf.trials as trials
+    monkeypatch.setattr(trials, "LEDGER", tmp_path / "ledger.jsonl")
+    monkeypatch.setattr(pipeline, "FINAL_ACCESS_LOG", tmp_path / "final_block_access.jsonl")
+    monkeypatch.setattr(holdout, "ACCESS_LOG", tmp_path / "holdout_access.jsonl")

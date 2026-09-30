@@ -1,6 +1,6 @@
 """Oracle == Numba and causality invariants on real EURUSD Development data (skipped without data/raw).
 
-Engineering evaluations only: nothing is selected, metrics are not inspected. Counted in runs/trial_ledger.jsonl.
+Engineering evaluations only: nothing is selected, metrics are not inspected. Tests do not write to the trial ledger.
 """
 import numpy as np
 import pytest
@@ -15,11 +15,9 @@ N_STRATEGIES = 40
 @pytest.fixture(scope="module")
 def real():
     from sqxf.backtest.evaluator import load_market
-    from sqxf.trials import record_evaluations
     market = load_market("EURUSD")
     rng = np.random.default_rng(20260929)
     strategies = [random_strategy(rng, "EURUSD", max_predicates=2) for _ in range(N_STRATEGIES)]
-    record_evaluations("test_real_data equivalence", "EURUSD", N_STRATEGIES * 4 * 3, selection=False)
     return market, strategies
 
 
