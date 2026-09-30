@@ -146,3 +146,11 @@ Formato: fecha — decisión. Alternativas. Motivo.
   nulo, así que el test es conservador para ese tipo de edge.
 - **60 permutaciones** (resolución 1/61 ≈ 0,016 < 0,025), elegidas por coste: ~7 min por permutación de los 6 pares medido sobre
   datos permutados, sin mirar resultados reales.
+
+## 2026-09-30 — Fase 2c, después del run `phase2c_wf_6pairs_r1`
+- **Veredicto reportado tal cual:** ninguna variante cumple los criterios (agregado negativo con costes ×1 y ×2, p = 0,066 > 0,025,
+  DSR 0,01). No se aflojan umbrales ni se relanza.
+- **Hallazgo:** la variante `x2robust` no cambia ninguna selección del genético (54/54 idénticas), porque sus candidatos tienen en
+  entrenamiento R medios de 0,25–0,6 muy por encima de los umbrales incluso con costes ×2. Se sigue contando como procedimiento
+  en el DSR (N = 6), según el preregistro.
+- **Diagnóstico post hoc** (una ventana de GBPUSD, solo datos de entrenamiento): 169 de las 200 mejores pasan ambos filtros; informativo.
