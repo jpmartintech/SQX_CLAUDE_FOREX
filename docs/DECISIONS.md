@@ -81,3 +81,38 @@ Formato: fecha — decisión. Alternativas. Motivo.
   - +99.000 del genético = **168.590**, el total del contador cuando se calculó el DSR (el N usado).
   - +20.000 del análisis de sensibilidad del DSR (aleatorias, sin selección) + 480 de la ejecución final de `pytest` = **189.070**.
   - Las evaluaciones posteriores al cálculo del DSR no cambian el resultado; con N = 189.070 el listón sube (1,17 frente a 1,13 anual con la nula de ruido puro).
+
+## 2026-09-30 — Fase 2b: evaluación del procedimiento (instrucción de Jaime, texto pegado), antes de cualquier run
+- **Pregunta:** ¿tiene edge fuera de muestra el *procedimiento* (genético + selección), no una estrategia concreta?
+- **Walk-forward con re-optimización:** para cada año OOS Y (2010–2018), el genético se entrena solo en Y−4..Y−1 (fitness = peor
+  t-estadístico en 2 bloques de 2 años), la selección top-10 se hace solo en entrenamiento, y las estrategias congeladas operan Y.
+  Solo se concatenan los años OOS.
+- **Datos:** M15 truncado en 2019-01-01 antes de construir el mercado; 2019–2022 y el holdout no se cargan.
+- **Control:** búsqueda aleatoria con el mismo presupuesto por ventana, la misma fitness, los mismos filtros y el mismo top-K.
+  Sin control, un resultado positivo podría deberse a la gramática o al criterio de selección, no al genético.
+- **Nulo:** 100 mercados con las barras M15 permutadas (se conserva la distribución de formas de barra y se destruye toda
+  dependencia temporal). El procedimiento completo (genético y control) se repite en cada uno con las mismas semillas.
+  p-valor = (1 + #nulos ≥ observado) / 101. Alternativa descartada: bootstrap por bloques (conserva estructura de corto plazo que
+  podría ser el propio edge buscado). Limitación: la permutación también destruye el clustering de volatilidad, así que el nulo
+  prueba "cualquier estructura temporal", no específicamente la parte explotable tras costes.
+- **Estadístico primario:** mean R por trade de todos los trades OOS (costes ×1). También se reportan costes ×2, el Sharpe de la
+  cartera equiponderada, su DD y los resultados por año.
+- **Número efectivo de ensayos:** (a) a nivel de procedimiento: N = procedimientos evaluados en los años OOS según
+  `trials/procedure_ledger.jsonl` (2 en este run: genético y control), con DSR de la cartera OOS usando Var[SR] de los nulos;
+  (b) a nivel de estrategia, informativo: N_eff = ρ̄ + (1 − ρ̄)·N con ρ̄ = correlación media de retornos diarios de 300 estrategias
+  por archivo del genético.
+- **Presupuesto:** ~20.000 evaluaciones únicas por ventana (500 × 40 generaciones), elegido por tiempo de cómputo (~1 min por
+  procedimiento completo medido sobre datos permutados, sin mirar resultados reales).
+- **Evaluaciones de los nulos:** son sobre datos sintéticos (permutados), no se suman a `trials/ledger.jsonl` (que cuenta
+  evaluaciones sobre datos reales); se guardan en `runs/<run>/null_shard*.jsonl` y su total se reporta.
+- **Solapamiento a declarar:** el run de la Fase 2 ya usó 2004–2018 (incluidos 2015–2018 para seleccionar). Los años OOS de este
+  procedimiento no son vírgenes para el investigador (gramática y forma de la fitness son las mismas que en la Fase 2),
+  aunque el procedimiento no usa ninguna estrategia ni resultado de aquel run.
+
+## 2026-09-30 — Fase 2b, después del run `phase2b_wf_eurusd_r1`
+- **Veredicto reportado tal cual:** el procedimiento no demuestra edge (p = 0,109; costes ×2 negativos). No se aflojan umbrales ni se relanza.
+- **Incidente:** los 4 shards del nulo fallaron al arrancar (`KeyError: 'null'`: YAML interpreta la clave `null:` como `None`) sin escribir
+  ningún resultado. Fix solo en el script (`3eb92ec`), config intacto, y los shards se relanzaron con las mismas semillas.
+- **Análisis post hoc** (diferencia genético − control bajo el nulo, p-valor con costes ×2, mean R sin 2012): informativos, fuera del preregistro.
+- **N_eff por correlación:** hubo que regenerar los archivos del genético con las mismas semillas (180.000 evaluaciones de ingeniería,
+  contadas en el contador), porque el procedimiento no los guarda.

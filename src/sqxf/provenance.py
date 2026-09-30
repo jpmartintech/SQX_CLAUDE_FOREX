@@ -39,3 +39,14 @@ def code_version() -> str:
         return f"{__version__}+{commit}{'-dirty' if dirty else ''}"
     except (OSError, subprocess.CalledProcessError):
         return f"{__version__}+unknown"
+
+
+def require_committed(path: Path) -> None:
+    """Pre-registration guard: ``path`` must be tracked by git and have no uncommitted changes."""
+    rel = Path(path).resolve().relative_to(PROJECT_ROOT)
+    tracked = subprocess.run(["git", "ls-files", "--error-unmatch", str(rel)], cwd=PROJECT_ROOT,
+                             capture_output=True).returncode == 0
+    dirty = subprocess.run(["git", "status", "--porcelain", "--", str(rel)], cwd=PROJECT_ROOT, capture_output=True,
+                           text=True).stdout.strip()
+    if not tracked or dirty:
+        raise RuntimeError(f"{rel} must be committed before any run (pre-registration)")
