@@ -180,3 +180,25 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Veredicto del proxy:** válido para retornos H4/D1 (corr ≥ 0,9988 salvo SOL 0,9945), algo optimista en stops (perp toca un 3–8 % más);
   se añade al preregistro un chequeo informativo con precios de perpetuo. Recomendación a Jaime: usar precios de perpetuo donde existan.
 - **Preregistro `configs/crypto_c1.yaml`:** umbrales de aceptación PROPUESTOS por Claude, pendientes de revisión de Jaime; nada se ejecuta en la Parte 1.
+
+## 2026-10-01 — Fase C1 Parte 2: cambios al preregistro (revisión de Jaime vía /goal), ANTES de cualquier run
+`configs/crypto_c1.yaml` pasa de `crypto_c1_wf_r1` (nunca ejecutado) a **`crypto_c1_wf_r2`**. Cambios, uno por uno:
+1. **Nulo:** 60 → **200** permutaciones de días UTC completos dentro de su mes (mismo mapeo en las 8 monedas). Motivo: más resolución
+   del p-valor (1/201). Instrucción de Jaime.
+2. **Control emparejado:** **200** réplicas con el mismo número, sentido y duración de trades (ya eran 200; se confirma).
+3. **Criterio por moneda:** 3 → **4 de 5** monedas por separado con mean R ×1 > 0, **cada una con ≥ 50 trades fuera de muestra**
+   (las que tengan menos cuentan como no positivas). Elegí 50 porque con σ ≈ 1R el error estándar del mean R es ~0,14R: por debajo,
+   el signo de una moneda es casi ruido. Fijado sin ver resultados.
+4. **Nuevo criterio:** mean R ×1 agregado > 0 en **al menos 3 de las 5 ventanas** fuera de muestra.
+5. **Precios:** **perpetuo USDT-M desde la fecha de cambio de cada moneda y spot antes**. La fecha es el primer día completo
+   ≥ listado + 7 días, para saltar las barras planas de la semana de listado: BTC 2019-09-16, ETH 2019-12-05, BNB 2020-02-18,
+   LINK 2020-01-25, ADA 2020-02-08, SOL 2020-09-22, DOGE 2020-07-18, AVAX 2020-10-01. Todas las ventanas fuera de muestra (2021–2023)
+   usan precios de perpetuo. El filtro de liquidez de $20M y las bandas de slippage siguen midiéndose con el volumen **spot**.
+6. **Reparación de LINK:** solo afecta a barras de origen spot; en r2 la barra del 2020-03-12 10:45 viene del perpetuo (low 1,813, real),
+   así que no se repara nada. El chequeo informativo pasa a ser reoperar las estrategias seleccionadas sobre spot sin reparar,
+   que sirve a la vez de estrés de mechas y de medida del proxy.
+7. **Sin cambios:** comisión 0,05 % taker con estrés ×2 en costes y funding, el resto de umbrales, semillas, ventanas, genético,
+   selección y variantes (H4 principal, D1 variante), y DSR con N = 2 × 2,4.
+- **Datos usados:** solo M15 < 2023-11-01 (spot y perpetuo ya descargados). No hace falta descargar nada del bloque de selección
+  ni del holdout, así que no se descarga nada nuevo.
+- **Evaluaciones del nulo:** son sobre precios permutados y no se suman a `trials/ledger.jsonl`; sí las del genético sobre datos reales.

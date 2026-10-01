@@ -99,11 +99,12 @@ def test_bars_and_features_prefix_invariance(m15, freq, cut):
 def test_liquidity_median_uses_only_previous_days(m15):
     a = daily_liquidity(m15, 10)
     m2 = m15.copy()
-    day = 100
-    m2.loc[m2["day_id"] >= day, "volume"] *= 1000
+    day = pd.Timestamp("2021-04-11")
+    m2.loc[m2["ts_local"] >= day, "volume"] *= 1000
     b = daily_liquidity(m2, 10)
     pd.testing.assert_series_equal(a["trailing_median"].loc[:day], b["trailing_median"].loc[:day])
-    assert b["trailing_median"].loc[day + 1] > a["trailing_median"].loc[day + 1]
+    nxt = day + pd.Timedelta(days=1)
+    assert b["trailing_median"].loc[nxt] > a["trailing_median"].loc[nxt]
 
 
 def test_illiquid_days_cannot_signal():

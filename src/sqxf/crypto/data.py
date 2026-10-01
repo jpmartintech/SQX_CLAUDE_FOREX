@@ -162,9 +162,9 @@ def build_bars(m15: pd.DataFrame, freq: str) -> pd.DataFrame:
 
 # ------------------------------------------------------------------ liquidity (causal)
 def daily_liquidity(m15: pd.DataFrame, window_days: int) -> pd.DataFrame:
-    """Per UTC day: USD volume and the trailing median over the previous ``window_days`` days (excluding the day itself)."""
+    """Per UTC date: USD volume and the trailing median over the previous ``window_days`` days (excluding the day itself)."""
     usd = m15["volume"] * (m15["open"] + m15["high"] + m15["low"] + m15["close"]) / 4
-    day = usd.groupby(m15["day_id"]).sum()
+    day = usd.groupby(m15["ts_local"].dt.normalize()).sum()
     med = day.rolling(window_days, min_periods=window_days).median().shift(1)
     return pd.DataFrame({"usd": day, "trailing_median": med})
 
@@ -200,3 +200,37 @@ def funding_arrays(bar_open: pd.DatetimeIndex, rates: pd.Series, mean_abs: float
     fr_abs = np.where(scheduled & (idx < first), mean_abs, 0.0)
     inside = rates.index[(rates.index >= idx.min()) & (rates.index <= idx.max())]
     return fr, fr_abs, int(len(inside.difference(idx)))
+
+
+def read_perp_csv(path: Path) -> pd.DataFrame:
+    d = pd.read_csv(path)
+    out = pd.DataFrame({"ts_local": pd.to_datetime(d["datetime"], format="%Y-%m-%d %H:%M:%S").astype("datetime64[ns]")})
+    for c in ("open", "high", "low", "close", "volume"):
+        out[c] = d[c].astype(float)
+    return out
+
+
+def load_hybrid_m15(coin: str, switch_utc: str, cfg: CryptoConfig | None = None, until: str = "development",
+                    reason: str = "", repair: bool = True) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Prices: spot M15 before ``switch_utc`` and Binance USDT-M perpetual M15 from it. Returns ``(prices, spot)``: the spot
+    frame is kept for the liquidity filter (always measured on SPOT volume). Same sealing as ``load_spot_m15``; perpetual rows
+    are cut at the same end. Repairs apply to spot-sourced bars only (the LINK 2020-03-12 bar is perp-sourced in this mode)."""
+    cfg = cfg or CryptoConfig.load()
+    spot = load_spot_m15(coin, cfg, repair=repair, until=until, reason=reason)
+    end = spot["ts_local"].max() + pd.Timedelta(minutes=15)
+    perp = read_perp_csv(PROJECT_ROOT / cfg["perp_dir"] / f"{coin}_15M_perp.csv")
+    validate_utc_m15(perp, f"{coin} perp")
+    sw = pd.Timestamp(switch_utc)
+    perp = perp[(perp["ts_local"] >= sw) & (perp["ts_local"] < end)]
+    head = spot.loc[spot["ts_local"] < sw, ["ts_local", "open", "high", "low", "close", "volume", "repaired"]]
+    perp = perp.assign(repaired=False)
+    df = pd.concat([head, perp], ignore_index=True)
+    validate_utc_m15(df, f"{coin} hybrid")
+    df["source"] = np.where(df["ts_local"] < sw, "spot", "perp")
+    sw_cfg = cfg["suspect_wick"]
+    df["suspect_wick"] = suspect_wicks(df, sw_cfg["body_excess"], sw_cfg["neighbour_excess"])
+    df["ts_utc"] = df["ts_local"].dt.tz_localize("UTC")
+    df["no_trade"] = False
+    df["day_id"] = pd.factorize(df["ts_local"].dt.normalize(), sort=True)[0].astype(np.int64)
+    df.attrs.update({**spot.attrs, "prices": f"spot<{switch_utc}<=perp", "switch_utc": switch_utc})
+    return df, spot

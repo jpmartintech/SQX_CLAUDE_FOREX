@@ -29,12 +29,13 @@ NO_COST = Costs(pip=0.0, spread_pips=0.0, slippage_pips_per_side=0.0)
 
 
 def build_crypto_market(coin: str, m15: pd.DataFrame, cfg: CryptoConfig, freq: str = "4h",
-                        funding: pd.Series | None = None, funding_mean_abs: float = 0.0) -> Market:
+                        funding: pd.Series | None = None, funding_mean_abs: float = 0.0,
+                        liquidity_m15: pd.DataFrame | None = None) -> Market:
     bars = build_bars(m15, freq)
     feats = compute_features(bars)
     atr = feats[f"atr.{ATR_PERIOD}"]
-    liq = daily_liquidity(m15, cfg["liquidity"]["window_days"])
-    med = liq["trailing_median"].reindex(bars["day_id"].to_numpy()).to_numpy()
+    liq = daily_liquidity(m15 if liquidity_m15 is None else liquidity_m15, cfg["liquidity"]["window_days"])
+    med = liq["trailing_median"].reindex(bars["ts_local"].dt.normalize()).to_numpy()
     slip = slippage_for(np.nan_to_num(med, nan=-1.0), cfg["liquidity"]["slippage_bands"])
     liquid = med >= cfg["liquidity"]["min_median_usd"]
     with np.errstate(invalid="ignore"):
@@ -82,3 +83,16 @@ def load_crypto_market(coin: str, freq: str = "4h", cfg: CryptoConfig | None = N
     mean_abs = funding_mean_abs(read_funding(coin, cfg, pd.Timestamp(cfg["funding"]["mean_abs_window_end_utc"])),
                                 pd.Timestamp(cfg["funding"]["mean_abs_window_end_utc"]))
     return build_crypto_market(coin, m15, cfg, freq, rates, mean_abs)
+
+
+def load_hybrid_market(coin: str, switch_utc: str, freq: str = "4h", cfg: CryptoConfig | None = None,
+                       until: str = "development", reason: str = "") -> tuple[Market, pd.DataFrame, pd.DataFrame]:
+    """Market on perpetual prices from ``switch_utc`` (spot before), liquidity on spot volume. Returns (market, prices, spot)."""
+    from sqxf.crypto.data import load_hybrid_m15
+    cfg = cfg or CryptoConfig.load()
+    prices, spot = load_hybrid_m15(coin, switch_utc, cfg, until=until, reason=reason)
+    end = prices["ts_local"].max() + pd.Timedelta(minutes=15)
+    win_end = pd.Timestamp(cfg["funding"]["mean_abs_window_end_utc"])
+    mean_abs = funding_mean_abs(read_funding(coin, cfg, win_end), win_end)
+    mk = build_crypto_market(coin, prices, cfg, freq, read_funding(coin, cfg, end), mean_abs, liquidity_m15=spot)
+    return mk, prices, spot
