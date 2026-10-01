@@ -299,3 +299,9 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Nota de transparencia sobre la Parte 2:** el cargador (`load_m15`) devuelve todo lo anterior a 2023 y después se recortaba en
   2019-01-01. Las filas de 2019–2022 estuvieron en memoria durante esos runs, aunque ningún cálculo las usó. Para este control se usa
   un cargador que filtra al leer el parquet (`load_m15_period`) y solo materializa 2004–2014.
+- **Resultado del control** (`docs/reports/positive_control.md`):
+  - Parte A: CAL1, R1 y R4 pierden en bruto; solo R3 es positiva en bruto y la vuelven negativa los costes.
+  - Parte B: falsos positivos 0/50; potencia 0 / 0 / 0,04 / 0,16 para +2 / +5 / +10 / +20 pips.
+  - Parte C: ningún φ ≤ 0,12 hace aceptable la calibración.
+  - Diagnóstico de potencia en `docs/BLOCKERS.md`, sin cambiar ningún umbral.
+  - Merge de `phase-s-control` a `main` con pytest en verde.

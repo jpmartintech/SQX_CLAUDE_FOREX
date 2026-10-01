@@ -1,6 +1,13 @@
 # PROGRESS
 
 ## Fase actual
+**Control positivo de la Fase S hecho** (`docs/reports/positive_control.md`, diagnóstico en `docs/BLOCKERS.md`):
+- El test predictivo tiene 0 % de falsos positivos pero potencia ≤ 16 % incluso con +20 pips netos a 24 h en 4 años: el nulo de la
+  Parte 2 no descarta edges grandes.
+- Las pérdidas de la Parte 2 ya existen en bruto (salvo R3).
+- La calibración no es rentable en mundos con φ ≤ 0,12.
+- No se cambió ningún umbral. Esperando decisión de Jaime.
+
 **Fase S, Parte 2 hecha (`v0.s2`):** pasada única preregistrada en la validación 2015–2018 (`docs/reports/phase-s2.md`). Test predictivo
 0/45 estados-horizonte; calibración H4 con la firma esperada pero −0,090R (PF 0,76); R1–R4 ninguna aceptada (R2 sin trades: su
 condición no se da nunca); DSR ≤ 0,016 con N = 13,92. Contador: 4.489.850 evaluaciones. Swap aún sin verificar con el broker.

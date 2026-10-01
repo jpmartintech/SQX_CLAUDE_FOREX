@@ -1,0 +1,167 @@
+{
+ "B": {
+  "replicas": 50,
+  "null": {
+   "family_wise_fpr": 0.0,
+   "per_test_fpr": 0.0,
+   "target_null_mean_net": -2.796068952456994,
+   "components_mean_count": {
+    "holm": 0.02,
+    "min_mean": 14.32,
+    "stability": 6.36,
+    "replica": 13.92
+   }
+  },
+  "edges": {
+   "2": {
+    "power": 0.0,
+    "components": {
+     "holm": 0.0,
+     "min_mean": 0.54,
+     "stability": 0.14,
+     "replica": 0.52
+    },
+    "realised_edge_pips_mean": 3.402824072897843,
+    "realised_edge_pips_sd": 1.5619139512195073,
+    "target_mean_net_mean": 0.6067551204408494,
+    "p_raw_median": 0.42435,
+    "p_holm_median": 1.0,
+    "other_predictive_any": 0.02,
+    "state_agreement_mean": 0.8802893772893772,
+    "target_bars_mean": 2705.6
+   },
+   "5": {
+    "power": 0.0,
+    "components": {
+     "holm": 0.0,
+     "min_mean": 0.76,
+     "stability": 0.22,
+     "replica": 0.76
+    },
+    "realised_edge_pips_mean": 6.399841706643381,
+    "realised_edge_pips_sd": 2.3589210454603693,
+    "target_mean_net_mean": 3.603772754186387,
+    "p_raw_median": 0.26749999999999996,
+    "p_holm_median": 1.0,
+    "other_predictive_any": 0.04,
+    "state_agreement_mean": 0.8497037545787545,
+    "target_bars_mean": 2916.16
+   },
+   "10": {
+    "power": 0.04,
+    "components": {
+     "holm": 0.04,
+     "min_mean": 0.84,
+     "stability": 0.34,
+     "replica": 0.9
+    },
+    "realised_edge_pips_mean": 11.39951087365557,
+    "realised_edge_pips_sd": 3.127252683426666,
+    "target_mean_net_mean": 8.603441921198577,
+    "p_raw_median": 0.10980000000000001,
+    "p_holm_median": 1.0,
+    "other_predictive_any": 0.1,
+    "state_agreement_mean": 0.8068859890109892,
+    "target_bars_mean": 3225.7
+   },
+   "20": {
+    "power": 0.16,
+    "components": {
+     "holm": 0.2,
+     "min_mean": 0.98,
+     "stability": 0.52,
+     "replica": 1.0
+    },
+    "realised_edge_pips_mean": 21.703836589738227,
+    "realised_edge_pips_sd": 4.889907070591811,
+    "target_mean_net_mean": 18.907767637281232,
+    "p_raw_median": 0.00725,
+    "p_holm_median": 0.3153,
+    "other_predictive_any": 0.18,
+    "state_agreement_mean": 0.7401369047619047,
+    "target_bars_mean": 3770.18
+   }
+  }
+ },
+ "C": {
+  "0.0": {
+   "replicas": 20,
+   "accepted_share": 0.0,
+   "mean_r_x1": -0.046057126752362273,
+   "mean_r_x2": -0.08888509863755724,
+   "pf_median": 0.8569038031295192,
+   "dsr_median": 0.000145403297369312,
+   "trades_mean": 1170.35,
+   "checks_share": {
+    "pooled_mean_r_x1_gt": 0.1,
+    "pooled_mean_r_x2_gt": 0.0,
+    "pooled_profit_factor_ge": 0.0,
+    "pairs_positive_min": 0.1,
+    "years_positive_min": 0.0,
+    "pooled_min_trades": 1.0,
+    "dsr_ge": 0.0
+   }
+  },
+  "0.03": {
+   "replicas": 20,
+   "accepted_share": 0.0,
+   "mean_r_x1": -0.04112222844658174,
+   "mean_r_x2": -0.08356879280126858,
+   "pf_median": 0.8849520849394815,
+   "dsr_median": 0.0003506681693169478,
+   "trades_mean": 1204.7,
+   "checks_share": {
+    "pooled_mean_r_x1_gt": 0.1,
+    "pooled_mean_r_x2_gt": 0.0,
+    "pooled_profit_factor_ge": 0.0,
+    "pairs_positive_min": 0.1,
+    "years_positive_min": 0.0,
+    "pooled_min_trades": 1.0,
+    "dsr_ge": 0.0
+   }
+  },
+  "0.06": {
+   "replicas": 20,
+   "accepted_share": 0.0,
+   "mean_r_x1": -0.03578905078843771,
+   "mean_r_x2": -0.07786734234137258,
+   "pf_median": 0.8981443827000196,
+   "dsr_median": 0.0005803543432726932,
+   "trades_mean": 1239.65,
+   "checks_share": {
+    "pooled_mean_r_x1_gt": 0.2,
+    "pooled_mean_r_x2_gt": 0.0,
+    "pooled_profit_factor_ge": 0.0,
+    "pairs_positive_min": 0.15,
+    "years_positive_min": 0.0,
+    "pooled_min_trades": 1.0,
+    "dsr_ge": 0.0
+   }
+  },
+  "0.12": {
+   "replicas": 20,
+   "accepted_share": 0.0,
+   "mean_r_x1": -0.023142639350502533,
+   "mean_r_x2": -0.06443350013468913,
+   "pf_median": 0.9335174072877913,
+   "dsr_median": 0.0023984888628315604,
+   "trades_mean": 1317.5,
+   "checks_share": {
+    "pooled_mean_r_x1_gt": 0.25,
+    "pooled_mean_r_x2_gt": 0.05,
+    "pooled_profit_factor_ge": 0.05,
+    "pairs_positive_min": 0.2,
+    "years_positive_min": 0.05,
+    "pooled_min_trades": 1.0,
+    "dsr_ge": 0.0
+   }
+  }
+ },
+ "C_pipeline_checks": {
+  "python_equals_numba": true,
+  "trades_compared": 224,
+  "states_unchanged_before_cut": true,
+  "trades_unchanged_before_cut": true,
+  "trades_before_cut": 149
+ }
+}
