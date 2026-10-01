@@ -1,0 +1,27 @@
+# Crypto module (C1) — data contract. Decisions by Jaime (2026-09-30); see docs/CRYPTO_DATA_AUDIT.md and CLAUDE.md "Cripto".
+spot_dir: data/raw/crypto            # <COIN>_15M.csv, UTC, bar-open timestamps (the provider *_1H.csv files are ignored)
+perp_dir: data/raw/crypto_perp       # <COIN>_15M_perp.csv and <COIN>_funding.csv (public Binance API, pre-holdout only)
+coins_per_coin: [BTCUSDT, ETHUSDT, BNBUSDT, LINKUSDT, ADAUSDT]   # validated coin by coin
+coins_aggregate_only: [SOLUSDT, DOGEUSDT, AVAXUSDT]             # only inside the aggregate
+holdout_start_utc: "2024-11-01 00:00:00"          # sealed for every coin (>= last 18 months of each)
+selection_block_start_utc: "2023-11-01 00:00:00"  # 2023-11-01 -> 2024-10-31: never seen by generators; logged access only
+liquidity:
+  window_days: 90                   # trailing median of daily USD volume, computed up to the PREVIOUS UTC day
+  min_median_usd: 20000000
+  slippage_bands:                   # per side, by the same trailing median (USD): [lower bound, slippage fraction]
+    - [500000000, 0.0001]
+    - [100000000, 0.0003]
+    - [20000000, 0.0005]
+costs:
+  taker_fee_per_side: 0.0005        # USDT-M perpetual taker fee (to verify by Jaime)
+funding:
+  event_hours_utc: [0, 8, 16]
+  pre_listing_rule: mean_abs_both_sides   # before each perpetual existed: charge mean |rate| to longs AND shorts
+  mean_abs_window_end_utc: "2023-11-01 00:00:00"  # mean |rate| computed on the coin's history before the selection block
+execution:
+  max_leverage: 1.0                 # nominal exposure <= 1x equity
+  risk_per_trade: 0.005
+  days_per_year: 365
+repairs:                            # applied ONLY to the derived copy; the stress variant uses the raw bar
+  - {coin: LINKUSDT, bar_utc: "2020-03-12 10:45:00", rule: "low = min(open, close)", reason: "low 0.0001 (-99.996 % wick), impossible print"}
+suspect_wick: {body_excess: 0.10, neighbour_excess: 0.08}   # flag only (kept as real)

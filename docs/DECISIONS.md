@@ -162,3 +162,58 @@ Formato: fecha — decisión. Alternativas. Motivo.
   Accesos en `trials/crypto_holdout_access.jsonl` (2 ejecuciones del script). Propuesta pendiente: holdout común desde 2024-11-01.
 - No se ha ejecutado ninguna estrategia ni ningún backtest cripto; nada se suma a `trials/ledger.jsonl`.
 - `CLAUDE.md` no se modifica: la sección cripto queda como diff propuesto en `docs/proposals/CLAUDE_md_crypto.diff`.
+
+## 2026-09-30 — Fase C1, Parte 1 (instrucción de Jaime vía /goal)
+- Merges: `phase-2c-6pairs` → `main` (tag `v0.2c`) y `phase-c0-crypto-audit` → `main` (tag `v0.c0`). Rama `phase-c1-crypto`.
+- **Remoto:** no hay `origin` y `gh` no está instalado en WSL; crear el repo requiere autenticación interactiva de Jaime (ver PROGRESS).
+- **CLAUDE.md:** aplicada la sección "Cripto (módulo aparte)" del diff propuesto, actualizada con las decisiones de Jaime (universo sin TRX,
+  holdout común 2024-11-01, perpetuos con spot como proxy, comisión 0,05 %, reparación de LINK solo en la copia derivada).
+- **Datos de perpetuos:** API pública de Binance sin claves (instrucción expresa de Jaime, excepción a AUTONOMY §3 "red externa"),
+  solo < 2024-11-01; exposición accidental de 3 tasas de funding de 2026 en la prueba de conectividad, registrada.
+- **Contrato del evaluador ampliado** (retrocompatible, forex bit a bit idéntico sobre 300 estrategias H1/M15 y 65.981 trades):
+  `cost_rel` por barra de señal, funding con signo y `fr_abs` a ambos lados en la apertura de cada barra de ejecución posterior a la de
+  entrada (conservador: una salida en la apertura de la barra del evento también paga), estrés de funding solo sobre pagos,
+  `frac = min(risk_per_trade, max_lev · riesgo/entrada)`.
+- **Funding antes del listado:** media de |tasa| del perpetuo de cada moneda antes del bloque de selección, en cada hora 00/08/16 UTC
+  anterior al primer evento real, a largos y cortos.
+- **D1:** la ejecución solo puede ser M15 (los eventos de 08/16 UTC caen dentro de la barra diaria).
+- **Veredicto del proxy:** válido para retornos H4/D1 (corr ≥ 0,9988 salvo SOL 0,9945), algo optimista en stops (perp toca un 3–8 % más);
+  se añade al preregistro un chequeo informativo con precios de perpetuo. Recomendación a Jaime: usar precios de perpetuo donde existan.
+- **Preregistro `configs/crypto_c1.yaml`:** umbrales de aceptación PROPUESTOS por Claude, pendientes de revisión de Jaime; nada se ejecuta en la Parte 1.
+
+## 2026-10-01 — Fase C1 Parte 2: cambios al preregistro (revisión de Jaime vía /goal), ANTES de cualquier run
+`configs/crypto_c1.yaml` pasa de `crypto_c1_wf_r1` (nunca ejecutado) a **`crypto_c1_wf_r2`**. Cambios, uno por uno:
+1. **Nulo:** 60 → **200** permutaciones de días UTC completos dentro de su mes (mismo mapeo en las 8 monedas). Motivo: más resolución
+   del p-valor (1/201). Instrucción de Jaime.
+2. **Control emparejado:** **200** réplicas con el mismo número, sentido y duración de trades (ya eran 200; se confirma).
+3. **Criterio por moneda:** 3 → **4 de 5** monedas por separado con mean R ×1 > 0, **cada una con ≥ 50 trades fuera de muestra**
+   (las que tengan menos cuentan como no positivas). Elegí 50 porque con σ ≈ 1R el error estándar del mean R es ~0,14R: por debajo,
+   el signo de una moneda es casi ruido. Fijado sin ver resultados.
+4. **Nuevo criterio:** mean R ×1 agregado > 0 en **al menos 3 de las 5 ventanas** fuera de muestra.
+5. **Precios:** **perpetuo USDT-M desde la fecha de cambio de cada moneda y spot antes**. La fecha es el primer día completo
+   ≥ listado + 7 días, para saltar las barras planas de la semana de listado: BTC 2019-09-16, ETH 2019-12-05, BNB 2020-02-18,
+   LINK 2020-01-25, ADA 2020-02-08, SOL 2020-09-22, DOGE 2020-07-18, AVAX 2020-10-01. Todas las ventanas fuera de muestra (2021–2023)
+   usan precios de perpetuo. El filtro de liquidez de $20M y las bandas de slippage siguen midiéndose con el volumen **spot**.
+6. **Reparación de LINK:** solo afecta a barras de origen spot; en r2 la barra del 2020-03-12 10:45 viene del perpetuo (low 1,813, real),
+   así que no se repara nada. El chequeo informativo pasa a ser reoperar las estrategias seleccionadas sobre spot sin reparar,
+   que sirve a la vez de estrés de mechas y de medida del proxy.
+7. **Sin cambios:** comisión 0,05 % taker con estrés ×2 en costes y funding, el resto de umbrales, semillas, ventanas, genético,
+   selección y variantes (H4 principal, D1 variante), y DSR con N = 2 × 2,4.
+- **Datos usados:** solo M15 < 2023-11-01 (spot y perpetuo ya descargados). No hace falta descargar nada del bloque de selección
+  ni del holdout, así que no se descarga nada nuevo.
+- **Evaluaciones del nulo:** son sobre precios permutados y no se suman a `trials/ledger.jsonl`; sí las del genético sobre datos reales.
+
+## 2026-10-01 — Fase C1 Parte 2, después del run `crypto_c1_wf_r2`
+- **Veredicto reportado tal cual:** ninguna variante cumple (H4 2/8 criterios, D1 3/8). No se aflojan umbrales ni se relanza.
+- **Nulo parcial en el informe (44/200):** el nulo completo (~8–9 h) no cabe en el límite de turnos. Los 11 shards siguen en segundo
+  plano con las semillas preregistradas y el informe se regenera con `scripts/crypto_c1.py report`. El veredicto no depende del nulo
+  (fallan criterios deterministas). No es un cambio del preregistro: es el mismo nulo, aún incompleto.
+- **AVAX H4 (+0,277R, t = 4,9)** revisado como posible "demasiado bueno": PF 1,52, 3 ventanas, trades solapados entre clones, datos limpios;
+  sin bug. Los t por trade sobrestiman la evidencia porque las top-10 se solapan; los contrastes válidos son el nulo, el control y el DSR.
+
+## 2026-10-01 — Cierre de C1 (instrucción de Jaime: parar el nulo "en 44 de 200")
+- Al ir a detener los procesos, **el nulo ya había completado las 200 permutaciones** (200 `j` distintos, 0…199; el último shard
+  terminó a las 15:12). No había nada que parar. Se regeneró el informe con el nulo completo: H4 p = 0,378 y DSR 0,074; D1 p = 0,129
+  y DSR 0,242. **Veredicto sin cambios** (ninguna variante cumple). `docs/reports/phase-c1.md` actualizado; el intermedio de 44
+  permutaciones se conserva en `phase-c1_run_interim.json`.
+- Merge de `phase-c1-crypto` a `main` con tag `v0.c1`.

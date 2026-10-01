@@ -64,7 +64,8 @@ def next_signal(pred_bits, rows, n_rows, base_bits, t, t1):
 
 @njit(cache=True)
 def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
-          direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1, record, trades, agg):
+          direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1, record, trades, agg,
+          cost_rel, fr, fr_abs, funding_mult, max_lev):
     equity = 1.0
     peak = 1.0
     max_dd = 0.0
@@ -92,6 +93,10 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
         risk = sl_atr * a
         k0 = h1_start[e]
         entry = o[k0]
+        cst = cost + cost_rel[t] * entry
+        frac = max_lev * risk / entry
+        if risk_frac < frac:
+            frac = risk_frac
         if direction == 1:
             stop = entry - risk
             target = entry + tp_atr * a
@@ -106,8 +111,14 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
         kend = h1_end[last]
         reason = 0
         px = 0.0
+        fund = 0.0
         k = k0
         while k < kend:
+            if k > k0:
+                pay = -direction * fr[k] * o[k] - fr_abs[k] * o[k]
+                if pay < 0:
+                    pay *= funding_mult
+                fund += pay
             if direction == 1:
                 if o[k] <= stop:
                     reason = 2
@@ -138,10 +149,10 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
                 break
             # Still open after bar k: mark to market (adverse extreme for drawdown, close for the peak).
             adv = l[k] if direction == 1 else h[k]
-            mtm = equity * (1.0 + risk_frac * ((direction * (adv - entry) - cost) / risk))
+            mtm = equity * (1.0 + frac * ((direction * (adv - entry) - cst + fund) / risk))
             if 1.0 - mtm / peak_m > max_dd_m:
                 max_dd_m = 1.0 - mtm / peak_m
-            mtm = equity * (1.0 + risk_frac * ((direction * (c[k] - entry) - cost) / risk))
+            mtm = equity * (1.0 + frac * ((direction * (c[k] - entry) - cst + fund) / risk))
             if mtm > peak_m:
                 peak_m = mtm
             k += 1
@@ -154,11 +165,11 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
             adv = px
         else:
             adv = l[k] if direction == 1 else h[k]
-        mtm = equity * (1.0 + risk_frac * ((direction * (adv - entry) - cost) / risk))
+        mtm = equity * (1.0 + frac * ((direction * (adv - entry) - cst + fund) / risk))
         if 1.0 - mtm / peak_m > max_dd_m:
             max_dd_m = 1.0 - mtm / peak_m
         x = h1_of[k]
-        r = (direction * (px - entry) - cost) / risk
+        r = (direction * (px - entry) - cst + fund) / risk
         d = day_id[k]
         if d != cur_day:
             if cur_day >= 0:
@@ -167,7 +178,7 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
                 s2_daily += dr * dr
             cur_day = d
             day_start_eq = equity
-        equity = equity * (1.0 + risk_frac * r)
+        equity = equity * (1.0 + frac * r)
         if equity > peak_m:
             peak_m = equity
         if 1.0 - equity / peak_m > max_dd_m:
@@ -205,6 +216,8 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
             trades[n, 10] = r
             trades[n, 11] = reason
             trades[n, 12] = equity
+            trades[n, 13] = fund
+            trades[n, 14] = frac
         n += 1
         t = next_signal(pred_bits, rows, n_rows, base_bits, x, t1)
     if cur_day >= 0:
@@ -238,7 +251,8 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
 
 @njit(cache=True, parallel=True)
 def evaluate_batch_light(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
-                         directions, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1):
+                         directions, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1,
+                         cost_rel, fr, fr_abs, funding_mult, max_lev):
     """Aggregates for a batch of strategies (one row each). ``rows[s, :n_rows[s]]`` are predicate rows."""
     n_strat = rows.shape[0]
     out = np.zeros((n_strat, N_AGG))
@@ -247,19 +261,20 @@ def evaluate_batch_light(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_e
         agg = np.zeros(N_AGG)
         _core(pred_bits, rows[s], n_rows[s], base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
               directions[s], sl_atr[s], tp_atr[s], max_bars[s], delay, cost, risk_frac, days_per_year, t0, t1,
-              False, dummy, agg)
+              False, dummy, agg, cost_rel, fr, fr_abs, funding_mult, max_lev)
         out[s, :] = agg
     return out
 
 
 @njit(cache=True)
 def simulate_rich(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
-                  direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1):
+                  direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1,
+                  cost_rel, fr, fr_abs, funding_mult, max_lev):
     """Full trade records (``float64[n, N_TRADE]``) and the aggregate vector for one strategy."""
     cap = max(t1 - t0, 0) + 1
     trades = np.empty((cap, N_TRADE))
     agg = np.zeros(N_AGG)
     n = _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
               direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1,
-              True, trades, agg)
+              True, trades, agg, cost_rel, fr, fr_abs, funding_mult, max_lev)
     return trades[:n].copy(), agg

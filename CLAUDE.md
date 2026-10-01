@@ -42,7 +42,7 @@ Copia de https://github.com/jpmartintech/SQX_ENGINE (clonada en `reference/`, ig
 5. **Sharpe por trade × √252**, no un Sharpe temporal.
 6. **Fitness genético en muestra** sobre todo Development, con el término de drawdown constante por el bug 2.
 7. **Configs base sin costes** (`spread: 0`, `slippage: 0`).
-8. **Se desvió a cripto/FTMO/prop firms** y acumuló ~75 scripts versionados sin contrato común. Aquí solo forex (dato base M15, señales en H1).
+8. **Se desvió a cripto/FTMO/prop firms** y acumuló ~75 scripts versionados sin contrato común. Aquí el núcleo es forex (dato base M15, señales en H1); cripto solo como **módulo aparte** con su propio contrato (ver "Cripto").
 9. Tests que no cubren `entry_delay`. Los 14 tests que fallan en ese repo son por artefactos ausentes, salvo `test_crypto_portfolio_v3` (`1.02 <= 1.0`).
 
 ## Datos
@@ -61,6 +61,32 @@ Copia de https://github.com/jpmartintech/SQX_ENGINE (clonada en `reference/`, ig
 - **Causalidad H1:** una feature de la barra H1 `t` está disponible en `t+1h`; la entrada más temprana es el open de la primera M15 con `ts >= t+1h`.
   Señales en H1; SL/TP/salidas se simulan sobre el camino M15 (el kernel rico usa M15).
 - Nunca ordenes, dedupliques ni rellenes en silencio: reporta y decide. El loader falla ante desorden o duplicados.
+
+## Cripto (módulo aparte)
+
+- **Separación:** código en `src/sqxf/crypto/` (datos, splits, costes); reutiliza evaluador, features y embudo, pero **ninguna lógica EET,
+  ni máscara de festivos, ni `trading_date` de forex**. Configs propios en `configs/crypto_*.yaml`. Auditoría: `docs/CRYPTO_DATA_AUDIT.md`.
+- **Datos:** M15 spot de Binance (inferido; USDT) en `data/raw/crypto/<COIN>USDT_15M.csv` (ignorado por git) con `SHA256SUMS.txt` y
+  manifiesto `docs/crypto_manifest.json`. CSV `datetime,open,high,low,close,volume`, timestamp = apertura de barra, **UTC** (verificado).
+  Volumen en moneda base (redondeado a enteros salvo BTC). Los `*_1H.csv` del proveedor no se usan.
+- **Universo (decisión de Jaime, C1):** validación por moneda en BTC, ETH, BNB, LINK, ADA; SOL, DOGE, AVAX solo en el agregado; TRX fuera.
+  Son supervivientes: sesgo de supervivencia declarado en todo resultado de cartera.
+- **Instrumento modelado:** perpetuos USDT-M de Binance con precios **spot como proxy** (validado en `docs/reports/crypto_spot_vs_perp.md`),
+  largos y cortos, exposición nominal máxima 1x el capital, funding histórico cada 8 h (00/08/16 UTC) a las posiciones abiertas
+  (largos pagan si es positivo); antes de existir cada perpetuo se cobra el funding medio en valor absoluto a ambos lados.
+  Datos de perpetuos y funding en `data/raw/crypto_perp/` (solo anteriores al holdout, con SHA256).
+- **Holdout cripto sellado:** desde 2024-11-01 00:00 UTC para todas las monedas (≥ 18 últimos meses de cada una). Calidad puede leerlo;
+  rendimiento no. Accesos en `trials/crypto_holdout_access.jsonl`. Bloque de selección 2023-11-01 → 2024-10-31; walk-forward OOS
+  2021-05 → 2023-10 (24 m entrenamiento / 6 m prueba).
+- **Barras derivadas:** H1 `[t, t+1h)`, H4 `[t, t+4h)` con t múltiplo de 4 h, D1 `[00:00, 24:00)` UTC (cierre 00:00 UTC), W1 lunes 00:00 UTC.
+  Completa = todas sus M15; incompleta se conserva y no genera señales; sin rellenar huecos (las paradas del exchange son huecos reales).
+  Multi-marco: solo barras del marco mayor con `close_ts ≤` cierre de la barra de señal.
+- **Liquidez:** una moneda solo genera señales si la mediana móvil de 90 días (hasta el día anterior) del volumen diario en USD ≥ $20M.
+- **Costes cripto siempre presentes:** comisión de perpetuos 0,05 % taker por lado por defecto (verificar Jaime) + slippage por tramo de
+  liquidez (≥$500M 0,01 %, $100–500M 0,03 %, $20–100M 0,05 % por lado) + funding. Estrés ×2 en costes y funding pagado.
+- **Barras sospechosas:** flag `suspect_wick`; se conservan como reales. Única corrección, solo en la copia derivada: LINKUSDT 2020-03-12 10:45
+  (low 0,0001 → min(open, close)); variante de estrés con los datos sin corregir. El CSV original no se toca.
+- **Ensayos:** el número efectivo de series independientes entre monedas es ~2,4 de 9 (PCA); validar en "9 monedas" no son 9 pruebas.
 
 ## Reglas de corrección (siempre)
 

@@ -1,0 +1,108 @@
+# Crypto C1 — walk-forward evaluation of the discovery PROCEDURE on Binance USDT-M perpetuals.
+# PRE-REGISTERED. r1 (Part 1, aa7b994) was never run. r2 = Jaime's review (2026-10-01): perpetual prices where they exist,
+# 200 null permutations, 200 matched-control replicas, per-coin 4 of 5 with a minimum of OOS trades, >= 3 of 5 positive
+# windows; every other threshold unchanged. Each change is in DECISIONS.md. Committed BEFORE running; no relaunch with
+# another seed; a change needs a new run_name.
+run_name: crypto_c1_wf_r2
+seed: 20261001                     # coin c, fold i: seed + coin_seed_offsets[c] + i (GA, random control and null alike)
+coin_seed_offsets: {BTCUSDT: 0, ETHUSDT: 1000, BNBUSDT: 2000, LINKUSDT: 3000, ADAUSDT: 4000, SOLUSDT: 5000,
+                    DOGEUSDT: 6000, AVAXUSDT: 7000}
+data_contract: configs/crypto_data.yaml   # holdout 2024-11-01 sealed; selection block 2023-11-01..2024-10-31 untouched here
+universe:
+  per_coin: [BTCUSDT, ETHUSDT, BNBUSDT, LINKUSDT, ADAUSDT]
+  aggregate_only: [SOLUSDT, DOGEUSDT, AVAXUSDT]
+  excluded: [TRXUSDT]
+data:
+  until: development               # every market is built from M15 < 2023-11-01 (loader default)
+  repair: true                     # applies to spot-sourced bars only (LINK 2020-03-12 10:45 is perp-sourced in r2: low 1.813)
+  spot_raw_check: report-only      # the selected strategies re-traded on raw (unrepaired) SPOT prices (proxy + wick stress)
+prices:                            # perpetual M15 prices from these UTC dates (first full day >= listing + 7 days, skipping
+  source: spot_before_switch_then_usdt_m_perpetual   # the flat placeholder bars of the listing week); spot before
+  perp_from_utc: {BTCUSDT: "2019-09-16", ETHUSDT: "2019-12-05", BNBUSDT: "2020-02-18", LINKUSDT: "2020-01-25",
+                  ADAUSDT: "2020-02-08", SOLUSDT: "2020-09-22", DOGEUSDT: "2020-07-18", AVAXUSDT: "2020-10-01"}
+  liquidity_volume: spot           # the $20M trailing-median filter and the slippage bands always use SPOT volume
+instrument:
+  model: usdt_m_perpetual          # perpetual prices where they exist (all OOS windows); spot before each listing
+  directions: long_and_short
+  max_leverage: 1.0
+  risk_per_trade: 0.005
+  taker_fee_per_side: 0.0005       # to be verified by Jaime
+  slippage: liquidity_bands        # configs/crypto_data.yaml
+  funding: historical_8h_at_bar_opens; pre_listing mean_abs_both_sides
+  cost_stress: {cost_multiplier: 2.0, funding_multiplier: 2.0}   # funding multiplier applies to payments only
+days_per_year: 365
+
+variants:                          # the ONLY two procedures of this run (Bonferroni over 2)
+  h4:                              # primary
+    signal_timeframe: 4h
+    exec_timeframe_train: SIG      # H4 bars (funding events fall on H4 opens)
+    exec_timeframe_oos: M15
+  d1:                              # pre-registered variant
+    signal_timeframe: 1D
+    exec_timeframe_train: M15      # funding at 08/16 UTC falls inside D1 bars -> walk the M15 path
+    exec_timeframe_oos: M15
+
+folds:                             # rolling: train 24 months -> test the next 6 months; only test windows are concatenated
+  oos_windows:
+    - ["2021-05-01", "2021-11-01"]
+    - ["2021-11-01", "2022-05-01"]
+    - ["2022-05-01", "2022-11-01"]
+    - ["2022-11-01", "2023-05-01"]
+    - ["2023-05-01", "2023-11-01"]
+  train_months: 24
+  train_blocks: 2                  # fitness blocks of 12 months
+
+# ---- identical to the forex procedure (configs/wf_procedure.yaml, configs/wf_6pairs.yaml "base") ----
+genetic: {population: 500, generations: 40, max_unique_evaluations: 20000, elite: 10, tournament: 4, crossover_rate: 0.7,
+          mutation_rate: 0.4, immigrant_rate: 0.1, max_predicates: 4}
+fitness: {min_trades_per_block: 20}   # worst per-block t-statistic of R, costs and funding x1
+selection:                          # inside the training window only; x2 = costs AND funding x2
+  min_trades: 60
+  min_profit_factor: 1.10
+  min_mean_r: 0.03
+  cost_x2_min_mean_r: 0.0
+  top_k: 10
+
+control_matched_random:            # does the timing beat random entries with the SAME exposure and direction mix?
+  replicas: 200                    # per coin and OOS window
+  rule: >-
+    for every selected strategy, replicate its OOS trades with random entry signal bars among the tradable bars of the
+    same window: same number of trades, same direction of each trade, same bars held, same stop distance (R denominator),
+    non-overlapping, exit at the close of the last held bar; same costs, slippage band and funding rules
+  statistic: pooled_oos_mean_r_x1
+  p_value: "(1 + #{replica >= observed}) / (1 + replicas)"
+
+"null":
+  method: utc_day_block_permutation_within_month   # complete UTC days (96 M15 in all 8 coins) permuted within their month,
+                                                   # SAME mapping for all coins; funding and volumes stay on the calendar
+  n_permutations: 200
+  seed_base: 991000
+  statistic: pooled_oos_mean_r_x1
+  p_value: "(1 + #{null >= observed}) / (1 + n_permutations)"
+
+benchmarks:                        # reported, not gates
+  buy_and_hold: [spot_long_equal_weight_1x, perp_long_equal_weight_1x_with_funding]   # same OOS windows, one round trip each
+  excluding_2021: trades with entry in 2021 removed; buy & hold windows starting in 2021 removed
+  long_short: pooled OOS mean R reported separately for long and short trades
+
+effective_trials:
+  independent_series: 2.4          # PCA participation ratio of the 9 coins (docs/CRYPTO_DATA_AUDIT.md section 8)
+  n_procedures: 2                  # h4 + d1 (crypto procedure ledger: trials/crypto_procedure_ledger.jsonl)
+  dsr_n: "n_procedures x independent_series = 4.8"
+  dsr_var_sr: null_runs            # Var[SR] of the same variant's OOS portfolio across the null permutations
+
+acceptance:                        # reviewed by Jaime (r2). A variant "has edge" only if ALL hold.
+  pooled_mean_r_x1_gt: 0.0
+  pooled_mean_r_x2_gt: 0.0         # costs and funding x2
+  pooled_mean_r_x1_excluding_2021_gt: 0.0
+  p_value_null_le: 0.025           # Bonferroni over the 2 variants
+  p_value_matched_control_le: 0.025
+  portfolio_dsr_ge: 0.95           # equal-weight portfolio of the 8 coins (daily, UTC), N = 4.8
+  per_coin_positive_x1_min: 4      # of the 5 per-coin coins, pooled OOS mean R x1 > 0 in at least 4 ...
+  per_coin_min_oos_trades: 50      # ... each with >= 50 OOS trades (a coin with fewer counts as NOT positive)
+  windows_positive_min: 3          # pooled (all 8 coins) OOS mean R x1 > 0 in at least 3 of the 5 windows
+
+too_good:                          # stop and look for a bug first (AUTONOMY.md 3)
+  max_profit_factor: 2.0
+  min_trades_for_pf_check: 50
+  max_sharpe: 3.0

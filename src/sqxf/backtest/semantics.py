@@ -29,6 +29,6 @@ N_AGG = len(AGG_FIELDS)
 
 # Trade record layout (float64 columns)
 TRADE_FIELDS = ("signal_idx", "entry_idx", "exit_idx", "entry_exec", "exit_exec", "entry_price", "exit_price",
-                "stop", "target", "risk", "r", "reason", "equity_after")
+                "stop", "target", "risk", "r", "reason", "equity_after", "funding", "frac")
 TRADE = {name: i for i, name in enumerate(TRADE_FIELDS)}
 N_TRADE = len(TRADE_FIELDS)

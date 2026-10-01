@@ -1,0 +1,115 @@
+{
+ "generated_utc": "2026-09-30T16:46:04.532446+00:00",
+ "source": "https://fapi.binance.com public endpoints (no keys)",
+ "holdout_start_utc": "2024-11-01T00:00:00Z",
+ "files": {
+  "ADAUSDT_15M_perp.csv": {
+   "sha256": "1579edc33ebfa61fff1baff2a4119f7ffb4c315ea07b88e01a5a83d88542fe79",
+   "rows": 166624,
+   "first_utc": "2020-01-31 08:00:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "ADAUSDT_funding.csv": {
+   "sha256": "d11d7fcb0bb3a3ac34911a9cca33dfb62b210dd733e08ac304938a18668aba35",
+   "rows": 5242,
+   "first_utc": "2020-01-19 16:00:00.000",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "AVAXUSDT_15M_perp.csv": {
+   "sha256": "e0f7ffa6282f1368ea5fbcb1669922cb31b76ff98999e0d62d7f2713c6b1c641",
+   "rows": 143972,
+   "first_utc": "2020-09-23 07:00:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "AVAXUSDT_funding.csv": {
+   "sha256": "7b558dde3c79581c718708b731cd3c4037f3f8db7c7d3fee978df94b9ce5ce66",
+   "rows": 4501,
+   "first_utc": "2020-09-22 16:00:00.004",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "BNBUSDT_15M_perp.csv": {
+   "sha256": "626cd92e0f647f1b5d0841fc3b768ae2c4569b3a07b68e6f34392abf5db14ea2",
+   "rows": 165664,
+   "first_utc": "2020-02-10 08:00:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "BNBUSDT_funding.csv": {
+   "sha256": "4b7b7007e7405cfac3c7b946f7ea619cff0b80d2eb7db208232fde2027959d57",
+   "rows": 5177,
+   "first_utc": "2020-02-10 08:00:00.000",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "BTCUSDT_15M_perp.csv": {
+   "sha256": "2a891b188f3247ce4ca33155baedf7b06dc71ee225a959cbd375cc08bfe43d5c",
+   "rows": 180505,
+   "first_utc": "2019-09-08 17:45:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "BTCUSDT_funding.csv": {
+   "sha256": "a2cf7e9f3a7158083216ee0c0cf5bc08581847e21a9fa244ad0fe9b947898162",
+   "rows": 5636,
+   "first_utc": "2019-09-10 08:00:00.000",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "DOGEUSDT_15M_perp.csv": {
+   "sha256": "e1ee38b3d8c7e6ef8a52792930bec29a0003310be552073b9ddc13af689dadad",
+   "rows": 151164,
+   "first_utc": "2020-07-10 09:00:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "DOGEUSDT_funding.csv": {
+   "sha256": "c6d9de90cf595f84bb6ccc9be5be6a050750c5682b88bd6e87f4506959d71b7b",
+   "rows": 4724,
+   "first_utc": "2020-07-10 08:00:00.001",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "ETHUSDT_15M_perp.csv": {
+   "sha256": "8c61596e418c57386b0c9a93645d0833e3be49eae81677e865b635b83dd05f24",
+   "rows": 172865,
+   "first_utc": "2019-11-27 07:45:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "ETHUSDT_funding.csv": {
+   "sha256": "8668c98ffdc2298acba628a2f5e1c24b34e065c9d52ac6bc073b02db02d93684",
+   "rows": 5402,
+   "first_utc": "2019-11-27 08:00:00.000",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "LINKUSDT_15M_perp.csv": {
+   "sha256": "e7058a4956b35e17367d575d531a1e21e1394771a763ef3f6dad226d0c1d699d",
+   "rows": 167968,
+   "first_utc": "2020-01-17 08:00:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "LINKUSDT_funding.csv": {
+   "sha256": "f0c2d67f867ad25ec1664acd9e1c0232ea5081b594e29dd0b2be860dcb7e0784",
+   "rows": 5249,
+   "first_utc": "2020-01-17 08:00:00.000",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "SOLUSDT_15M_perp.csv": {
+   "sha256": "18085fa34fcc0c8bfb52968797a06d873ec03c9f3e4269dbeaacda1b650eb526",
+   "rows": 144836,
+   "first_utc": "2020-09-14 07:00:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "SOLUSDT_funding.csv": {
+   "sha256": "e9cb4e2b3021644eef14a062dfe9b1d28c1e767ad95c69d5efa6d833fc9ebcfb",
+   "rows": 4603,
+   "first_utc": "2020-09-13 16:00:00.004",
+   "last_utc": "2024-10-31 16:00:00.000"
+  },
+  "TRXUSDT_15M_perp.csv": {
+   "sha256": "8cddad3afbcb961a7a59942e7ceff9319f80a7ec95b1917deb1ed9d76a6ce74c",
+   "rows": 168160,
+   "first_utc": "2020-01-15 08:00:00",
+   "last_utc": "2024-10-31 23:45:00"
+  },
+  "TRXUSDT_funding.csv": {
+   "sha256": "baaddb9d241b54189a57b8986d59ca3a88198e05a1ea8cb521f0938de1b7c0cd",
+   "rows": 5255,
+   "first_utc": "2020-01-15 08:00:00.000",
+   "last_utc": "2024-10-31 16:00:00.000"
+  }
+ }
+}

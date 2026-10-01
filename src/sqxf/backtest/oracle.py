@@ -1,12 +1,19 @@
 """Pure-Python reference evaluator (the oracle). Deliberately plain: no bitsets, no Numba, one loop.
 
 Contract (docs/DECISIONS.md):
-* A signal at H1 bar ``t`` requires ``signal[t]`` (predicates AND tradable) inside the window ``[t0, t1)``.
-* Entry at the open of the first execution bar of H1 bar ``e = t + 1 + delay``. Nothing happens before it.
-* Stop/target from ATR at ``t``, anchored on the real entry price. Per execution bar, in order: open beyond stop -> exit at
-  open; open beyond target -> exit at open; low/high touches stop -> exit at stop (stop wins ties); touches target -> exit.
-* Otherwise exit at the close of H1 bar ``min(e + max_bars - 1, t1 - 1)`` (TIME, or END when clipped by the window).
+* A signal at signal bar ``t`` requires ``signal[t]`` (predicates AND tradable) inside the window ``[t0, t1)``.
+* Entry at the open of the first execution bar of signal bar ``e = t + 1 + delay``. Nothing happens before it.
+* Stop/target from ATR at ``t``, anchored on the real entry price. Per execution bar, in order: funding at the bar open
+  (bars after the entry bar); open beyond stop -> exit at open; open beyond target -> exit at open; low/high touches stop ->
+  exit at stop (stop wins ties); touches target -> exit.
+* Otherwise exit at the close of signal bar ``min(e + max_bars - 1, t1 - 1)`` (TIME, or END when clipped by the window).
 * One position at a time; the next signal may be the exit bar itself.
+* Costs per trade in price units: ``cost_abs + cost_rel[t] * entry`` (forex: cost_rel = 0; crypto: cost_abs = 0).
+* Funding (crypto perpetuals) at the open of every execution bar after the entry bar up to the exit bar, in price units per
+  unit of position: ``-direction * fr[k] * o[k] - fr_abs[k] * o[k]`` (longs pay a positive rate; ``fr_abs`` is charged to
+  both sides); a payment that is a cost is multiplied by ``funding_mult`` (stress).
+* R = (direction * (exit - entry) - cost + funding) / risk. Equity fraction at risk per trade:
+  ``frac = min(risk_frac, max_lev * risk / entry)`` (max nominal exposure ``max_lev`` x equity; forex: max_lev = inf).
 """
 from __future__ import annotations
 
@@ -18,14 +25,19 @@ from sqxf.backtest.semantics import AGG, END, N_AGG, STOP, STOP_GAP, TARGET, TAR
 
 
 def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, direction, sl_atr, tp_atr, max_bars,
-                    delay, cost, risk_frac, days_per_year, t0, t1):
+                    delay, cost, risk_frac, days_per_year, t0, t1, cost_rel=None, fr=None, fr_abs=None,
+                    funding_mult=1.0, max_lev=math.inf):
     """Return ``(trades, agg)``: list of trade dicts and the aggregate vector (numpy float64)."""
+    n_sig, n_ex = len(signal), len(o)
+    cost_rel = np.zeros(n_sig) if cost_rel is None else cost_rel
+    fr = np.zeros(n_ex) if fr is None else fr
+    fr_abs = np.zeros(n_ex) if fr_abs is None else fr_abs
     trades = []
     equity = 1.0
     peak_m, dd_m = 1.0, 0.0
 
-    def mark(eq, price, entry, risk):
-        return eq * (1.0 + risk_frac * ((direction * (price - entry) - cost) / risk))
+    def mark(eq, frac, price, entry, cst, fund, risk):
+        return eq * (1.0 + frac * ((direction * (price - entry) - cst + fund) / risk))
 
     t = t0
     while t < t1:
@@ -39,6 +51,8 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
         risk = sl_atr * a
         k0 = int(h1_start[e])
         entry = float(o[k0])
+        cst = cost + float(cost_rel[t]) * entry
+        frac = min(risk_frac, max_lev * risk / entry)
         if direction == 1:
             stop, target = entry - risk, entry + tp_atr * a
         else:
@@ -49,7 +63,13 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
             last, time_reason = t1 - 1, END
         kend = int(h1_end[last])
         reason, px, k = 0, 0.0, k0
+        fund = 0.0
         for k in range(k0, kend):
+            if k > k0:
+                pay = -direction * float(fr[k]) * float(o[k]) - float(fr_abs[k]) * float(o[k])
+                if pay < 0:
+                    pay *= funding_mult
+                fund += pay
             if direction == 1:
                 if o[k] <= stop:
                     reason, px = STOP_GAP, float(o[k])
@@ -70,21 +90,22 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
                     reason, px = TARGET, target
             if reason:
                 break
-            dd_m = max(dd_m, 1.0 - mark(equity, l[k] if direction == 1 else h[k], entry, risk) / peak_m)
-            peak_m = max(peak_m, mark(equity, c[k], entry, risk))
+            dd_m = max(dd_m, 1.0 - mark(equity, frac, l[k] if direction == 1 else h[k], entry, cst, fund, risk) / peak_m)
+            peak_m = max(peak_m, mark(equity, frac, c[k], entry, cst, fund, risk))
         if not reason:
             k = kend - 1
             reason, px = time_reason, float(c[k])
         adverse = px if reason in (STOP, STOP_GAP, TARGET_GAP) else (l[k] if direction == 1 else h[k])
-        dd_m = max(dd_m, 1.0 - mark(equity, adverse, entry, risk) / peak_m)
+        dd_m = max(dd_m, 1.0 - mark(equity, frac, adverse, entry, cst, fund, risk) / peak_m)
         x = int(h1_of[k])
-        r = (direction * (px - entry) - cost) / risk
-        equity = equity * (1.0 + risk_frac * r)
+        r = (direction * (px - entry) - cst + fund) / risk
+        equity = equity * (1.0 + frac * r)
         peak_m = max(peak_m, equity)
         dd_m = max(dd_m, 1.0 - equity / peak_m)
         trades.append({"signal_idx": t, "entry_idx": e, "exit_idx": x, "entry_exec": k0, "exit_exec": k,
                        "entry_price": entry, "exit_price": px, "stop": stop, "target": target, "risk": risk,
-                       "r": r, "reason": reason, "equity_after": equity, "day": int(day_id[k])})
+                       "r": r, "reason": reason, "equity_after": equity, "funding": fund, "frac": frac,
+                       "day": int(day_id[k])})
         t = x
     agg = aggregate_trades(trades, day_id, h1_start, h1_end, days_per_year, t0, t1)
     agg[AGG["max_dd_mtm"]] = dd_m
