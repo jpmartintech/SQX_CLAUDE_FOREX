@@ -217,3 +217,17 @@ Formato: fecha — decisión. Alternativas. Motivo.
   y DSR 0,242. **Veredicto sin cambios** (ninguna variante cumple). `docs/reports/phase-c1.md` actualizado; el intermedio de 44
   permutaciones se conserva en `phase-c1_run_interim.json`.
 - Merge de `phase-c1-crypto` a `main` con tag `v0.c1`.
+
+## 2026-10-01 — Fase S, Parte 1 (instrucción de Jaime vía /goal): preregistro `configs/states_ribbon.yaml`
+- **Anclajes:** H1/H4/H8 en el reloj local EET/EEST alineado a las 00:00 locales (H4 00/04/08/12/16/20, H8 00/08/16), que coincide
+  con el cierre de Nueva York de los brokers; D1 = día de trading FX (00:00–24:00 EET, las barras del domingo por la tarde
+  pertenecen al lunes). Una barra está disponible al FINAL de su intervalo, aunque falten M15; solo las barras completas entran en el
+  contexto multi-timeframe, y solo si `available_utc <=` cierre de la barra H1 base. Alternativa descartada: anclar en UTC (partiría
+  la sesión respecto al cierre de NY que usan los brokers).
+- **Descriptores con histéresis** fijados a priori, sin mirar datos: orden 6/2, percentil de anchura 0,80/0,65 y 0,20/0,35 sobre 500
+  barras, pendiente de la EMA34 a 5 barras 0,30/0,10 ATR. Estado combinado ≤ 27: régimen (D1 y H8), pendiente H4 y orden H1.
+- **Evaluador:** trailing stop en ATR (la barra solo mueve el stop para las siguientes) y salida por señal (al cierre de una barra de
+  señal, salida en la apertura siguiente); con ambos apagados, forex es bit a bit idéntico (300 estrategias H1/M15, 65.981 trades).
+- **Swap:** `configs/swap.yaml` con valor conservador por defecto, 1,0 pip/noche que pagan largos y cortos y triple el jueves a las
+  00:00 EET. **Pendiente de verificar con el broker de Jaime.**
+- **Umbrales de persistencia y de aceptación PROPUESTOS por Claude**, pendientes de revisión de Jaime. Parte 1 no lee retornos.

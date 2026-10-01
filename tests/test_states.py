@@ -112,3 +112,11 @@ def test_adx_prefix_invariant_and_range(m15):
     np.testing.assert_array_equal(part, full[:k])
     v = full[~np.isnan(full)]
     assert v.min() >= 0 and v.max() <= 100
+
+
+def test_preregistered_ribbon_config_drives_the_descriptors(m15):
+    from sqxf.provenance import load_config
+    cfg = load_config("states_ribbon")["ribbon"]
+    assert cfg["ema_periods"] == [8, 13, 21, 34, 55, 89, 144]
+    d = descriptors(build_local_bars(m15, "H1"), cfg)
+    assert set(np.unique(d["state"].dropna())) <= set(range(27))
