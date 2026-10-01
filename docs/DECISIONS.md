@@ -285,3 +285,23 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Cierre:** se cumplen los criterios de la fase (pasada única preregistrada, informe con número de ensayos, tablas completas,
   criterio a criterio, años, pares, drawdown y limitaciones, y tests en verde). Un resultado negativo es válido (AUTONOMY §1),
   así que se hace merge a `main` con tag `v0.s2`.
+
+## 2026-10-02 — Control positivo de la Fase S y descomposición de costes (instrucción de Jaime vía /goal)
+- Rama `phase-s-control` desde `main`. Preregistro `configs/positive_control.yaml`, commiteado antes de ejecutar nada.
+- **Mundo nulo:** días completos de desarrollo (2004–2014) barajados sin reemplazo y en el mismo orden para los 6 pares, sobre un
+  calendario sintético de 7 años: 3 de calentamiento y los 4 últimos como ventana de prueba (misma longitud que 2015–2018).
+- **Edge inyectado de forma causal** tras el estado 26, con tamaños netos de +2, +5, +10 y +20 pips a 24 h (bruto = neto + 1,5).
+  La inyección se calcula con el estado del mundo NULO en las 24 barras previas; el test mide sobre los estados del mundo inyectado,
+  que pueden diferir ligeramente, y por eso se reporta también el edge realizado.
+- **Parte C:** AR(1) de los retornos H4 con φ ∈ {0,03; 0,06; 0,12} (más la referencia 0), 20 réplicas por nivel, y la misma tubería
+  y aceptación que la calibración de la Parte 2, con el DSR de la Parte 2 (N = 13,92; Var[SR] = 0,00148).
+- **Contador:** las evaluaciones sintéticas van a `trials/synthetic_ledger.jsonl`, nunca a `trials/ledger.jsonl`.
+- **Nota de transparencia sobre la Parte 2:** el cargador (`load_m15`) devuelve todo lo anterior a 2023 y después se recortaba en
+  2019-01-01. Las filas de 2019–2022 estuvieron en memoria durante esos runs, aunque ningún cálculo las usó. Para este control se usa
+  un cargador que filtra al leer el parquet (`load_m15_period`) y solo materializa 2004–2014.
+- **Resultado del control** (`docs/reports/positive_control.md`):
+  - Parte A: CAL1, R1 y R4 pierden en bruto; solo R3 es positiva en bruto y la vuelven negativa los costes.
+  - Parte B: falsos positivos 0/50; potencia 0 / 0 / 0,04 / 0,16 para +2 / +5 / +10 / +20 pips.
+  - Parte C: ningún φ ≤ 0,12 hace aceptable la calibración.
+  - Diagnóstico de potencia en `docs/BLOCKERS.md`, sin cambiar ningún umbral.
+  - Merge de `phase-s-control` a `main` con pytest en verde.

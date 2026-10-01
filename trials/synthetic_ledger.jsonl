@@ -1,0 +1,70 @@
+{"utc": "2026-10-01T17:29:29.841253+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 0}
+{"utc": "2026-10-01T17:29:41.141308+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 1}
+{"utc": "2026-10-01T17:29:54.135494+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 2}
+{"utc": "2026-10-01T17:30:05.721701+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 3}
+{"utc": "2026-10-01T17:30:19.236863+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 4}
+{"utc": "2026-10-01T17:30:31.591316+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 5}
+{"utc": "2026-10-01T17:30:43.154070+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 6}
+{"utc": "2026-10-01T17:30:55.258863+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 7}
+{"utc": "2026-10-01T17:31:03.122370+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 1}
+{"utc": "2026-10-01T17:31:03.445683+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 5}
+{"utc": "2026-10-01T17:31:02.611622+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 0}
+{"utc": "2026-10-01T17:31:02.685004+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 3}
+{"utc": "2026-10-01T17:31:02.708036+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 4}
+{"utc": "2026-10-01T17:31:03.431339+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 8}
+{"utc": "2026-10-01T17:31:04.151320+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 9}
+{"utc": "2026-10-01T17:31:04.386774+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 2}
+{"utc": "2026-10-01T17:31:04.421349+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 7}
+{"utc": "2026-10-01T17:31:04.601640+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 6}
+{"utc": "2026-10-01T17:31:05.535761+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 8}
+{"utc": "2026-10-01T17:31:17.659803+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 9}
+{"utc": "2026-10-01T17:31:29.913976+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 10}
+{"utc": "2026-10-01T17:31:40.511326+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 11}
+{"utc": "2026-10-01T17:31:55.692074+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 12}
+{"utc": "2026-10-01T17:32:08.488324+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 13}
+{"utc": "2026-10-01T17:32:22.647021+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 14}
+{"utc": "2026-10-01T17:32:34.843138+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 15}
+{"utc": "2026-10-01T17:32:48.959456+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 16}
+{"utc": "2026-10-01T17:32:57.998799+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 11}
+{"utc": "2026-10-01T17:32:58.102336+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 15}
+{"utc": "2026-10-01T17:33:00.006257+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 13}
+{"utc": "2026-10-01T17:33:00.807408+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 12}
+{"utc": "2026-10-01T17:33:01.846658+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 14}
+{"utc": "2026-10-01T17:33:02.766387+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 10}
+{"utc": "2026-10-01T17:33:03.418940+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 17}
+{"utc": "2026-10-01T17:33:04.247418+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 19}
+{"utc": "2026-10-01T17:33:04.445575+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 17}
+{"utc": "2026-10-01T17:33:04.841398+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 18}
+{"utc": "2026-10-01T17:33:05.753449+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 16}
+{"utc": "2026-10-01T17:33:17.100428+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 18}
+{"utc": "2026-10-01T17:33:28.419357+00:00", "purpose": "positive control C (calibration, 4 phi levels, 6 pairs)", "n_evaluations": 24, "code_version": "0.1.0+6b5dcd696a6c", "replica": 19}
+{"utc": "2026-10-01T17:34:49.675128+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 25}
+{"utc": "2026-10-01T17:34:48.509561+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 21}
+{"utc": "2026-10-01T17:34:52.870604+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 23}
+{"utc": "2026-10-01T17:34:53.998070+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 22}
+{"utc": "2026-10-01T17:34:55.315762+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 27}
+{"utc": "2026-10-01T17:34:56.179952+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 24}
+{"utc": "2026-10-01T17:34:57.256859+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 28}
+{"utc": "2026-10-01T17:34:57.368498+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 26}
+{"utc": "2026-10-01T17:34:59.549399+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 29}
+{"utc": "2026-10-01T17:34:59.742153+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 20}
+{"utc": "2026-10-01T17:36:36.305287+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 35}
+{"utc": "2026-10-01T17:36:40.425461+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 31}
+{"utc": "2026-10-01T17:36:42.265178+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 33}
+{"utc": "2026-10-01T17:36:45.524490+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 36}
+{"utc": "2026-10-01T17:36:45.690805+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 32}
+{"utc": "2026-10-01T17:36:48.039476+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 30}
+{"utc": "2026-10-01T17:36:49.081470+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 37}
+{"utc": "2026-10-01T17:36:49.413249+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 34}
+{"utc": "2026-10-01T17:36:51.448838+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 38}
+{"utc": "2026-10-01T17:36:51.475688+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 39}
+{"utc": "2026-10-01T17:38:22.379737+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 45}
+{"utc": "2026-10-01T17:38:29.006897+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 41}
+{"utc": "2026-10-01T17:38:29.165095+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 43}
+{"utc": "2026-10-01T17:38:31.732184+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 42}
+{"utc": "2026-10-01T17:38:32.554014+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 46}
+{"utc": "2026-10-01T17:38:34.992566+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 40}
+{"utc": "2026-10-01T17:38:36.727668+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 47}
+{"utc": "2026-10-01T17:38:37.001740+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 48}
+{"utc": "2026-10-01T17:38:37.866568+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 49}
+{"utc": "2026-10-01T17:38:37.899214+00:00", "purpose": "positive control B (null + 4 edge sizes, 45 tests each, 6 pairs)", "n_evaluations": 1350, "code_version": "0.1.0+6b5dcd696a6c", "replica": 44}
