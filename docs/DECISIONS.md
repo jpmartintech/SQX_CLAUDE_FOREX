@@ -359,3 +359,14 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Edge plantado localizado y compensado:** la deriva inyectada se resta uniformemente en las barras sin ventana activa, de modo que el
   mundo plantado conserva el ratio de precio final/inicial del nulo.
 - **Sesión:** g1 no tiene predicados temporales; limitación, sin ampliar la gramática en esta fase.
+- **Enmienda de la calibración (run `funnel_v2_k2`), antes de ejecutar ningún mundo.**
+  - Con el edge compensado, la respuesta de las plantadas de reversión no es monótona en delta.
+    En el mundo de calibración (semilla 79999), RL pasa de −0,70 (nulo) a +0,65 con 1 pip/H1, a +1,26 con 2 y a +0,72 con 4.
+    La deriva compensatoria de las barras inactivas genera señales nuevas que pierden.
+  - La bisección preregistrada en [0, 20] empezaba en 10, veía un Sharpe negativo y divergía a 20 (Sharpe −7,9).
+  - Nueva regla: barrido en la rejilla 0..6 pips/H1 (paso 0,25) y bisección dentro del primer tramo que cruza el objetivo.
+    Un objetivo que no se cruza en la rejilla se declara inalcanzable y no se ejecutan mundos para él.
+  - La validez preregistrada no cambia: supervivencia ≥80 % en un objetivo con Sharpe realizado ≤1,0.
+  - Se recalibran las 4 plantadas con la regla nueva.
+    Las calibraciones de tendencia de k1 eran monótonas, pero se descartan para aplicar un único procedimiento.
+  - El diagnóstico se registró en el contador sintético.

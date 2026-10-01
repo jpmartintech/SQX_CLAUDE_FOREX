@@ -27,7 +27,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 CONFIG = PROJECT_ROOT / "configs" / "funnel_calibrated.yaml"
-OUT = PROJECT_ROOT / "runs" / "funnel_v2_k1"
+OUT = PROJECT_ROOT / "runs" / "funnel_v2_k2"   # = run_name (k1 calibration superseded, DECISIONS)
 SYN = PROJECT_ROOT / "trials" / "synthetic_ledger.jsonl"
 CAL_START, N_DAYS, N_PHASE2 = "2004-01-05", 3911, 168590
 
@@ -63,43 +63,62 @@ def genetic_archive(mk, ref, seed):
 
 
 def run_calibrate(name):
+    """Amended rule (DECISIONS 2026-10-02, run funnel_v2_k2): the compensated reversion response is non-monotonic in delta, so
+    Sharpe is first scanned on the pre-registered grid; bisection runs inside the first grid interval where it crosses the
+    target; a target never crossed on the grid is recorded as unreachable (no planted worlds are run for it)."""
     v2, ref, dev, dcfg = setup()
     s = planted(v2["planted"]["strategies"][name])
+    cfg = v2["planted"]["calibration_amendment"]
     w0 = null_shapes(dev, 79999)
     mk0 = make_market(w0, CAL_START, N_DAYS, dcfg)
     dw = window(mk0, *ref["periods"]["dsr_window"])
     c0 = rebuild(w0["o0"], w0["shapes"])[3]
     lo0, hi0 = float(c0.min()), float(c0.max())
-    out = {"strategy": name, "null_ratio": price_ratio(w0), "null_sharpe": strategy_sharpe(mk0, s, dw)[0], "targets": {}}
     evals = 0
+
+    def measure(delta):
+        nonlocal evals
+        wp = plant(w0, mk0, s, delta)
+        c = rebuild(wp["o0"], wp["shapes"])[3]
+        sh, mr, n = float("nan"), float("nan"), 0
+        if np.isfinite(c).all() and c.min() >= 0.05 * lo0 and c.max() <= 20 * hi0:
+            try:
+                sh, mr, n = strategy_sharpe(make_market(wp, CAL_START, N_DAYS, dcfg), s, dw)
+                evals += 1
+            except (ZeroDivisionError, SystemError, FloatingPointError):
+                pass
+        deg = not np.isfinite(sh) or not np.isfinite(mr) or abs(mr) > 10
+        return {"delta_pips_per_h1": float(delta), "sharpe": float(sh), "mean_r": float(mr), "trades": int(n),
+                "ratio": price_ratio(wp), "degenerate": bool(deg)}
+
+    grid = [measure(d) for d in np.arange(0.0, cfg["grid_max"] + 1e-9, cfg["grid_step"])]
+    out = {"strategy": name, "null_ratio": price_ratio(w0), "null_sharpe": grid[0]["sharpe"], "grid": grid, "targets": {}}
     for target in v2["planted"]["target_net_sharpe"]:
-        lo, hi, best = 0.0, 20.0, None
-        for _ in range(30):
-            mid = (lo + hi) / 2
-            wp = plant(w0, mk0, s, mid)
-            c = rebuild(wp["o0"], wp["shapes"])[3]
-            sh, mr, n = float("nan"), float("nan"), 0
-            if np.isfinite(c).all() and c.min() >= 0.05 * lo0 and c.max() <= 20 * hi0:
-                try:
-                    sh, mr, n = strategy_sharpe(make_market(wp, CAL_START, N_DAYS, dcfg), s, dw)
-                    evals += 1
-                except (ZeroDivisionError, SystemError, FloatingPointError):
-                    pass
-            deg = not np.isfinite(sh) or not np.isfinite(mr) or abs(mr) > 10
-            best = {"delta_pips_per_h1": mid, "sharpe": sh, "mean_r": mr, "trades": n, "ratio": price_ratio(wp),
-                    "degenerate": bool(deg)}
-            if not deg and abs(sh - target) <= 0.05:
-                break
-            lo, hi = (mid, hi) if (sh < target and not deg) else (lo, mid)
-        out["targets"][str(target)] = best
+        k = next((k for k in range(1, len(grid)) if not grid[k]["degenerate"] and not grid[k - 1]["degenerate"]
+                  and grid[k - 1]["sharpe"] < target <= grid[k]["sharpe"]), None)
+        if k is None:
+            out["targets"][str(target)] = {"unreachable": True, "max_grid_sharpe": max(g["sharpe"] for g in grid
+                                                                                        if not g["degenerate"])}
+            print(f"{name} {target}: UNREACHABLE (max grid Sharpe {out['targets'][str(target)]['max_grid_sharpe']:.3f})",
+                  flush=True)
+            continue
+        lo, hi, best = grid[k - 1]["delta_pips_per_h1"], grid[k]["delta_pips_per_h1"], grid[k]
+        if abs(best["sharpe"] - target) > cfg["tolerance"]:
+            for _ in range(cfg["max_iterations"]):
+                best = measure((lo + hi) / 2)
+                if not best["degenerate"] and abs(best["sharpe"] - target) <= cfg["tolerance"]:
+                    break
+                lo, hi = (best["delta_pips_per_h1"], hi) if (best["sharpe"] < target and not best["degenerate"]) \
+                    else (lo, best["delta_pips_per_h1"])
+        out["targets"][str(target)] = {**best, "unreachable": False}
         print(f"{name} {target}: delta {best['delta_pips_per_h1']:.4f} sharpe {best['sharpe']:.3f} R {best['mean_r']:+.3f} "
               f"n {best['trades']} ratio {best['ratio']:.3f} (null {out['null_ratio']:.3f})", flush=True)
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / f"calibration_{name}.json").write_text(json.dumps(out, indent=1))
-    syn("phase K calibration bisection", evals, strategy=name)
+    syn("phase K calibration (grid + bisection, amended)", evals, strategy=name)
 
 
-def jobs(v2):
+def jobs(v2, cal=None):
     nw = v2["null_worlds"]
     out = [("cal", i, nw["calibration"]["seed_base"] + i, None, None) for i in range(nw["calibration"]["count"])]
     out += [("fp", i, nw["false_positive"]["seed_base"] + i, None, None) for i in range(nw["false_positive"]["count"])]
@@ -107,6 +126,8 @@ def jobs(v2):
     for r in range(p["replicas"]["count"]):
         for name in p["strategies"]:
             for t in p["target_net_sharpe"]:
+                if cal is not None and cal[name]["targets"][str(t)]["unreachable"]:
+                    continue
                 out.append(("planted", r, p["replicas"]["seed_base"] + r, name, str(t)))
     return out
 
@@ -117,7 +138,7 @@ def run_worlds(shard, n_shards):
     path = OUT / f"worlds_shard{shard}.jsonl"
     done = {tuple(json.loads(x)["job"]) for x in path.read_text().splitlines()} if path.exists() else set()
     cmp = v2["comparison_phase2"]
-    for j, (kind, i, seed, name, t) in enumerate(jobs(v2)):
+    for j, (kind, i, seed, name, t) in enumerate(jobs(v2, cal)):
         key = (kind, i, seed, name, t)
         if j % n_shards != shard or tuple(key) in done:
             continue

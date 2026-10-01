@@ -1,7 +1,7 @@
 # Funnel v2, calibrated by simulation (Phase K). PRE-REGISTERED before any run. configs/funnel.yaml stays untouched (reference).
 # Synthetic evaluations -> trials/synthetic_ledger.jsonl only. trials/ledger.jsonl md5 before: 0eef3ea96eb2c809a340545fedeb0b53
 # (must be identical after the synthetic phase; it only changes if the single real run happens).
-run_name: funnel_v2_k1
+run_name: funnel_v2_k2                       # k1 -> k2: calibration amendment only (DECISIONS 2026-10-02), before any world ran
 reference_funnel: configs/funnel.yaml       # windows, cost/delay/stability thresholds and the genetic are taken from here
 pair: EURUSD
 
@@ -59,6 +59,15 @@ planted:
   calibration: >-
     bisection of delta in [0, 20] pips/H1 (max 30 iterations, +-0.05 Sharpe) on a dedicated world (seed 79999); degenerate
     worlds (price outside [0.05 x min, 20 x max] of the null world, or numeric failure) count as "too strong"
+  calibration_amendment:                     # AMENDMENT (k2), committed before any world: the compensated reversion response is
+    # non-monotonic in delta (Sharpe peaks ~1.3 near 2 pips/H1, then falls), so the plain [0, 20] bisection diverges to 20.
+    # Sharpe is scanned on the grid 0, 0.25, .., 6 pips/H1; bisection (max 30 iterations, +-0.05) inside the FIRST grid interval
+    # where Sharpe crosses the target; a target never crossed on the grid is UNREACHABLE (recorded, no planted worlds run for it).
+    # Same calibration world (seed 79999), same degeneracy rule; all 4 strategies recalibrated under this rule.
+    grid_step: 0.25
+    grid_max: 6.0
+    tolerance: 0.05
+    max_iterations: 30
   replicas: {count: 20, seed_base: 73000}    # replica r uses null world seed 73000 + r for all strategies and sizes
   pool: "generator archive of the PLANTED world + the planted strategy inserted"
   survival: >-
