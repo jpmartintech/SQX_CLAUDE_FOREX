@@ -113,3 +113,4 @@
 {"utc": "2026-10-01T20:23:58.210962+00:00", "purpose": "funnel control sensitivity (pool re-evaluated in planted worlds)", "n_evaluations": 160008, "code_version": "0.1.0+55f430980428-dirty", "replica": 0}
 {"utc": "2026-10-01T20:23:58.613875+00:00", "purpose": "funnel control sensitivity (pool re-evaluated in planted worlds)", "n_evaluations": 160008, "code_version": "0.1.0+55f430980428-dirty", "replica": 2}
 {"utc": "2026-10-01T20:24:02.837135+00:00", "purpose": "funnel control sensitivity (pool re-evaluated in planted worlds)", "n_evaluations": 160008, "code_version": "0.1.0+55f430980428-dirty", "replica": 4}
+{"utc": "2026-10-01T21:08:46.439916+00:00", "purpose": "phase K compute sizing (GA timing on probe world 99998)", "n_evaluations": 120000}

@@ -1,0 +1,82 @@
+# Funnel v2, calibrated by simulation (Phase K). PRE-REGISTERED before any run. configs/funnel.yaml stays untouched (reference).
+# Synthetic evaluations -> trials/synthetic_ledger.jsonl only. trials/ledger.jsonl md5 before: 0eef3ea96eb2c809a340545fedeb0b53
+# (must be identical after the synthetic phase; it only changes if the single real run happens).
+run_name: funnel_v2_k1
+reference_funnel: configs/funnel.yaml       # windows, cost/delay/stability thresholds and the genetic are taken from here
+pair: EURUSD
+
+generator:                                   # identical to the Phase 2 genetic (configs/funnel.yaml "genetic", 100k unique)
+  config: configs/funnel.yaml#genetic
+  fitness: configs/funnel.yaml#fitness       # worst per-block t-stat, training blocks 2004-2007, 2008-2011, 2012-2014 only
+  seed_real: 20261003                        # the single real run (only if the funnel is valid)
+  synthetic_seed: "same as the world seed"   # every synthetic world runs the genetic with seed = its world seed
+
+stages:                                      # applied to the generator archive (+ the planted strategy in planted worlds)
+  sanity:                                    # training 2004-2014, M15, costs x1 (replaces the Phase 2 "basic" gate)
+    min_trades: 200
+    min_mean_r: 0.0                          # mean R > 0
+    min_profit_factor: 1.0                   # PF > 1.0
+  stability: configs/funnel.yaml#stages.stability          # mean R > 0 in all 3 training blocks
+  cost_stress: configs/funnel.yaml#stages.cost_stress      # costs x2: PF >= 1.05, mean R > 0
+  execution_stress: configs/funnel.yaml#stages.execution_stress   # 1-bar delay: PF >= 1.05, mean R > 0
+  out_of_sample:
+    window: ["2015-01-01", "2019-01-01"]     # the validation years (fitness never sees them); costs x1, M15
+    min_trades: 40
+  decision_gate:                             # replaces the Deflated Sharpe (kept only as an informative diagnostic)
+    rule: >-
+      threshold = 95th percentile (numpy linear interpolation) over the 200 calibration null worlds of the MAXIMUM of the
+      out-of-sample statistic among the strategies that pass sanity..out_of_sample in that world (-inf if none);
+      a strategy passes iff its out-of-sample statistic > threshold
+    candidate_designs:                       # max 3; differ only in the out-of-sample statistic (same window)
+      D1_tstat_r: "t-statistic of mean R per trade, costs x1"
+      D2_sharpe: "annualised Sharpe of daily returns (sqrt 260), costs x1"
+      D3_tstat_r_x2: "t-statistic of mean R per trade, costs x2"
+    design_choice: >-
+      among designs with false-positive rate <= 0.05 on the 100 independent null worlds, the one with the highest MINIMUM
+      (over the 4 planted strategies) survival at target Sharpe 1.0; ties -> D1. Chosen ONLY with synthetic worlds.
+
+null_worlds:                                 # EURUSD complete days 2004-2018 shuffled on a synthetic 15-year calendar
+  construction: configs/funnel_control.yaml#world   # 3716 days permuted + 195 resampled, calendar 2004-01-05..2018-12-31
+  calibration: {count: 200, seed_base: 71000}       # threshold
+  false_positive: {count: 100, seed_base: 72000}    # independent worlds: FP rate of the full v2 funnel
+
+planted:
+  strategies:                                # g1 strategies (no session predicates exist in g1: limitation)
+    TL_trend_long:  {direction: LONG,  predicates: [["trend.ema_pair.20.100", ">", 0.0], ["trend.breakout_high.20", ">", 0.0]],
+                     sl_atr: 2.0, tp_atr: 3.0, max_bars: 48}
+    TS_trend_short: {direction: SHORT, predicates: [["trend.ema_pair.20.100", "<", 0.0], ["trend.breakout_low.20", "<", 0.0]],
+                     sl_atr: 2.0, tp_atr: 3.0, max_bars: 48}
+    RL_rev_long:    {direction: LONG,  predicates: [["momentum.rsi.14", "<", 30.0], ["volatility.bb_lower.20.2", "<", 0.0]],
+                     sl_atr: 1.5, tp_atr: 1.5, max_bars: 24}
+    RS_rev_short:   {direction: SHORT, predicates: [["momentum.rsi.14", ">", 70.0], ["volatility.bb_upper.20.2", ">", 0.0]],
+                     sl_atr: 1.5, tp_atr: 1.5, max_bars: 24}
+  target_net_sharpe: [0.3, 0.6, 1.0, 1.5]    # annualised daily Sharpe 2004-2018, M15, costs x1, 0.5 % risk
+  edge_rule: >-
+    LOCALISED and COMPENSATED: H1 bar u gets +delta pips (log, at its open, over its 4 M15 closes) in the strategy direction
+    iff the NULL-world signal fired in [u - max_bars, u - 1]; the total injected log drift is then subtracted uniformly over
+    all bars WITHOUT an active window, so the planted world keeps the null world's end/start price ratio (must be 0.85-1.0,
+    reported) and the edge does not become a market-wide trend
+  calibration: >-
+    bisection of delta in [0, 20] pips/H1 (max 30 iterations, +-0.05 Sharpe) on a dedicated world (seed 79999); degenerate
+    worlds (price outside [0.05 x min, 20 x max] of the null world, or numeric failure) count as "too strong"
+  replicas: {count: 20, seed_base: 73000}    # replica r uses null world seed 73000 + r for all strategies and sizes
+  pool: "generator archive of the PLANTED world + the planted strategy inserted"
+  survival: >-
+    the planted strategy passes the decision gate, OR an archive strategy with daily-return correlation > 0.8 with it
+    (2004-2018) passes it; the stage that eliminates the planted strategy is reported
+
+comparison_phase2:                           # informative: the Phase 2 funnel (configs/funnel.yaml, DSR N = 168590)
+  null_worlds: "calibration worlds 0-29"
+  planted_replicas: [0, 1, 2]
+
+validity:                                    # the v2 funnel is VALID only if BOTH hold for the chosen design
+  false_positive_rate_max: 0.05              # on the 100 independent null worlds
+  survival_min: 0.80                         # for EACH of the 4 planted strategies, at some target whose realised mean
+  realised_sharpe_max: 1.0                   # Sharpe (over the 20 replicas) is <= 1.0
+  if_invalid: "no real run; diagnosis in docs/BLOCKERS.md; no criterion relaxed, no new seeds"
+
+real_run:                                    # ONLY if valid; exactly once
+  data: EURUSD M15 2003-2018 via the parquet-filtering loader (2019+ never loaded)
+  generator: as above, seed_real
+  report: [survivors, mean R x1/x2, PF, MTM drawdown %, by year, replica on GBPUSD/USDJPY/USDCHF/USDCAD/NZDUSD without
+           reselection (OOS 2015-2018), DSR (informative, N = trials/ledger.jsonl total), matched random control (200 replicas)]

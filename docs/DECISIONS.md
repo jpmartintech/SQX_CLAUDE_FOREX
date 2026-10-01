@@ -346,3 +346,16 @@ Formato: fecha — decisión. Alternativas. Motivo.
   - El genético no encuentra la plantada (correlación máxima 0,61).
   - N_eff por clustering ≈ 66.000, sin efecto práctico.
   - Diagnóstico en `docs/BLOCKERS.md`. Ningún umbral cambiado. md5 de `trials/ledger.jsonl` sin cambios. Merge a `main`.
+
+## 2026-10-02 — Fase K: embudo v2 calibrado por simulación (instrucción de Jaime vía /goal)
+- Rama `phase-k-calibration` desde `main`. Preregistro `configs/funnel_calibrated.yaml` antes de ejecutar nada. `configs/funnel.yaml`
+  intacto. md5 de `trials/ledger.jsonl` antes: `0eef3ea96eb2c809a340545fedeb0b53`.
+- **Generador:** el genético de la Fase 2 sin cambios (100.000 evaluaciones; ~22 s por mundo medido en un mundo de prueba, semilla 99998,
+  anotado en el contador sintético). El umbral nulo debe reproducir el procedimiento real, por eso no se reduce el presupuesto.
+- **Falsos positivos medidos en 100 mundos nulos independientes** (no en los 200 de calibración, donde serían un 5 % por construcción).
+  Con una tasa real del 5 %, el error binomial (±2,2 %) puede dar más del 5 % por puro ruido; se acepta así, sin tolerancia.
+- **Diseños:** 3 estadísticos fuera de muestra sobre la misma ventana 2015–2018, porque el ajuste real fija entrenamiento 2004–2014 y
+  validación 2015–2018. Se elige con mundos sintéticos; elegir entre 3 sobre las mismas réplicas tiene un pequeño sesgo optimista.
+- **Edge plantado localizado y compensado:** la deriva inyectada se resta uniformemente en las barras sin ventana activa, de modo que el
+  mundo plantado conserva el ratio de precio final/inicial del nulo.
+- **Sesión:** g1 no tiene predicados temporales; limitación, sin ampliar la gramática en esta fase.
