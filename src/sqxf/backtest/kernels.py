@@ -65,7 +65,7 @@ def next_signal(pred_bits, rows, n_rows, base_bits, t, t1):
 @njit(cache=True)
 def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
           direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1, record, trades, agg,
-          cost_rel, fr, fr_abs, funding_mult, max_lev):
+          cost_rel, fr, fr_abs, funding_mult, max_lev, trail_atr, exit_sig):
     equity = 1.0
     peak = 1.0
     max_dd = 0.0
@@ -112,6 +112,9 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
         reason = 0
         px = 0.0
         fund = 0.0
+        stop0 = stop
+        ext = entry
+        pending = False
         k = k0
         while k < kend:
             if k > k0:
@@ -119,6 +122,10 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
                 if pay < 0:
                     pay *= funding_mult
                 fund += pay
+            if pending:
+                reason = 8
+                px = o[k]
+                break
             if direction == 1:
                 if o[k] <= stop:
                     reason = 2
@@ -127,7 +134,7 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
                     reason = 4
                     px = o[k]
                 elif l[k] <= stop:
-                    reason = 1
+                    reason = 1 if stop == stop0 else 7
                     px = stop
                 elif h[k] >= target:
                     reason = 3
@@ -140,7 +147,7 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
                     reason = 4
                     px = o[k]
                 elif h[k] >= stop:
-                    reason = 1
+                    reason = 1 if stop == stop0 else 7
                     px = stop
                 elif l[k] <= target:
                     reason = 3
@@ -155,13 +162,31 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
             mtm = equity * (1.0 + frac * ((direction * (c[k] - entry) - cst + fund) / risk))
             if mtm > peak_m:
                 peak_m = mtm
+            # trailing stop: this bar's extreme moves the stop for the NEXT bars only (causal)
+            if trail_atr > 0.0:
+                if direction == 1:
+                    if h[k] > ext:
+                        ext = h[k]
+                    cand = ext - trail_atr * a
+                    if cand > stop:
+                        stop = cand
+                else:
+                    if l[k] < ext:
+                        ext = l[k]
+                    cand = ext + trail_atr * a
+                    if cand < stop:
+                        stop = cand
+            # exit signal at the close of a signal bar (from the entry bar on) -> exit at the next execution bar open
+            sb = h1_of[k]
+            if k == h1_end[sb] - 1 and sb >= e and exit_sig[sb]:
+                pending = True
             k += 1
         if reason == 0:
             k = kend - 1
             reason = time_reason
             px = c[k]
         # Exit bar: worst price seen before leaving (the exit price itself for stops and gaps).
-        if reason == 1 or reason == 2 or reason == 4:
+        if reason == 1 or reason == 2 or reason == 4 or reason == 7 or reason == 8:
             adv = px
         else:
             adv = l[k] if direction == 1 else h[k]
@@ -210,7 +235,7 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
             trades[n, 4] = k
             trades[n, 5] = entry
             trades[n, 6] = px
-            trades[n, 7] = stop
+            trades[n, 7] = stop0
             trades[n, 8] = target
             trades[n, 9] = risk
             trades[n, 10] = r
@@ -252,7 +277,7 @@ def _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h
 @njit(cache=True, parallel=True)
 def evaluate_batch_light(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
                          directions, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1,
-                         cost_rel, fr, fr_abs, funding_mult, max_lev):
+                         cost_rel, fr, fr_abs, funding_mult, max_lev, trail_atr, exit_sig):
     """Aggregates for a batch of strategies (one row each). ``rows[s, :n_rows[s]]`` are predicate rows."""
     n_strat = rows.shape[0]
     out = np.zeros((n_strat, N_AGG))
@@ -261,7 +286,7 @@ def evaluate_batch_light(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_e
         agg = np.zeros(N_AGG)
         _core(pred_bits, rows[s], n_rows[s], base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
               directions[s], sl_atr[s], tp_atr[s], max_bars[s], delay, cost, risk_frac, days_per_year, t0, t1,
-              False, dummy, agg, cost_rel, fr, fr_abs, funding_mult, max_lev)
+              False, dummy, agg, cost_rel, fr, fr_abs, funding_mult, max_lev, trail_atr, exit_sig)
         out[s, :] = agg
     return out
 
@@ -269,12 +294,12 @@ def evaluate_batch_light(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_e
 @njit(cache=True)
 def simulate_rich(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
                   direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1,
-                  cost_rel, fr, fr_abs, funding_mult, max_lev):
+                  cost_rel, fr, fr_abs, funding_mult, max_lev, trail_atr, exit_sig):
     """Full trade records (``float64[n, N_TRADE]``) and the aggregate vector for one strategy."""
     cap = max(t1 - t0, 0) + 1
     trades = np.empty((cap, N_TRADE))
     agg = np.zeros(N_AGG)
     n = _core(pred_bits, rows, n_rows, base_bits, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id,
               direction, sl_atr, tp_atr, max_bars, delay, cost, risk_frac, days_per_year, t0, t1,
-              True, trades, agg, cost_rel, fr, fr_abs, funding_mult, max_lev)
+              True, trades, agg, cost_rel, fr, fr_abs, funding_mult, max_lev, trail_atr, exit_sig)
     return trades[:n].copy(), agg

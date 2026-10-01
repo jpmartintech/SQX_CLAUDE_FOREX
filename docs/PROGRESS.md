@@ -1,6 +1,17 @@
 # PROGRESS
 
 ## Fase actual
+**Fase S, Parte 2 hecha (`v0.s2`):** pasada única preregistrada en la validación 2015–2018 (`docs/reports/phase-s2.md`). Test predictivo
+0/45 estados-horizonte; calibración H4 con la firma esperada pero −0,090R (PF 0,76); R1–R4 ninguna aceptada (R2 sin trades: su
+condición no se da nunca); DSR ≤ 0,016 con N = 13,92. Contador: 4.489.850 evaluaciones. Swap aún sin verificar con el broker.
+Esperando revisión de Jaime.
+
+**Fase S, Parte 1 hecha (rama `phase-s-states`):** preregistro `configs/states_ribbon.yaml` (`1748f2d`) y swap conservador
+`configs/swap.yaml` (pendiente de verificar con el broker). Fase descriptiva sin retornos: `docs/reports/states_descriptive.md`
+(4,2 cambios por 100 H1; 45 tests fijados en EURUSD). **No se ha ejecutado el test predictivo ni ninguna regla.** Pendiente: revisión
+de Jaime de los umbrales propuestos y del incumplimiento de duración en EURUSD D1.
+C1 cerrado (`v0.c1`): nulo completo 200/200, veredicto sin cambios.
+
 **Fase C1 Parte 2 hecha (rama `phase-c1-crypto`, run `crypto_c1_wf_r2`): ninguna variante cumple los criterios** (`docs/reports/phase-c1.md`).
 Nulo completo (200/200): H4 p = 0,378 / DSR 0,074; D1 p = 0,129 / DSR 0,242.
 Contador: 4.489.550 evaluaciones sobre datos reales. Bloque de selección y holdout cripto: sin tocar.

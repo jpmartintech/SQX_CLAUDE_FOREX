@@ -1,0 +1,12 @@
+# Forex overnight swap, COST per night in pips (positive = the position pays; negative = it earns). Charged at the 00:00 EET
+# rollover bar: Tue, Wed, Fri x1, Thu x3 (weekend), Mon none (sqxf.backtest.swap).
+# CONSERVATIVE PLACEHOLDERS — PENDING VERIFICATION WITH JAIME'S BROKER: both sides pay, no carry credit is ever assumed.
+status: unverified_conservative_default
+default: {long: 1.0, short: 1.0}
+pairs:
+  EURUSD: {long: 1.0, short: 1.0}
+  GBPUSD: {long: 1.0, short: 1.0}
+  USDJPY: {long: 1.0, short: 1.0}
+  USDCHF: {long: 1.0, short: 1.0}
+  USDCAD: {long: 1.0, short: 1.0}
+  NZDUSD: {long: 1.0, short: 1.0}

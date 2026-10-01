@@ -5,8 +5,9 @@ Aggregate vector (one float64 row per strategy) and trade record layout, used by
 from __future__ import annotations
 
 # Exit reasons
-STOP, STOP_GAP, TARGET, TARGET_GAP, TIME, END = 1, 2, 3, 4, 5, 6
-REASON_NAMES = {STOP: "STOP", STOP_GAP: "STOP_GAP", TARGET: "TARGET", TARGET_GAP: "TARGET_GAP", TIME: "TIME", END: "END"}
+STOP, STOP_GAP, TARGET, TARGET_GAP, TIME, END, TRAIL, SIGNAL = 1, 2, 3, 4, 5, 6, 7, 8
+REASON_NAMES = {STOP: "STOP", STOP_GAP: "STOP_GAP", TARGET: "TARGET", TARGET_GAP: "TARGET_GAP", TIME: "TIME", END: "END",
+                TRAIL: "TRAIL", SIGNAL: "SIGNAL"}
 
 # Aggregate vector layout
 AGG_FIELDS = (

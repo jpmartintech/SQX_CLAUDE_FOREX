@@ -217,3 +217,71 @@ Formato: fecha — decisión. Alternativas. Motivo.
   y DSR 0,242. **Veredicto sin cambios** (ninguna variante cumple). `docs/reports/phase-c1.md` actualizado; el intermedio de 44
   permutaciones se conserva en `phase-c1_run_interim.json`.
 - Merge de `phase-c1-crypto` a `main` con tag `v0.c1`.
+
+## 2026-10-01 — Fase S, Parte 1 (instrucción de Jaime vía /goal): preregistro `configs/states_ribbon.yaml`
+- **Anclajes:** H1/H4/H8 en el reloj local EET/EEST alineado a las 00:00 locales (H4 00/04/08/12/16/20, H8 00/08/16), que coincide
+  con el cierre de Nueva York de los brokers; D1 = día de trading FX (00:00–24:00 EET, las barras del domingo por la tarde
+  pertenecen al lunes). Una barra está disponible al FINAL de su intervalo, aunque falten M15; solo las barras completas entran en el
+  contexto multi-timeframe, y solo si `available_utc <=` cierre de la barra H1 base. Alternativa descartada: anclar en UTC (partiría
+  la sesión respecto al cierre de NY que usan los brokers).
+- **Descriptores con histéresis** fijados a priori, sin mirar datos: orden 6/2, percentil de anchura 0,80/0,65 y 0,20/0,35 sobre 500
+  barras, pendiente de la EMA34 a 5 barras 0,30/0,10 ATR. Estado combinado ≤ 27: régimen (D1 y H8), pendiente H4 y orden H1.
+- **Evaluador:** trailing stop en ATR (la barra solo mueve el stop para las siguientes) y salida por señal (al cierre de una barra de
+  señal, salida en la apertura siguiente); con ambos apagados, forex es bit a bit idéntico (300 estrategias H1/M15, 65.981 trades).
+- **Swap:** `configs/swap.yaml` con valor conservador por defecto, 1,0 pip/noche que pagan largos y cortos y triple el jueves a las
+  00:00 EET. **Pendiente de verificar con el broker de Jaime.**
+- **Umbrales de persistencia y de aceptación PROPUESTOS por Claude**, pendientes de revisión de Jaime. Parte 1 no lee retornos.
+- **Fase descriptiva ejecutada** después del preregistro (`docs/reports/states_descriptive.md`), solo sobre el periodo de desarrollo y
+  sin retornos. Criterio de sistema cumplido (4,1–4,3 cambios por 100 H1 frente a un máximo de 15). Incumplimiento por timeframe:
+  EURUSD D1, duración mínima 2,64 < 3; se reporta tal cual. Quedan fijados **15 estados × 3 horizontes = 45 tests** en EURUSD
+  antes de leer ningún retorno.
+
+## 2026-10-01 — Fase S, Parte 2: registro ANTES de ejecutar (instrucción de Jaime vía /goal)
+- **Preregistro intacto:** `configs/states_ribbon.yaml` en HEAD es idéntico al de `1748f2d` (`git diff` vacío).
+- **Desviación conocida:** en EURUSD D1, un estado con ≥ 1 % del tiempo tiene una duración media de 2,64 barras, por debajo del
+  mínimo propuesto de 3. Se acepta como desviación conocida y no se cambia ningún umbral. El criterio que detiene la fase es el de
+  sistema (≤ 15 cambios por 100 H1) y se cumple (4,26 en EURUSD).
+- **Swap:** se mantiene `configs/swap.yaml` conservador (1 pip/noche que pagan largos y cortos, triple el jueves), **pendiente de
+  verificar con el broker**; no bloquea.
+- **Tests predictivos fijados antes de leer retornos:** EURUSD, 15 estados utilizables con dirección (0, 1, 3, 4, 8, 9, 10, 16, 17,
+  18, 19, 22, 23, 25, 26) × 3 horizontes (6, 24, 120 H1) = **45 pares estado-horizonte**. Holm sobre los 45. Réplica: los mismos 45
+  en cada uno de los 5 pares restantes (validación, no selección).
+- **Pares efectivos** (antes de evaluar ninguna estrategia): PCA de los retornos diarios logarítmicos de los cierres D1 completos de
+  los 6 pares en desarrollo (2004–2014, 2.753 días comunes): autovalores 3,27 · 1,29 · 0,50 · 0,43 · 0,35 · 0,17; participation
+  ratio **2,78** (`docs/reports/states_effective_pairs.json`). **N del DSR = 5 estrategias × 2,78 = 13,92.**
+- **Detalles de implementación que el YAML no fija** (decididos ahora, sin ver resultados; ninguno toca un umbral):
+  - Regla simétrica: las patas larga y corta se evalúan como dos subcuentas independientes con 0,5 % de riesgo cada una y se
+    agrupan sus trades. En R1, R2 y R4 no pueden coincidir (los regímenes se excluyen); en R3 sí (régimen 0).
+  - Espejos de las salidas: R1 corto sale si régimen ≠ −1 o pendiente H4 = +1; R2 corto sale si régimen ≠ −1.
+  - Transiciones ("cambia a", "deja", "sale de"): valor en la barra H1 t distinto del de t−1, sobre los valores alineados de barras cerradas.
+  - Años positivos: por año de entrada del trade. Pares positivos: mean R ×1 > 0 con ≥ 20 trades.
+  - DSR: retornos diarios de la cartera equiponderada de los 6 pares (subcuentas de 0,5 % por par); Var[SR] = varianza del Sharpe
+    diario de las 30 combinaciones estrategia × par, como dice el YAML.
+  - p del bootstrap tal cual dice el YAML: fracción de las 10.000 medias remuestreadas ≤ 0 (semilla 20261002), con un bloque circular
+    de max(5·h, 120) barras H1 sobre la serie completa de validación (todas las barras con retorno futuro disponible).
+  - Retorno futuro: entrada en la apertura de la barra H1 t+1 y salida en el cierre de la barra t+h (h barras H1 existentes); se
+    descarta si t+h no existe antes del 2019-01-01. Coste: 1,5 pips con el pip de cada par.
+  - Control aleatorio emparejado (solo informativo; lo pide la instrucción y no es un criterio del YAML): 200 réplicas por estrategia,
+    entradas aleatorias entre las barras operables de la validación, mismo número de trades, sentido, barras mantenidas y distancia de
+    stop en fracción del precio, salida por tiempo, mismos costes y swap.
+  - Ventana: señales en [2015-01-01, 2019-01-01) local; posiciones abiertas al final se cierran en la última barra (END).
+- **Incidente en la pasada única (antes de ver ningún resultado):** la primera ejecución de `scripts/states_validate.py` se cayó al
+  agregar R2, porque **R2 no genera ninguna entrada**: su condición (régimen +1, pendiente H4 +1 y orden H1 −1) no se da en ninguna
+  barra de los 6 pares entre 2003 y 2018. Verificado solo con recuentos de señales, sin retornos; cuadra con la fase descriptiva, donde
+  el estado combinado 24 no aparece. El script no mostró ni guardó resultados, ni escribió en el contador; solo dejó dos CSV de trades
+  (CAL1 y R1) que no se abrieron y que la reejecución sobrescribe.
+  **Decisión:** no se cambia la regla. R2 se evalúa tal cual (0 trades, falla el mínimo de trades) y cuenta como ensayo. El único
+  cambio es de robustez del código (agregar una estrategia sin trades). La reejecución es la misma pasada: mismo config, mismas
+  semillas, y el cálculo es determinista. No es una repetición con otros parámetros.
+
+## 2026-10-01 — Fase S, Parte 2: resultado y cierre
+- **Pasada única ejecutada** (`states_ribbon_s1`): test predictivo 0/45; calibración con la firma esperada (4/4) pero rentabilidad
+  negativa (−0,090R, PF 0,76); R1–R4 ninguna aceptada (R2 sin trades); DSR ≤ 0,016 (N = 13,92); sin avisos de "demasiado bueno".
+  Informe `docs/reports/phase-s2.md`. No se aflojan umbrales ni se lanzan búsquedas nuevas en esta fase.
+- **Formato:** `results.json` serializó como texto los booleanos de numpy de los criterios predictivos; los veredictos se calcularon
+  en memoria con booleanos reales. La copia `docs/reports/phase-s2_results.json` solo convierte el formato.
+- **Verificación:** el p crudo idéntico del estado 0 en h = 24 y h = 120 (0,3165) se comprobó con el mismo código y semilla: los
+  remuestreos coinciden solo en el 57 %; es una coincidencia.
+- **Cierre:** se cumplen los criterios de la fase (pasada única preregistrada, informe con número de ensayos, tablas completas,
+  criterio a criterio, años, pares, drawdown y limitaciones, y tests en verde). Un resultado negativo es válido (AUTONOMY §1),
+  así que se hace merge a `main` con tag `v0.s2`.

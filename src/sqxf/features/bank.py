@@ -145,3 +145,17 @@ def compute_features(h1: pd.DataFrame) -> dict[str, np.ndarray]:
         for name, values in confirmed_structure(high, low, close, d).items():
             out[f"structure.{name}.{d}"] = values
     return {k: np.asarray(v, dtype=np.float64) for k, v in out.items()}
+
+
+def adx(high: np.ndarray, low: np.ndarray, close: np.ndarray, period: int = 14) -> np.ndarray:
+    """Wilder's ADX (causal; Wilder smoothing = EWM with alpha 1/period, adjust=False). NaN during warm-up."""
+    h, lo = pd.Series(high), pd.Series(low)
+    up, dn = h.diff(), -lo.diff()
+    plus = up.where((up > dn) & (up > 0), 0.0)
+    minus = dn.where((dn > up) & (dn > 0), 0.0)
+    tr = pd.Series(true_range(high, low, close))
+    rma = lambda s: s.ewm(alpha=1 / period, adjust=False, min_periods=period).mean()  # noqa: E731
+    atr_w = rma(tr)
+    pdi, mdi = 100 * rma(plus) / atr_w, 100 * rma(minus) / atr_w
+    dx = 100 * (pdi - mdi).abs() / (pdi + mdi)
+    return rma(dx).to_numpy()

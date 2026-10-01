@@ -1,0 +1,129 @@
+# Phase S — market states from an EMA ribbon. PRE-REGISTERED: committed BEFORE any return analysis.
+# Discretisation, hysteresis, persistence criteria, tests, rules and thresholds are fixed a priori (not fitted to data).
+# Acceptance and persistence thresholds are PROPOSED by Claude and pending Jaime's review; any change after review needs a
+# DECISIONS.md entry (reason not based on results) and a new run_name. Part 1 runs NOTHING that looks at returns.
+run_name: states_ribbon_s1
+pairs:
+  primary: EURUSD
+  replica: [GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD]   # validation of the same definitions, never used for selection
+periods:                         # local EET dates, end exclusive
+  development: ["2004-01-01", "2015-01-01"]   # DESCRIPTION ONLY (states, durations, transitions); returns are never read
+  validation: ["2015-01-01", "2019-01-01"]    # predictive test, calibration and rules (Part 2)
+  data_end: "2019-01-01"                      # M15 truncated here: the 2019-2022 block and the holdout are never loaded
+  warmup_from: "2003-05-05"                   # bars before development start only warm up EMAs/ATR/percentiles
+
+timeframes:                      # all derived from canonical M15 (sqxf.states.bars), local EET/EEST clock
+  H1: {role: timing, anchor: "local clock hour"}
+  H4: {role: timing, anchor: "00/04/08/12/16/20 EET (NY-close aligned)"}
+  H8: {role: regime, anchor: "00/08/16 EET (NY-close aligned)"}
+  D1: {role: regime, anchor: "FX trading day 00:00-24:00 EET = 17:00 NY close; Sunday-evening bars belong to Monday"}
+  availability: "a bar is usable from the END of its bucket (available_utc); only COMPLETE higher-timeframe bars whose
+    available_utc <= the base H1 bar close enter the multi-timeframe context (sqxf.states.bars.align_closed)"
+  complete: "every M15 of the bucket present (D1: >= 96); incomplete bars produce no state (NaN)"
+
+ribbon:
+  ema_periods: [8, 13, 21, 34, 55, 89, 144]   # per timeframe, on closes, EMA adjust=False, NaN until the period is reached
+  atr_period: 14                               # SMA of the true range, same timeframe
+  order:                         # score = sum over the 6 adjacent pairs of sign(EMA_fast - EMA_slow), in [-6, 6]
+    enter_bull: 6                # +1 entered at a perfect bullish order, kept while score >= 2; -1 mirrored; else 0
+    stay_bull: 2
+  width:                         # (max EMA - min EMA) / ATR14 -> causal percentile among the last window+1 bars (incl. t)
+    percentile_window: 500       # bars of the same timeframe
+    enter_expanded: 0.80         # level 2 entered at pct >= 0.80, kept while >= 0.65
+    stay_expanded: 0.65
+    enter_compressed: 0.20       # level 0 entered at pct <= 0.20, kept while <= 0.35; else level 1
+    stay_compressed: 0.35
+  slope:                         # (EMA34[t] - EMA34[t-5]) / ATR14[t]
+    ema: 34
+    lag: 5
+    enter_up: 0.30               # +1 entered at >= 0.30, kept while >= 0.10; -1 mirrored; else 0
+    stay_up: 0.10
+  per_timeframe_state: "9 * (order + 1) + 3 * width_level + (slope + 1)  -> 27 states per timeframe (descriptive)"
+  combined_state: >-
+    on H1 bars: regime = +1 if D1 order = +1 and H8 order = +1, -1 if both -1, else 0; timing = H4 slope and H1 order;
+    state = 9 * (regime + 1) + 3 * (h4_slope + 1) + (h1_order + 1)  -> at most 27 combined states
+
+descriptive:                     # development period only, no returns (Part 1 may run it after this commit)
+  metrics: [fraction_of_time, mean_and_median_duration, spells, changes_per_100_bars, transition_matrix_per_bar,
+            transition_matrix_on_change]
+  persistence:                   # PROPOSED
+    per_timeframe_min_mean_duration_bars: 3      # every per-TF state with >= 1 % of time; in bars of that timeframe
+    per_timeframe_max_changes_per_100_bars: 25
+    combined_usable_min_fraction: 0.01           # a combined state is "usable" (testable) only if both hold
+    combined_usable_min_mean_duration_h1: 6
+    combined_max_changes_per_100_h1: 15          # system level: above this the phase stops (states too noisy)
+
+predictive_test:                 # validation 2015-2018 (Part 2). NOT run in Part 1.
+  base: H1
+  entry: "open of the first M15 of H1 bar t+1 after a state observed at the close of bar t"
+  horizons_h1_bars: [6, 24, 120]
+  direction: "regime if != 0, else H4 slope if != 0, else untested (described only)"
+  net_return: "direction * (exit_close - entry_open) / pip - 1.5 pips (same 1.5 pips for every pair); no swap"
+  tested_states: usable combined states from the descriptive phase (fixed before any return is read)
+  bootstrap: {method: circular_block, block_h1_bars: "max(5 * horizon, 120)", resamples: 10000, seed: 20261002,
+              p_value: "one-sided P(mean net <= 0)"}
+  multiple_testing: holm_over_all_tested_state_horizon_pairs_on_EURUSD
+  stability: "mean net > 0 in >= 3 of the 4 calendar years 2015..2018"
+  replica: "same state and horizon on each replica pair: mean net > 0 in >= 3 of 5 pairs (no re-selection)"
+  acceptance:                    # PROPOSED: a state-horizon is "predictive" only if ALL hold
+    holm_p_le: 0.05
+    min_mean_net_pips: 1.0
+    stability: true
+    replica: true
+
+calibration_hypothesis_1:        # validation 2015-2018 (Part 2): reproduce a classic trend system; counts as 1 trial
+  timeframe: H4
+  entry: "at an H4 close, flat: long if EMA50 > EMA200 and ADX14 > 25; short if EMA50 < EMA200 and ADX14 > 25"
+  initial_stop_atr: 3.0          # ATR14 of H4 at the signal bar
+  trailing_atr: 3.0              # chandelier from the best price since entry, moved from the next bar (sqxf kernel)
+  exit_signal: "EMA50 crosses back (long: EMA50 < EMA200; short: EMA50 > EMA200) -> next execution bar open"
+  target: none
+  max_bars_h4: 500
+  execution: M15
+  expected_signature:            # PROPOSED calibration check of the evaluator, not a profitability claim
+    win_rate_between: [0.25, 0.50]
+    payoff_ratio_min: 1.5        # mean winning R / |mean losing R|
+    min_trades_eurusd: 30
+    trail_or_signal_exit_share_min: 0.60
+
+rules:                           # at most 5 strategies in total; each rule is symmetric (long and short = one rule)
+  common: {signal_tf: H1, execution: M15, risk_per_trade: 0.005, costs: configs/costs.yaml, swap: configs/swap.yaml,
+           atr: "ATR14 of H1 at the signal bar", max_bars_h1: 480}
+  R1_trend_continuation:
+    entry: "regime = +1, H4 slope = +1 and H1 order changes into +1 (short: all mirrored)"
+    exit_signal: "regime != +1 or H4 slope = -1"
+    safety_stop_atr: 3.0
+  R2_pullback_end:
+    entry: "regime = +1, H4 slope = +1 and H1 order leaves -1 (to 0 or +1) (short mirrored)"
+    exit_signal: "regime != +1"
+    trailing_atr: 3.0
+    safety_stop_atr: 2.5
+  R3_compression_release:
+    entry: "H4 width leaves level 0 (compressed) while H4 order = +1 and regime != -1 (short mirrored)"
+    trailing_atr: 3.0
+    safety_stop_atr: 2.0
+  R4_regime_change:
+    entry: "regime changes to +1 (short: to -1)"
+    exit_signal: "regime != +1 (short: != -1)"
+    safety_stop_atr: 8.0
+  stress: {cost_multiplier: 2.0, swap_multiplier: 2.0}
+
+acceptance_strategies:           # PROPOSED; for the calibration system and each rule, validation 2015-2018, 6 pairs pooled
+  pooled_mean_r_x1_gt: 0.0
+  pooled_mean_r_x2_gt: 0.0       # costs and swap x2
+  pooled_profit_factor_ge: 1.10
+  pairs_positive_min: 4          # of 6, each with >= 20 trades (fewer = not positive)
+  pair_min_trades: 20
+  years_positive_min: 3          # of 4, pooled
+  pooled_min_trades: 100
+  dsr_ge: 0.95
+
+trials:
+  strategies: 5                  # calibration system + R1..R4 (each on 6 pairs; every evaluation goes to trials/ledger.jsonl)
+  predictive_tests: "number of tested state-horizon pairs (recorded before reading returns)"
+  effective_pairs: "participation ratio of the PCA of daily close-to-close returns of the 6 pairs, development period,
+    computed in Part 2 BEFORE any strategy is evaluated (capped at 6)"
+  dsr_n: "strategies x effective_pairs"
+  dsr_var_sr: "variance of the daily Sharpe of the 5 strategies x 6 pairs"
+
+too_good: {max_profit_factor: 2.0, min_trades_for_pf_check: 50, max_sharpe: 3.0}

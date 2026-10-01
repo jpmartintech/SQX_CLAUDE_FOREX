@@ -158,16 +158,21 @@ def _cost(market: Market, cost_multiplier: float) -> float:
     return market.costs.round_trip * float(cost_multiplier)
 
 
-def _extra(market: Market, ex: ExecData, cost_multiplier: float, funding_multiplier: float) -> tuple:
-    """Crypto-aware kernel arguments (all neutral for forex): relative costs, funding, funding stress, leverage cap."""
+def _extra(market: Market, ex: ExecData, cost_multiplier: float, funding_multiplier: float, trail_atr: float = 0.0,
+           exit_signal: np.ndarray | None = None) -> tuple:
+    """Kernel arguments beyond the core contract (all neutral by default): relative costs, funding/swap, funding stress,
+    leverage cap, trailing stop in ATR (0 = off) and an exit signal per signal bar (exit at the next execution bar open)."""
     fr, fr_abs = ex.funding_arrays()
-    return (market.cost_rel_array() * float(cost_multiplier), fr, fr_abs, float(funding_multiplier), float(market.max_lev))
+    xs = np.zeros(market.n_h1, dtype=np.bool_) if exit_signal is None else np.asarray(exit_signal, dtype=np.bool_)
+    return (market.cost_rel_array() * float(cost_multiplier), fr, fr_abs, float(funding_multiplier), float(market.max_lev),
+            float(trail_atr), xs)
 
 
 # ------------------------------------------------------------------ evaluation
 def evaluate_light(market: Market, strategies: Sequence[StrategyDefinition], exec_tf: str = "H1", delay: int = 0,
                    cost_multiplier: float = 1.0, window: tuple[int, int] | None = None,
-                   funding_multiplier: float = 1.0) -> np.ndarray:
+                   funding_multiplier: float = 1.0, trail_atr: float = 0.0,
+                   exit_signal: np.ndarray | None = None) -> np.ndarray:
     """Aggregate matrix ``float64[len(strategies), N_AGG]`` (Numba, parallel over strategies)."""
     enc = encode(strategies)
     ex = market.execs[exec_tf]
@@ -176,7 +181,7 @@ def evaluate_light(market: Market, strategies: Sequence[StrategyDefinition], exe
                                 ex.h1_start, ex.h1_end, ex.h1_of, ex.o, ex.h, ex.l, ex.c, ex.day_id,
                                 enc["directions"], enc["sl_atr"], enc["tp_atr"], enc["max_bars"], int(delay),
                                 _cost(market, cost_multiplier), market.risk_per_trade, market.days_per_year, t0, t1,
-                                *_extra(market, ex, cost_multiplier, funding_multiplier))
+                                *_extra(market, ex, cost_multiplier, funding_multiplier, trail_atr, exit_signal))
 
 
 @dataclass
@@ -193,7 +198,8 @@ class RichResult:
 
 def evaluate_rich(market: Market, strategy: StrategyDefinition, exec_tf: str = "M15", delay: int = 0,
                   cost_multiplier: float = 1.0, window: tuple[int, int] | None = None,
-                  funding_multiplier: float = 1.0) -> RichResult:
+                  funding_multiplier: float = 1.0, trail_atr: float = 0.0,
+                  exit_signal: np.ndarray | None = None) -> RichResult:
     enc = encode([strategy])
     ex = market.execs[exec_tf]
     t0, t1 = _window(market, window)
@@ -202,7 +208,7 @@ def evaluate_rich(market: Market, strategy: StrategyDefinition, exec_tf: str = "
                              int(enc["directions"][0]), float(enc["sl_atr"][0]), float(enc["tp_atr"][0]),
                              int(enc["max_bars"][0]), int(delay), _cost(market, cost_multiplier),
                              market.risk_per_trade, market.days_per_year, t0, t1,
-                             *_extra(market, ex, cost_multiplier, funding_multiplier))
+                             *_extra(market, ex, cost_multiplier, funding_multiplier, trail_atr, exit_signal))
     return RichResult(strategy, trades_frame(market, rec), agg, market.days_per_year)
 
 
@@ -216,13 +222,15 @@ def strategy_signal(market: Market, strategy: StrategyDefinition) -> np.ndarray:
 
 def evaluate_oracle(market: Market, strategy: StrategyDefinition, exec_tf: str = "M15", delay: int = 0,
                     cost_multiplier: float = 1.0, window: tuple[int, int] | None = None,
-                    funding_multiplier: float = 1.0) -> tuple[list[dict], np.ndarray]:
+                    funding_multiplier: float = 1.0, trail_atr: float = 0.0,
+                    exit_signal: np.ndarray | None = None) -> tuple[list[dict], np.ndarray]:
     ex = market.execs[exec_tf]
     t0, t1 = _window(market, window)
     return simulate_oracle(strategy_signal(market, strategy), market.atr, ex.h1_start, ex.h1_end, ex.h1_of,
                            ex.o, ex.h, ex.l, ex.c, ex.day_id, strategy.sign, strategy.sl_atr, strategy.tp_atr,
                            strategy.max_bars, int(delay), _cost(market, cost_multiplier), market.risk_per_trade,
-                           market.days_per_year, t0, t1, *_extra(market, ex, cost_multiplier, funding_multiplier))
+                           market.days_per_year, t0, t1,
+                           *_extra(market, ex, cost_multiplier, funding_multiplier, trail_atr, exit_signal))
 
 
 # ------------------------------------------------------------------ outputs
