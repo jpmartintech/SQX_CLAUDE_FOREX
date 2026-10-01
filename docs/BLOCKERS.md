@@ -43,3 +43,32 @@ diseño, el test predictivo no tiene capacidad para validar estados en una venta
   ningún predicado temporal; se planta en su lugar una estrategia de estructura y volatilidad (`configs/funnel_control.yaml`, V).
 - Por tanto, ni la Fase 2 ni este control pueden decir nada de edges de sesión: el genético no puede generarlos. Añadir predicados
   de sesión sería ampliar el espacio de búsqueda (Fase 6), con su propio preregistro y conteo de ensayos. Decide Jaime.
+
+## 2026-10-02 — El embudo de la Fase 2 no deja pasar edges reales plantados, ni con Sharpe ≈ 1 (control de la fábrica)
+**Estado:** documentado; no se ha cambiado ningún umbral de `configs/funnel.yaml`. Decide Jaime. Detalle en
+`docs/reports/funnel_control.md`.
+
+**Evidencia** (EURUSD sintético de 15 años, pool de 20.000 estrategias aleatorias de g1 más la plantada, N del DSR = 168.590,
+10 réplicas por combinación):
+- **Supervivencia al embudo completo = 0/10 en todos los tamaños**, para la estrategia de tendencia (T) y la de reversión (R). Sharpe
+  realizado medio en las réplicas:
+  - T: 0,26 / 0,42 / 0,63 / 1,03;
+  - R: 0,26 / 0,51 / 0,87 / 1,16.
+- **Falsos positivos** en el mundo nulo: 0/10 (de media 1,1 estrategias del pool superan el walk-forward y ninguna el DSR).
+- **Qué mata:**
+  - **Etapa básica** con Sharpe ≤ 0,6: PF ≥ 1,15 y mean R ≥ 0,05R en 2004–2014; el edge plantado da de +0,03 a +0,05R por trade.
+  - **Deflated Sharpe** con los edges mayores: el walk-forward deja pasar el 60–70 % con Sharpe ~1,0–1,2, y el DSR mata a todas
+    (DSR mediano 0,00).
+
+**Diagnóstico** (sin cambiar nada):
+1. **El listón del DSR es inalcanzable para un edge realista.** Con N = 168.590 y la Var[SR] del pool (Sharpe diario, 0,0016 → desviación
+   anual de 0,65), el Sharpe máximo esperado bajo el nulo es ≈ 2,6–2,7 anual. Una estrategia con Sharpe 1,0–1,2 sostenido durante
+   15 años tiene DSR ≈ 0.
+2. **La Var[SR] del pool no mide solo ruido:** refleja diferencias estructurales entre estrategias aleatorias (el arrastre de costes
+   varía mucho), lo que infla SR\*.
+3. **El N efectivo por clustering** (785 grupos de cada 2.000, N_eff ≈ 66.000) apenas baja el listón: con N_eff el DSR de las plantadas
+   sigue ≈ 0 (Parte C).
+4. **La etapa básica exige mean R ≥ 0,05R y PF ≥ 1,15;** un edge de Sharpe 0,3–0,6 con ~1.500 trades en 15 años son ~0,03–0,05R
+   por trade, justo en el umbral, y cae por ruido.
+5. **Implicación:** los 0 supervivientes de la Fase 2 no indican ausencia de edges aprovechables (Sharpe 0,6–1,0). Con estos umbrales y
+   este N, el embudo no los habría dejado pasar.

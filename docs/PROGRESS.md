@@ -1,6 +1,12 @@
 # PROGRESS
 
 ## Fase actual
+**Control de la fábrica completa hecho** (`docs/reports/funnel_control.md`):
+- El embudo de la Fase 2 no deja pasar estrategias plantadas con Sharpe neto de hasta ≈ 1,16 (0/80 combinaciones × réplicas sobreviven;
+  FPR nula 0/10). La etapa básica mata a los edges pequeños y el DSR (N = 168.590, SR\* ≈ 2,6 anual) a todos los grandes.
+- Los 0 supervivientes de la Fase 2 no descartan edges aprovechables (Sharpe 0,6–1,0).
+- g1 no tiene predicados de sesión; V no fue calibrable. Diagnóstico en `docs/BLOCKERS.md`. Esperando decisión de Jaime.
+
 **Control positivo de la Fase S hecho** (`docs/reports/positive_control.md`, diagnóstico en `docs/BLOCKERS.md`):
 - El test predictivo tiene 0 % de falsos positivos pero potencia ≤ 16 % incluso con +20 pips netos a 24 h en 4 años: el nulo de la
   Parte 2 no descarta edges grandes.

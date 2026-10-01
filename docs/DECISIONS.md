@@ -334,3 +334,15 @@ Formato: fecha — decisión. Alternativas. Motivo.
   45 % de las barras) hunde el precio de 1,19 a 0,16 y el coste fijo en pips se dispara en R. No alcanza ni el objetivo 0,3. **No se
   cambia la regla:** V queda fuera de A, B y C, y el control sigue con T (tendencia) y R (reversión), calibradas a ±0,05 (R a 0,3:
   0,260). La calibración final de T y R es idéntica bit a bit a la primera.
+- **Hallazgo de diseño (Parte B) y análisis post hoc informativo:** en los mundos plantados, entre 16.000 y 73.000 de las 99.000
+  estrategias del genético superan el walk-forward. La deriva plantada (activa en una fracción grande de las barras) se convierte en una
+  tendencia de todo el mercado y beneficia a casi cualquier estrategia del mismo sentido; no es un edge localizado en la plantada.
+  Esto infla la Var[SR] del pool y con ella el listón del DSR. Sin cambiar el preregistro, se añade un análisis de sensibilidad
+  (`scripts/funnel_control_sensitivity.py`): deriva del precio de cada mundo, puesto de la plantada en el pool y DSR de la plantada con
+  la Var[SR] del mundo nulo. Solo informativo; no altera ningún resultado ni umbral.
+- **Resultado del control de la fábrica** (`docs/reports/funnel_control.md`):
+  - Supervivencia 0 % para T y R en todos los tamaños (Sharpe realizado 0,26–1,16); FPR nula 0/10.
+  - La etapa básica mata a los edges pequeños y el DSR a todos los grandes (SR\* ≈ 2,6 anual).
+  - El genético no encuentra la plantada (correlación máxima 0,61).
+  - N_eff por clustering ≈ 66.000, sin efecto práctico.
+  - Diagnóstico en `docs/BLOCKERS.md`. Ningún umbral cambiado. md5 de `trials/ledger.jsonl` sin cambios. Merge a `main`.
