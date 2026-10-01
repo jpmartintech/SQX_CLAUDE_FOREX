@@ -2,7 +2,7 @@
 
 ## Fase actual
 **Fase C1 Parte 2 hecha (rama `phase-c1-crypto`, run `crypto_c1_wf_r2`): ninguna variante cumple los criterios** (`docs/reports/phase-c1.md`).
-Nulo en curso en segundo plano (44/200 en el informe); al terminar: `python scripts/crypto_c1.py report && python scripts/crypto_c1_tables.py`.
+Nulo completo (200/200): H4 p = 0,378 / DSR 0,074; D1 p = 0,129 / DSR 0,242.
 Contador: 4.489.550 evaluaciones sobre datos reales. Bloque de selección y holdout cripto: sin tocar.
 
 **Fase C1 (cripto), Parte 1 hecha (rama `phase-c1-crypto`):** módulo cripto, datos de perpetuos y funding, informe spot frente a perpetuo

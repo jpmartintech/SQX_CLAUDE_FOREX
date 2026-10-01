@@ -5,10 +5,7 @@ Fecha: 2026-10-01. Rama `phase-c1-crypto`. Run **`crypto_c1_wf_r2`**.
 - **Datos:** solo M15 < 2023-11-01: precios de perpetuo desde la fecha de cambio de cada moneda y spot antes. El bloque de selección y el holdout no se han cargado ni descargado; ningún acceso nuevo en `trials/crypto_holdout_access.jsonl`.
 - **Resultados:** `docs/reports/phase-c1_run_interim.json` (copia de `runs/crypto_c1_wf_r2/report.json`); trades en `runs/crypto_c1_wf_r2/`.
 
-> **Nulo PARCIAL: 44 de las 200 permutaciones preregistradas.** Cada permutación vuelve a ejecutar el procedimiento completo (genético en 8 monedas × 5 ventanas × 2 variantes) y tarda ~30 min por tanda de 11. Las 200 no caben en el límite de turnos de esta sesión.
-> - Los 11 shards siguen corriendo en segundo plano con las semillas preregistradas.
-> - Al terminar (~7 h más), `python scripts/crypto_c1.py report` regenera el informe con las 200.
-> - **El veredicto no depende del nulo:** ambas variantes ya fallan varios criterios deterministas (costes ×2, monedas, ventanas). El nulo solo afecta a `p_value_null` y al DSR, que con 44 permutaciones también fallan.
+> **Nulo COMPLETO: 200 de 200 permutaciones** (actualizado el 2026-10-01). La primera versión de este informe usaba un nulo parcial de 44; las 200 terminaron en segundo plano antes de la orden de parada. Cifras finales en `docs/reports/phase-c1_run.json`; el intermedio queda en `phase-c1_run_interim.json`. **El veredicto no cambia.**
 
 ## Veredicto
 
@@ -19,9 +16,9 @@ Fecha: 2026-10-01. Rama `phase-c1-crypto`. Run **`crypto_c1_wf_r2`**.
 | mean R agregado, costes ×1 > 0 | −0,0220 → **no** | +0,0119 → sí |
 | mean R agregado, costes y funding ×2 > 0 | −0,0745 → **no** | −0,0291 → **no** |
 | mean R sin 2021 > 0 | +0,0030 → sí | −0,0211 → **no** |
-| p-valor frente al nulo ≤ 0,025 (44 perm.) | 0,400 → **no** | 0,133 → **no** |
+| p-valor frente al nulo ≤ 0,025 (200 perm.) | 0,378 → **no** | 0,129 → **no** |
 | p-valor frente al control emparejado ≤ 0,025 (200 réplicas) | 0,010 → sí | 0,005 → sí |
-| DSR de la cartera ≥ 0,95 (N = 2 × 2,4 = 4,8) | 0,087 → **no** | 0,248 → **no** |
+| DSR de la cartera ≥ 0,95 (N = 2 × 2,4 = 4,8) | 0,074 → **no** | 0,242 → **no** |
 | ≥ 4 de 5 monedas validadas por separado en positivo, cada una con ≥ 50 trades | 1/5 (ETH) → **no** | 3/5 (ETH, LINK, ADA) → **no** |
 | ≥ 3 de 5 ventanas en positivo | 1/5 → **no** | 3/5 → sí |
 
@@ -36,10 +33,10 @@ Fecha: 2026-10-01. Rama `phase-c1-crypto`. Run **`crypto_c1_wf_r2`**.
 | mean R ×1 / ×2 | −0,0220 / −0,0745 | +0,0119 / −0,0291 |
 | t (trades tratados como independientes, ver nota) | −1,73 | +0,72 |
 | Funding medio por trade (en R) | −0,0013 | −0,0048 |
-| Nulo (44): media / p95 / máximo de mean R | −0,030 / +0,002 / +0,012 | −0,021 / +0,022 / +0,047 |
+| Nulo (200): media / p95 / máximo de mean R | −0,029 / +0,011 / +0,035 | −0,024 / +0,027 / +0,048 |
 | Control emparejado (200): media / p95 | −0,059 / −0,036 | −0,051 / −0,024 |
 | Cartera equiponderada (0,5 % de riesgo por trade, ≤ 1x): Sharpe / retorno / DD | −0,30 / −0,96 % / 2,2 % | +0,13 / +0,28 % / 1,8 % |
-| PSR frente a 0 / DSR (SR\* anual) | 0,32 / 0,087 (0,58) | 0,58 / 0,248 (0,56) |
+| PSR frente a 0 / DSR (SR\* anual) | 0,32 / 0,074 (0,63) | 0,58 / 0,242 (0,57) |
 | Chequeo informativo: mismas estrategias sobre spot sin corregir, mean R ×1 / ×2 | −0,0529 / −0,1081 | +0,0122 / −0,0297 |
 
 **Por moneda** (mean R ×1 / ×2, trades). Las 5 primeras se validan por separado; SOL, DOGE y AVAX cuentan solo en el agregado:
@@ -84,7 +81,7 @@ Fecha: 2026-10-01. Rama `phase-c1-crypto`. Run **`crypto_c1_wf_r2`**.
 2. **Sí supera claramente al control emparejado** (p = 0,010 y 0,005): el momento de entrada que elige el genético es mejor que entrar al azar con la misma exposición y dirección. Pero:
    - el control pierde −0,05/−0,06R por costes, funding y salidas por tiempo;
    - batirlo no basta para ser rentable;
-   - **no supera al nulo** (p = 0,40 en H4 y 0,13 en D1): en datos sin orden diario el procedimiento obtiene resultados parecidos.
+   - **no supera al nulo** (p = 0,38 en H4 y 0,13 en D1): en datos sin orden diario el procedimiento obtiene resultados parecidos.
 3. **Los cortos funcionan mejor que los largos** en ambas variantes (H4 +0,030 frente a −0,048; D1 +0,076 frente a −0,011). En parte es el funding: los cortos lo cobran (+0,005 a +0,011R por trade). En parte es el régimen: 2021-11 → 2022-11 fue un mercado bajista de −44 % y −38 %.
 4. **Comprar y mantener** del agregado fue muy negativo en estas ventanas (−44 %, −38 %) salvo mayo a noviembre de 2021 (+65 %). Las estrategias, con riesgo de 0,5 % por trade y tope de 1x, tienen un drawdown del ~2 %: es otra escala de riesgo, así que la comparación directa de retornos no es homogénea.
 5. **Proxy spot:** reoperar lo mismo sobre spot sin corregir empeora H4 (−0,053 frente a −0,022) y deja D1 igual. Cuadra con lo medido en la Parte 1: el spot difiere sobre todo en los stops y las mechas.
@@ -100,8 +97,8 @@ Fecha: 2026-10-01. Rama `phase-c1-crypto`. Run **`crypto_c1_wf_r2`**.
 
 ## Número de ensayos
 - **Contador `trials/ledger.jsonl`: 4.489.550 evaluaciones sobre datos reales** (4.219.000 de selección). Esta fase añade 1.600.000 (800.000 × 2 variantes); antes había 2.889.550.
-- **Nulos:** 44 × 1,6 M = 70,4 M evaluaciones sobre datos permutados en este informe, con 200 × 1,6 M = 320 M al completarse. No cuentan en el contador.
-- **DSR:** N = 2 procedimientos (`trials/crypto_procedure_ledger.jsonl`) × 2,4 series independientes = **4,8**. Var[SR] sale de las 44 carteras nulas: SR\* anual 0,58 (H4) y 0,56 (D1). DSR de 0,087 y 0,248.
+- **Nulos:** 200 × 1,6 M = 320 M evaluaciones sobre datos permutados. No cuentan en el contador.
+- **DSR:** N = 2 procedimientos (`trials/crypto_procedure_ledger.jsonl`) × 2,4 series independientes = **4,8**. Var[SR] sale de las 200 carteras nulas: SR\* anual 0,63 (H4) y 0,57 (D1). DSR de 0,074 y 0,242.
 
 ## Qué se construyó en la Parte 2
 - **Precios híbridos** (`load_hybrid_m15` / `load_hybrid_market`): perpetuo desde la fecha de cambio preregistrada de cada moneda y spot antes. La liquidez siempre se mide con el volumen spot y por fecha UTC.
@@ -123,7 +120,6 @@ Fecha: 2026-10-01. Rama `phase-c1-crypto`. Run **`crypto_c1_wf_r2`**.
 `pytest -q`: **114 passed** (mostrado en la conversación). `ruff`: limpio.
 
 ## Limitaciones
-- **Nulo parcial** (44/200) en este informe; se completará en segundo plano.
 - **Solo 5 ventanas de 6 meses** (2,5 años fuera de muestra), dominadas por un único ciclo (euforia de 2021 → bajista de 2022 → lateral de 2023).
 - **Universo de supervivientes** (sesgo declarado). La correlación entre monedas deja ~2,4 series independientes.
 - **Comisión de 0,05 % taker sin verificar** con tu cuenta. Sin modelar liquidaciones: con un tope de 1x no se alcanzan.
@@ -131,4 +127,3 @@ Fecha: 2026-10-01. Rama `phase-c1-crypto`. Run **`crypto_c1_wf_r2`**.
 ## Siguiente (decide Jaime)
 - Con esta gramática, el procedimiento ha fallado ya en forex (2, 2b, 2c) y en cripto (C1). **No propongo más búsquedas con la gramática g1.**
 - Si se sigue, cambiar la hipótesis: carry/funding como señal explícita (los cortos cobran funding), estrategias de régimen o tendencia a D1/W1 con pocas reglas y preregistradas, o selección por robustez entre monedas (una regla común para las 8) en lugar de reglas por moneda.
-- Cuando termine el nulo: `python scripts/crypto_c1.py report && python scripts/crypto_c1_tables.py` y sustituir las cifras del nulo y del DSR de este informe.

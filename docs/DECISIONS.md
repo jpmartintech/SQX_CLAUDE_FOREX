@@ -210,3 +210,10 @@ Formato: fecha — decisión. Alternativas. Motivo.
   (fallan criterios deterministas). No es un cambio del preregistro: es el mismo nulo, aún incompleto.
 - **AVAX H4 (+0,277R, t = 4,9)** revisado como posible "demasiado bueno": PF 1,52, 3 ventanas, trades solapados entre clones, datos limpios;
   sin bug. Los t por trade sobrestiman la evidencia porque las top-10 se solapan; los contrastes válidos son el nulo, el control y el DSR.
+
+## 2026-10-01 — Cierre de C1 (instrucción de Jaime: parar el nulo "en 44 de 200")
+- Al ir a detener los procesos, **el nulo ya había completado las 200 permutaciones** (200 `j` distintos, 0…199; el último shard
+  terminó a las 15:12). No había nada que parar. Se regeneró el informe con el nulo completo: H4 p = 0,378 y DSR 0,074; D1 p = 0,129
+  y DSR 0,242. **Veredicto sin cambios** (ninguna variante cumple). `docs/reports/phase-c1.md` actualizado; el intermedio de 44
+  permutaciones se conserva en `phase-c1_run_interim.json`.
+- Merge de `phase-c1-crypto` a `main` con tag `v0.c1`.
