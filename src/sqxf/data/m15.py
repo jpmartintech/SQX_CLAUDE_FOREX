@@ -179,3 +179,19 @@ def load_m15(pair: str, cfg: DataConfig | None = None, use_cache: bool = True) -
         tmp.replace(cache)
     df.attrs.update(meta)
     return df
+
+
+def load_m15_period(pair: str, start: str | None, end: str, cfg: DataConfig | None = None) -> pd.DataFrame:
+    """Canonical M15 restricted AT READ TIME to ``start <= ts_local < end`` (parquet filter): rows outside the period are
+    never materialised. Builds the cache first if needed (same as ``load_m15``)."""
+    cfg = cfg or DataConfig.load()
+    cache = _cache_path(pair, cfg)
+    if not cache.exists():
+        load_m15(pair, cfg)
+    filters = [("ts_local", "<", pd.Timestamp(end))]
+    if start is not None:
+        filters.append(("ts_local", ">=", pd.Timestamp(start)))
+    df = pq.read_table(cache, filters=filters).to_pandas()
+    meta = {k.decode(): v.decode() for k, v in (pq.read_schema(cache).metadata or {}).items()}
+    df.attrs.update({**meta, "period": f"[{start}, {end})"})
+    return df.reset_index(drop=True)
