@@ -1,0 +1,63 @@
+# Positive control of the Phase S funnel + cost decomposition of Part 2. PRE-REGISTERED (committed before any run).
+# Synthetic evaluations go to trials/synthetic_ledger.jsonl, never to trials/ledger.jsonl. No funnel threshold is changed:
+# every test/criterion below is the Part 2 one, read from configs/states_ribbon.yaml (commit 1748f2d).
+run_name: positive_control_s1
+funnel_config: configs/states_ribbon.yaml
+
+source_data:                       # only these M15 rows are ever read (parquet filter at read time)
+  pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD]
+  period: ["2004-01-01", "2015-01-01"]   # development only (local EET); 2015+ is never materialised
+
+null_world:                        # temporal structure destroyed, intraday paths and cross-pair correlation kept
+  method: day_block_shuffle        # complete trading days (96 M15 in all 6 pairs) of the development period, sampled
+                                   # WITHOUT replacement in a random order, the SAME order for the 6 pairs
+  calendar_start_local: "2008-01-07"     # synthetic weekday calendar, 96 bars/day 00:00..23:45 local (EET/EEST)
+  days: 1820                       # 7 x 260 weekdays: 3 years of warm-up + 4 years tested
+  validation_window: ["2011-01-01", "2015-01-01"]   # last 4 synthetic calendar years (same length as 2015-2018)
+  shapes: "per M15 bar: open gap vs previous close, high/low/close vs open (log); prices rebuilt from the first open"
+
+part_A:                            # decomposition from the saved Part 2 trades only (runs/states_ribbon_s1/trades_*.csv)
+  strategies: [CAL1_H4_EMA50_200_ADX, R1_trend_continuation, R3_compression_release, R4_regime_change]
+  gross_r: "direction * (exit - entry) / risk"
+  cost_r: "round-trip cost of configs/costs.yaml / risk"
+  swap_r: "funding column (swap paid, price units) / risk"
+  nights: "swap pips paid / 1 pip (= charged nights, Thursday x3) and calendar rollovers crossed"
+
+part_B:                            # positive control of the predictive test (the 45 state-horizon pairs of Part 2)
+  replicas: 50
+  world_seed_base: 31000           # replica i uses seed 31000 + i; the SAME null world is used for every edge size
+  tests: same_as_part_2            # 45 pairs, circular block bootstrap (seed 20261002, 10000 resamples), Holm, >= 1 pip,
+                                   # >= 3/4 years, >= 3/5 replica pairs: unchanged
+  edge:
+    target_state: 26               # regime +1, H4 slope +1, H1 order +1 (usable; direction +1)
+    horizon_h1: 24
+    net_sizes_pips: [2, 5, 10, 20]   # intended conditional mean NET 24 h return; gross injected = size + 1.5 pips cost
+    rule: >-
+      causal drift: on H1 bar u add sign(target) * (size + 1.5) / 24 pips (log, at the bar's open price) if the NULL-world
+      combined state was the target at any bar in [u-24, u-1]; spread evenly over the 4 M15 closes of u. Uses only states
+      known before u. Injected in all 6 pairs (the replica criterion needs it).
+  reading:
+    false_positive_rate: "share of null replicas with >= 1 of the 45 pairs accepted (family-wise) and per-test rate"
+    power: "share of replicas where (target_state, 24 h) is accepted with ALL Part 2 criteria"
+    components: "pass rates of Holm, >= 1 pip, stability and replica separately"
+    realised_edge: "observed mean net 24 h at the target state (injected world) minus the same in the paired null world"
+    minimum_detectable_effect: "smallest size with power >= 0.80 (also >= 0.50)"
+
+part_C:                            # positive control of the strategy pipeline (calibration hypothesis 1)
+  ar_phi_levels: [0.03, 0.06, 0.12]   # AR(1) persistence of H4 log returns injected causally; reference level 0.0 also run
+  replicas: 20
+  world_seed_base: 41000           # replica i uses seed 41000 + i (same null world for every level)
+  rule: "on H4 bar k (00/04/.. EET buckets) add phi * R_{k-1} (total log return of the previous H4 bar, after injection),
+    spread evenly over its 16 M15 closes"
+  strategy: calibration_hypothesis_1 of configs/states_ribbon.yaml (H4 EMA50/200, ADX14 > 25, stop and trailing 3 ATR,
+    exit on the opposite cross), 6 pairs, costs configs/costs.yaml, swap configs/swap.yaml (conservative)
+  acceptance: acceptance_strategies of configs/states_ribbon.yaml, unchanged
+  dsr: {n: 13.922, var_sr_daily: 0.0014790724364076233}   # Part 2 values (N = 5 strategies x 2.78 effective pairs)
+  reading: "per level: share of replicas accepted, pooled mean R x1/x2, PF; first level with acceptance share >= 0.8"
+
+pipeline_checks:                   # the funnel must not be blind because of a bug
+  python_equals_numba: "oracle vs kernel trades identical on synthetic worlds (calibration signals, one pair per replica 0)"
+  causality: "perturbing the synthetic future leaves earlier states and trades unchanged"
+
+ledgers:
+  synthetic: trials/synthetic_ledger.jsonl
