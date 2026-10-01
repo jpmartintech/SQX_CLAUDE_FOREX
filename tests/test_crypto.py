@@ -124,7 +124,8 @@ def _run(signal, o, h, l, c, atr, direction, fr, fr_abs, funding_mult=1.0, max_l
                                   max_bars, 0, 0.0, 0.005, 365.0, 0, n, cost_rel, fr, fr_abs, funding_mult, max_lev)
     rec, kagg = simulate_rich(pack_bits(signal[None, :]), np.array([0, -1, -1, -1]), 1, pack_bits(np.ones(n, bool)),
                               np.asarray(atr, float), idx, idx + 1, idx, *arrs, idx, direction, sl, tp, max_bars, 0, 0.0,
-                              0.005, 365.0, 0, n, cost_rel, fr, fr_abs, funding_mult, max_lev)
+                              0.005, 365.0, 0, n, cost_rel, fr, fr_abs, funding_mult, max_lev, 0.0,
+                              np.zeros(n, dtype=np.bool_))
     for row, tr in zip(rec, trades, strict=True):
         for name, j in TRADE.items():
             assert row[j] == tr[name], name

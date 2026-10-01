@@ -101,3 +101,14 @@ def test_describe_counts_spells_and_transitions():
     assert d["mean_duration"][1] == 2.5 and d["mean_duration"][2] == 1.5
     assert d["transition_on_change"][1][2] == 1.0 and d["transition_on_change"][2][1] == 1.0
     assert d["changes_per_100_bars"] == pytest.approx(100 * 2 / 6)
+
+
+def test_adx_prefix_invariant_and_range(m15):
+    from sqxf.features.bank import adx
+    b = build_local_bars(m15, "H4")
+    full = adx(b["high"].to_numpy(), b["low"].to_numpy(), b["close"].to_numpy())
+    k = len(b) // 2
+    part = adx(b["high"].to_numpy()[:k], b["low"].to_numpy()[:k], b["close"].to_numpy()[:k])
+    np.testing.assert_array_equal(part, full[:k])
+    v = full[~np.isnan(full)]
+    assert v.min() >= 0 and v.max() <= 100

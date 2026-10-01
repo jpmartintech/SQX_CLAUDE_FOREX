@@ -21,17 +21,18 @@ import math
 
 import numpy as np
 
-from sqxf.backtest.semantics import AGG, END, N_AGG, STOP, STOP_GAP, TARGET, TARGET_GAP, TIME
+from sqxf.backtest.semantics import AGG, END, N_AGG, SIGNAL, STOP, STOP_GAP, TARGET, TARGET_GAP, TIME, TRAIL
 
 
 def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, direction, sl_atr, tp_atr, max_bars,
                     delay, cost, risk_frac, days_per_year, t0, t1, cost_rel=None, fr=None, fr_abs=None,
-                    funding_mult=1.0, max_lev=math.inf):
+                    funding_mult=1.0, max_lev=math.inf, trail_atr=0.0, exit_sig=None):
     """Return ``(trades, agg)``: list of trade dicts and the aggregate vector (numpy float64)."""
     n_sig, n_ex = len(signal), len(o)
     cost_rel = np.zeros(n_sig) if cost_rel is None else cost_rel
     fr = np.zeros(n_ex) if fr is None else fr
     fr_abs = np.zeros(n_ex) if fr_abs is None else fr_abs
+    exit_sig = np.zeros(n_sig, dtype=bool) if exit_sig is None else exit_sig
     trades = []
     equity = 1.0
     peak_m, dd_m = 1.0, 0.0
@@ -64,19 +65,23 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
         kend = int(h1_end[last])
         reason, px, k = 0, 0.0, k0
         fund = 0.0
+        stop0, extreme, pending = stop, entry, False
         for k in range(k0, kend):
             if k > k0:
                 pay = -direction * float(fr[k]) * float(o[k]) - float(fr_abs[k]) * float(o[k])
                 if pay < 0:
                     pay *= funding_mult
                 fund += pay
+            if pending:
+                reason, px = SIGNAL, float(o[k])
+                break
             if direction == 1:
                 if o[k] <= stop:
                     reason, px = STOP_GAP, float(o[k])
                 elif o[k] >= target:
                     reason, px = TARGET_GAP, float(o[k])
                 elif l[k] <= stop:
-                    reason, px = STOP, stop
+                    reason, px = (STOP if stop == stop0 else TRAIL), stop
                 elif h[k] >= target:
                     reason, px = TARGET, target
             else:
@@ -85,17 +90,27 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
                 elif o[k] <= target:
                     reason, px = TARGET_GAP, float(o[k])
                 elif h[k] >= stop:
-                    reason, px = STOP, stop
+                    reason, px = (STOP if stop == stop0 else TRAIL), stop
                 elif l[k] <= target:
                     reason, px = TARGET, target
             if reason:
                 break
             dd_m = max(dd_m, 1.0 - mark(equity, frac, l[k] if direction == 1 else h[k], entry, cst, fund, risk) / peak_m)
             peak_m = max(peak_m, mark(equity, frac, c[k], entry, cst, fund, risk))
+            if trail_atr > 0:  # the bar's extreme moves the stop for the next bars only
+                if direction == 1:
+                    extreme = max(extreme, float(h[k]))
+                    stop = max(stop, extreme - trail_atr * a)
+                else:
+                    extreme = min(extreme, float(l[k]))
+                    stop = min(stop, extreme + trail_atr * a)
+            sb = int(h1_of[k])
+            if k == int(h1_end[sb]) - 1 and sb >= e and exit_sig[sb]:
+                pending = True
         if not reason:
             k = kend - 1
             reason, px = time_reason, float(c[k])
-        adverse = px if reason in (STOP, STOP_GAP, TARGET_GAP) else (l[k] if direction == 1 else h[k])
+        adverse = px if reason in (STOP, STOP_GAP, TARGET_GAP, TRAIL, SIGNAL) else (l[k] if direction == 1 else h[k])
         dd_m = max(dd_m, 1.0 - mark(equity, frac, adverse, entry, cst, fund, risk) / peak_m)
         x = int(h1_of[k])
         r = (direction * (px - entry) - cst + fund) / risk
@@ -103,7 +118,7 @@ def simulate_oracle(signal, atr, h1_start, h1_end, h1_of, o, h, l, c, day_id, di
         peak_m = max(peak_m, equity)
         dd_m = max(dd_m, 1.0 - equity / peak_m)
         trades.append({"signal_idx": t, "entry_idx": e, "exit_idx": x, "entry_exec": k0, "exit_exec": k,
-                       "entry_price": entry, "exit_price": px, "stop": stop, "target": target, "risk": risk,
+                       "entry_price": entry, "exit_price": px, "stop": stop0, "target": target, "risk": risk,
                        "r": r, "reason": reason, "equity_after": equity, "funding": fund, "frac": frac,
                        "day": int(day_id[k])})
         t = x
