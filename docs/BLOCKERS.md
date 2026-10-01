@@ -37,3 +37,9 @@ diseño, el test predictivo no tiene capacidad para validar estados en una venta
 - Diagnóstico: la memoria del AR(1) se agota en 1–2 barras H4, mientras que el cruce EMA50/200 con trailing de 3 ATR responde a tendencias
   largas. La ratio de varianzas a largo plazo con φ = 0,12 es solo ≈ 1,27. Los costes y el swap conservador restan ~0,05R por trade
   (Parte A: CAL1 −0,019R de costes y −0,036R de swap).
+
+## 2026-10-02 — No hay estrategias de hora o sesión en la gramática g1
+- El control de la fábrica pedía plantar una estrategia "basada en hora o sesión" de la gramática actual. g1 (170 predicados) no tiene
+  ningún predicado temporal; se planta en su lugar una estrategia de estructura y volatilidad (`configs/funnel_control.yaml`, V).
+- Por tanto, ni la Fase 2 ni este control pueden decir nada de edges de sesión: el genético no puede generarlos. Añadir predicados
+  de sesión sería ampliar el espacio de búsqueda (Fase 6), con su propio preregistro y conteo de ensayos. Decide Jaime.

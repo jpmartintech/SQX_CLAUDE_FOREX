@@ -1,0 +1,76 @@
+# Positive control of the WHOLE Phase 2 funnel with planted strategies of known edge. PRE-REGISTERED before any run.
+# Funnel thresholds are read from configs/funnel.yaml (commit ef3843c) and are NOT changed. Synthetic evaluations ->
+# trials/synthetic_ledger.jsonl only; trials/ledger.jsonl must keep md5 0eef3ea96eb2c809a340545fedeb0b53.
+run_name: funnel_control_s1
+funnel_config: configs/funnel.yaml
+stages_used: [basic, stability, cost_stress, execution_stress, walk_forward, deflated_sharpe]   # final block: not in a 15-y world
+
+world:
+  source: EURUSD complete days (96 M15), 2004-01-01 .. 2019-01-01, read with the parquet-filtering loader
+  calendar: synthetic weekdays 2004-01-05 .. 2018-12-31 (3911 days, 96 M15 per day, local EET/EEST)
+  construction: >-
+    the 3716 available complete days in a random permutation, followed by 195 days drawn WITH replacement from the same
+    pool (not enough complete days for a pure permutation); intraday paths kept, inter-day structure destroyed
+  periods: same as configs/funnel.yaml (fitness 2004-2014 in 3 blocks, walk-forward 2015..2018, DSR window 2004-2018)
+  replica_seed_base: 61000          # replica i (0..9) world seed 61000 + i; the same world for every planted strategy/size
+
+planted_strategies:                # concrete g1 strategies (counts checked on a probe world, seed 99999: >= 1000 trades 2004-2014)
+  T_trend:
+    direction: LONG
+    predicates: [["trend.ema_pair.20.100", ">", 0.0], ["trend.breakout_high.20", ">", 0.0]]
+    sl_atr: 2.0
+    tp_atr: 3.0
+    max_bars: 48
+  R_reversion:
+    direction: LONG
+    predicates: [["momentum.rsi.14", "<", 30.0], ["volatility.bb_lower.20.2", "<", 0.0]]
+    sl_atr: 1.5
+    tp_atr: 1.5
+    max_bars: 24
+  V_structure_volatility:          # SUBSTITUTE for the requested time/session strategy: g1 has no time or session predicate
+    direction: SHORT
+    predicates: [["structure.break_low.3", "<", 0.0], ["volatility.atr_regime.14.50", ">", 0.0]]
+    sl_atr: 2.0
+    tp_atr: 2.0
+    max_bars: 24
+
+edge:
+  target_net_sharpe: [0.3, 0.6, 1.0, 1.5]   # annualised Sharpe (daily, sqrt(260)) of the planted strategy over 2004-2018,
+                                            # M15 execution, costs x1 (configs/costs.yaml), 0.5 % risk per trade
+  rule: >-
+    causal drift in the strategy direction: H1 bar u gets +delta pips (log, at its open, spread over its 4 M15 closes) iff the
+    strategy's NULL-world signal fired at any H1 bar in [u - max_bars, u - 1]; only bars after a signal, no future information
+  calibration: >-
+    delta per (strategy, target) by bisection on a dedicated calibration world (seed 69999, not a replica) so that the
+    realised net Sharpe is within +-0.05 of the target (bracket [0, 20] pips/bar, max 30 iterations); the same delta is then
+    applied in every replica, where the realised Sharpe and mean R per trade are reported
+
+part_A:
+  replicas: 10                     # per planted strategy and size (>= 10), plus the null (no planting) in the same worlds
+  pool_size: 20000                 # random g1 strategies (sqxf.grammar.random_strategy, 1-4 predicates)
+  pool_seed: 51000                 # the SAME pool in every replica; the planted strategy is added to it
+  dsr_n_trials: 168590             # same exigency as the real Phase 2 run
+  dsr_var_sr: "variance of the daily Sharpe over the pool strategies with >= 30 trades in the DSR window (as in Phase 2)"
+  reading:
+    survival: "share of replicas where the planted strategy survives each stage and the whole funnel, per strategy and size"
+    killer: "first stage that eliminates the planted strategy"
+    false_positive_rate: "share of null replicas with >= 1 pool strategy surviving the whole funnel (and mean count)"
+    minimum_surviving_edge: "smallest target Sharpe with whole-funnel survival >= 0.80 (per strategy)"
+
+part_B:                            # only these runs (compute budget), background + logs + resumable
+  sizes: [1.0, 1.5]
+  replicas: [0, 1, 2]
+  genetic: same as configs/funnel.yaml (fitness only on the 3 training blocks; seed 20260930 + replica)
+  equivalent: "same canonical hash as the planted, or daily-return correlation > 0.8 (DSR window) with the planted, among the
+    500 best archive strategies by fitness and among the funnel survivors"
+  funnel: the archive goes through the same funnel (part_A rules, N = 168590)
+
+part_C:                            # informative only; thresholds unchanged
+  replicas: [0]
+  sizes: [1.0]
+  method: >-
+    2000 pool strategies with >= 30 trades (seed 52000), daily returns over 2004-2018; correlation distance 1 - rho, average
+    linkage, cut at 0.5; N_eff = 168590 * clusters / 2000; DSR of the planted strategies and of the 5 best null-pool
+    strategies (by raw DSR) recomputed with N_eff and compared with N = 168590
+
+ledgers: {synthetic: trials/synthetic_ledger.jsonl}

@@ -305,3 +305,14 @@ Formato: fecha — decisión. Alternativas. Motivo.
   - Parte C: ningún φ ≤ 0,12 hace aceptable la calibración.
   - Diagnóstico de potencia en `docs/BLOCKERS.md`, sin cambiar ningún umbral.
   - Merge de `phase-s-control` a `main` con pytest en verde.
+
+## 2026-10-02 — Control positivo de la fábrica completa (embudo de la Fase 2) (instrucción de Jaime vía /goal)
+- Rama `phase-s-funnel-control` desde `main`. Preregistro `configs/funnel_control.yaml` antes de ejecutar nada. Umbrales de
+  `configs/funnel.yaml` sin cambios. md5 de `trials/ledger.jsonl` antes: `0eef3ea96eb2c809a340545fedeb0b53`.
+- **Calendario:** solo hay 3.716 días completos de EURUSD en 2004–2018 frente a los 3.911 laborables del calendario de 15 años. Se usan
+  los 3.716 permutados más 195 días muestreados con reemplazo, para que valgan exactamente los periodos de la Fase 2.
+- **Tercera estrategia:** g1 no tiene predicados de hora ni de sesión, así que la estrategia "de sesión" pedida no existe en la
+  gramática actual. Se sustituye por una de estructura y volatilidad (V) y queda anotado en `docs/BLOCKERS.md`.
+- **Viabilidad comprobada solo con recuentos de trades** en un mundo de prueba (semilla 99999, fuera de las réplicas): T 1.029,
+  R 1.053 y V 1.720 trades en 2004–2014.
+- **Etapas:** se usan las de la Fase 2 hasta el DSR; el bloque final (2019–2022) no existe en un mundo de 15 años.
