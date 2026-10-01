@@ -265,3 +265,11 @@ Formato: fecha — decisión. Alternativas. Motivo.
     entradas aleatorias entre las barras operables de la validación, mismo número de trades, sentido, barras mantenidas y distancia de
     stop en fracción del precio, salida por tiempo, mismos costes y swap.
   - Ventana: señales en [2015-01-01, 2019-01-01) local; posiciones abiertas al final se cierran en la última barra (END).
+- **Incidente en la pasada única (antes de ver ningún resultado):** la primera ejecución de `scripts/states_validate.py` se cayó al
+  agregar R2, porque **R2 no genera ninguna entrada**: su condición (régimen +1, pendiente H4 +1 y orden H1 −1) no se da en ninguna
+  barra de los 6 pares entre 2003 y 2018. Verificado solo con recuentos de señales, sin retornos; cuadra con la fase descriptiva, donde
+  el estado combinado 24 no aparece. El script no mostró ni guardó resultados, ni escribió en el contador; solo dejó dos CSV de trades
+  (CAL1 y R1) que no se abrieron y que la reejecución sobrescribe.
+  **Decisión:** no se cambia la regla. R2 se evalúa tal cual (0 trades, falla el mínimo de trades) y cuenta como ensayo. El único
+  cambio es de robustez del código (agregar una estrategia sin trades). La reejecución es la misma pasada: mismo config, mismas
+  semillas, y el cálculo es determinista. No es una repetición con otros parámetros.

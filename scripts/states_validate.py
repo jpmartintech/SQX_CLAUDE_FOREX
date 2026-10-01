@@ -177,11 +177,13 @@ def main() -> None:
                            "max_dd": dd, "sharpe": mom[0] * math.sqrt(260), "mean_pips": float(tr["pips"].mean()) if len(tr) else None}
             if len(tr):
                 trades_all.append(tr)
-        t = pd.concat(trades_all, ignore_index=True) if trades_all else pd.DataFrame()
+        t = pd.concat(trades_all, ignore_index=True) if trades_all else pd.DataFrame(
+            {c: pd.Series(dtype=float) for c in ("r", "r_x2", "pips", "direction")}
+            | {"reason": pd.Series(dtype=str), "pair": pd.Series(dtype=str), "entry_local": pd.Series(dtype="datetime64[ns]")})
         pf_daily = pd.concat(port, axis=1).fillna(0.0).mean(axis=1)
         eq = np.cumprod(1 + pf_daily.to_numpy())
         record_evaluations(f"states S2 strategy {name}", "+".join(pairs), len(pairs), selection=True, run=cfg["run_name"])
-        if len(t):
+        if len(t) and "entry_time" in t:
             t.drop(columns=["entry_time", "exit_bar_time"]).to_csv(OUT / f"trades_{name}.csv", index=False)
         win, loss = t.loc[t.r > 0, "r"], t.loc[t.r < 0, "r"]
         by_year = t.groupby(pd.to_datetime(t["entry_local"]).dt.year)["r"].mean() if len(t) else pd.Series(dtype=float)
