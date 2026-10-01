@@ -1,6 +1,10 @@
 # PROGRESS
 
 ## Fase actual
+**Fase C1 Parte 2 hecha (rama `phase-c1-crypto`, run `crypto_c1_wf_r2`): ninguna variante cumple los criterios** (`docs/reports/phase-c1.md`).
+Nulo en curso en segundo plano (44/200 en el informe); al terminar: `python scripts/crypto_c1.py report && python scripts/crypto_c1_tables.py`.
+Contador: 4.489.550 evaluaciones sobre datos reales. Bloque de selección y holdout cripto: sin tocar.
+
 **Fase C1 (cripto), Parte 1 hecha (rama `phase-c1-crypto`):** módulo cripto, datos de perpetuos y funding, informe spot frente a perpetuo
 (`docs/reports/crypto_spot_vs_perp.md`) y preregistro `configs/crypto_c1.yaml` commiteado. **No se ha ejecutado ninguna búsqueda.**
 Pendiente: revisión de Jaime de los umbrales propuestos y de la recomendación de usar precios de perpetuo.

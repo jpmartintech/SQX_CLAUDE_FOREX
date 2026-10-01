@@ -202,3 +202,11 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Datos usados:** solo M15 < 2023-11-01 (spot y perpetuo ya descargados). No hace falta descargar nada del bloque de selección
   ni del holdout, así que no se descarga nada nuevo.
 - **Evaluaciones del nulo:** son sobre precios permutados y no se suman a `trials/ledger.jsonl`; sí las del genético sobre datos reales.
+
+## 2026-10-01 — Fase C1 Parte 2, después del run `crypto_c1_wf_r2`
+- **Veredicto reportado tal cual:** ninguna variante cumple (H4 2/8 criterios, D1 3/8). No se aflojan umbrales ni se relanza.
+- **Nulo parcial en el informe (44/200):** el nulo completo (~8–9 h) no cabe en el límite de turnos. Los 11 shards siguen en segundo
+  plano con las semillas preregistradas y el informe se regenera con `scripts/crypto_c1.py report`. El veredicto no depende del nulo
+  (fallan criterios deterministas). No es un cambio del preregistro: es el mismo nulo, aún incompleto.
+- **AVAX H4 (+0,277R, t = 4,9)** revisado como posible "demasiado bueno": PF 1,52, 3 ventanas, trades solapados entre clones, datos limpios;
+  sin bug. Los t por trade sobrestiman la evidencia porque las top-10 se solapan; los contrastes válidos son el nulo, el control y el DSR.
