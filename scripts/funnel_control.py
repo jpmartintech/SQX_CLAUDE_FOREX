@@ -26,7 +26,7 @@ from sqxf.control.factory import (
     strategy_sharpe,
     world_shapes,
 )
-from sqxf.control.synthetic import load_dev_shapes
+from sqxf.control.synthetic import load_dev_shapes, rebuild
 from sqxf.data.m15 import DataConfig
 from sqxf.funnel.pipeline import daily_returns, make_fitness, stats, window
 from sqxf.generators.genetic import GAConfig, run_genetic
@@ -74,18 +74,28 @@ def run_calibrate(name: str) -> None:
     mk0 = make_market(w0, CAL_START, N_DAYS, dcfg)
     dsr_w = window(mk0, *f["periods"]["dsr_window"])
     out = {"strategy": name, "null_sharpe": strategy_sharpe(mk0, s, dsr_w)[0], "targets": {}}
+    null_close = rebuild(w0["o0"], w0["shapes"])[3]
+    null_lo, null_hi = float(null_close.min()), float(null_close.max())
     evals = 0
     for target in fc["edge"]["target_net_sharpe"]:
         lo, hi, best = 0.0, 20.0, None
         for _ in range(30):
             mid = (lo + hi) / 2
-            mk = make_market(planted_world(w0, mk0, s, mid), CAL_START, N_DAYS, dcfg)
-            sh, mr, n = strategy_sharpe(mk, s, dsr_w)
-            evals += 1
+            wp = planted_world(w0, mk0, s, mid)
+            close = rebuild(wp["o0"], wp["shapes"])[3]
+            sh, mr, n = float("nan"), float("nan"), 0
+            if np.isfinite(close).all() and close.min() >= 0.05 * null_lo and close.max() <= 20.0 * null_hi:
+                try:   # outside these bounds the price path has collapsed / exploded (degenerate world)
+                    sh, mr, n = strategy_sharpe(make_market(wp, CAL_START, N_DAYS, dcfg), s, dsr_w)
+                    evals += 1
+                except (ZeroDivisionError, SystemError, FloatingPointError):
+                    pass
             best = {"delta_pips_per_h1": mid, "sharpe": sh, "mean_r": mr, "trades": n}
-            if abs(sh - target) <= 0.05:
+            degenerate = not np.isfinite(mr) or not np.isfinite(sh) or abs(mr) > 10.0
+            best["degenerate"] = bool(degenerate)
+            if not degenerate and abs(sh - target) <= 0.05:
                 break
-            lo, hi = (mid, hi) if sh < target else (lo, mid)
+            lo, hi = (mid, hi) if (sh < target and not degenerate) else (lo, mid)
         out["targets"][str(target)] = best
         print(f"{name} target {target}: delta {best['delta_pips_per_h1']:.4f} -> sharpe {best['sharpe']:.3f} "
               f"meanR {best['mean_r']:+.3f} n {best['trades']}", flush=True)
@@ -95,7 +105,15 @@ def run_calibrate(name: str) -> None:
 
 
 def calibration(fc) -> dict:
-    return {n: json.loads((OUT / f"calibration_{n}.json").read_text()) for n in fc["planted_strategies"]}
+    """Only (strategy, target) pairs whose calibration reached the target within +-0.05 (non-degenerate) are used."""
+    out = {}
+    for n in fc["planted_strategies"]:
+        c = json.loads((OUT / f"calibration_{n}.json").read_text())
+        ok = {t: v for t, v in c["targets"].items()
+              if np.isfinite(v["sharpe"]) and not v.get("degenerate") and abs(v["sharpe"] - float(t)) <= 0.05}
+        if ok:
+            out[n] = {**c, "targets": ok}
+    return out
 
 
 def pool(fc):
@@ -119,9 +137,9 @@ def run_a(shard: int, n_shards: int) -> None:
         rec = {"replica": i, "null": {"counts": res0["counts"], "survivors": len(res0["pool_survivors"]),
                                       "var_sr": res0["var_sr"]}, "planted": {}}
         dsr_w = window(mk0, *f["periods"]["dsr_window"])
-        for name, spec in fc["planted_strategies"].items():
-            s = planted(spec)
-            for target, c in cal[name]["targets"].items():
+        for name, cc in cal.items():
+            s = planted(fc["planted_strategies"][name])
+            for target, c in cc["targets"].items():
                 mk = make_market(planted_world(w0, mk0, s, c["delta_pips_per_h1"]), CAL_START, N_DAYS, dcfg)
                 sh, mr, n = strategy_sharpe(mk, s, dsr_w)
                 res = run_funnel_pool(mk, [*P, s], f, N, track=len(P))
@@ -134,14 +152,15 @@ def run_a(shard: int, n_shards: int) -> None:
                       f"{'SURVIVES' if res['tracked']['survived'] else 'killed at ' + str(res['tracked']['killer'])}", flush=True)
         with path.open("a") as fh:
             fh.write(json.dumps(rec, default=float) + "\n")
-        syn("funnel control A (pool + planted through the funnel)", (1 + 12) * (len(P) + 1), replica=i)
+        syn("funnel control A (pool + planted through the funnel)",
+            (1 + sum(len(c["targets"]) for c in cal.values())) * (len(P) + 1), replica=i)
 
 
 def run_b(shard: int, n_shards: int) -> None:
     fc, f, dev, dcfg = setup()
     cal = calibration(fc)
     b = fc["part_B"]
-    jobs = [(name, str(sz), r) for name in fc["planted_strategies"] for sz in b["sizes"] for r in b["replicas"]]
+    jobs = [(name, str(sz), r) for name in cal for sz in b["sizes"] for r in b["replicas"] if str(sz) in cal[name]["targets"]]
     path = OUT / f"B_shard{shard}.jsonl"
     done = {(x["strategy"], x["size"], x["replica"]) for x in map(json.loads, path.read_text().splitlines())} \
         if path.exists() else set()
@@ -202,9 +221,9 @@ def run_c() -> None:
         nulls.append({"sharpe": float(st["sharpe"][eligible[j]]), "dsr_raw": deflated_sharpe(d, N, var_sr)["dsr"],
                       "dsr_neff": deflated_sharpe(d, ne["n_eff"], var_sr)["dsr"]})
     plants = {}
-    for name, spec in fc["planted_strategies"].items():
-        s = planted(spec)
-        for sz in c["sizes"]:
+    for name in cal:
+        s = planted(fc["planted_strategies"][name])
+        for sz in [z for z in c["sizes"] if str(z) in cal[name]["targets"]]:
             mk = make_market(planted_world(w0, mk0, s, cal[name]["targets"][str(sz)]["delta_pips_per_h1"]), CAL_START, N_DAYS,
                              dcfg)
             d = daily_returns(mk, s, "M15", dsr_w)
@@ -227,9 +246,11 @@ def report() -> None:
         "fpr": float(np.mean([r["null"]["survivors"] > 0 for r in rows])),
         "mean_survivors": float(np.mean([r["null"]["survivors"] for r in rows])),
         "mean_counts": {k: float(np.mean([r["null"]["counts"][k] for r in rows])) for k in stages}}, "planted": {}}
-    for name in fc["planted_strategies"]:
+    for name in cal:
         for t in fc["edge"]["target_net_sharpe"]:
             key = f"{name}|{t}"
+            if str(t) not in cal[name]["targets"]:
+                continue
             g = [r["planted"][key] for r in rows]
             killers = {}
             for x in g:
@@ -252,7 +273,7 @@ def report() -> None:
     plt.style.use("dark_background")
     fig, ax = plt.subplots(1, 2, figsize=(12, 4.5))
     ts = fc["edge"]["target_net_sharpe"]
-    for name in fc["planted_strategies"]:
+    for name in cal:
         ax[0].plot(ts, [out["planted"][f"{name}|{t}"]["survival"] for t in ts], "o-", label=f"{name} (embudo completo)")
         ax[0].plot(ts, [out["planted"][f"{name}|{t}"]["stage_survival"]["walk_forward"] for t in ts], ":", alpha=0.7,
                    label=f"{name} (hasta walk-forward)")
