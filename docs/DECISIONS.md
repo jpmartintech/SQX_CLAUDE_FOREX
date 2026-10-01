@@ -305,3 +305,44 @@ Formato: fecha — decisión. Alternativas. Motivo.
   - Parte C: ningún φ ≤ 0,12 hace aceptable la calibración.
   - Diagnóstico de potencia en `docs/BLOCKERS.md`, sin cambiar ningún umbral.
   - Merge de `phase-s-control` a `main` con pytest en verde.
+
+## 2026-10-02 — Control positivo de la fábrica completa (embudo de la Fase 2) (instrucción de Jaime vía /goal)
+- Rama `phase-s-funnel-control` desde `main`. Preregistro `configs/funnel_control.yaml` antes de ejecutar nada. Umbrales de
+  `configs/funnel.yaml` sin cambios. md5 de `trials/ledger.jsonl` antes: `0eef3ea96eb2c809a340545fedeb0b53`.
+- **Calendario:** solo hay 3.716 días completos de EURUSD en 2004–2018 frente a los 3.911 laborables del calendario de 15 años. Se usan
+  los 3.716 permutados más 195 días muestreados con reemplazo, para que valgan exactamente los periodos de la Fase 2.
+- **Tercera estrategia:** g1 no tiene predicados de hora ni de sesión, así que la estrategia "de sesión" pedida no existe en la
+  gramática actual. Se sustituye por una de estructura y volatilidad (V) y queda anotado en `docs/BLOCKERS.md`.
+- **Viabilidad comprobada solo con recuentos de trades** en un mundo de prueba (semilla 99999, fuera de las réplicas): T 1.029,
+  R 1.053 y V 1.720 trades en 2004–2014.
+- **Etapas:** se usan las de la Fase 2 hasta el DSR; el bloque final (2019–2022) no existe en un mundo de 15 años.
+- **Calibración, incidente:** en la primera calibración, V (corta y que se activa en muchas barras) entró en una región degenerada:
+  con una deriva de 10 pips/barra el precio sintético se acercó a cero (R ≈ −6e31, Sharpe 0). La bisección lo interpretó como "por
+  debajo del objetivo" y se clavó en el tope de 20. **Arreglo de robustez** del procedimiento, sin cambiar objetivos, horquilla ni
+  umbrales: un mundo con R no finito o |R| > 10 (imposible con estos stops) cuenta como "deriva demasiado fuerte". Se recalibran las
+  tres estrategias; la calibración anterior se conserva en `runs/funnel_control_s1/cal_v1/`.
+- **Calibración, ampliación de la regla de robustez:** en un mundo degenerado el kernel llegó a dividir por cero (equity colapsada).
+  Ahora, además, un mundo cuyos precios salen de [0,5 × mínimo, 2 × máximo] del mundo nulo de calibración cuenta como "deriva demasiado
+  fuerte" y no se evalúa. Objetivos, horquilla y criterio de ±0,05 sin cambios.
+- **Calibración, corrección de la regla anterior:** el rango [0,5×, 2×] era demasiado estricto. Un edge plantado acumula deriva durante
+  15 años, y mundos válidos (los que calibraron T y R en la primera versión) ya salen de ese rango, así que la recalibración quedó
+  inservible (resultados en `runs/funnel_control_s1/cal_v2/`, descartados). Regla definitiva: el mundo es degenerado solo si el precio
+  colapsa o explota (fuera de [0,05 × mínimo, 20 × máximo] del mundo nulo) o si el kernel falla por un error numérico. Validación:
+  T y R deben reproducir exactamente su primera calibración.
+- **V (estructura/volatilidad) no es calibrable con la regla preregistrada:** su Sharpe frente a la deriva no es monótono. Sube de −0,44
+  (δ = 0) a un máximo de +0,05 (δ = 0,3 pips/barra) y vuelve a caer, porque la deriva bajista acumulada en 15 años (V está activa en el
+  45 % de las barras) hunde el precio de 1,19 a 0,16 y el coste fijo en pips se dispara en R. No alcanza ni el objetivo 0,3. **No se
+  cambia la regla:** V queda fuera de A, B y C, y el control sigue con T (tendencia) y R (reversión), calibradas a ±0,05 (R a 0,3:
+  0,260). La calibración final de T y R es idéntica bit a bit a la primera.
+- **Hallazgo de diseño (Parte B) y análisis post hoc informativo:** en los mundos plantados, entre 16.000 y 73.000 de las 99.000
+  estrategias del genético superan el walk-forward. La deriva plantada (activa en una fracción grande de las barras) se convierte en una
+  tendencia de todo el mercado y beneficia a casi cualquier estrategia del mismo sentido; no es un edge localizado en la plantada.
+  Esto infla la Var[SR] del pool y con ella el listón del DSR. Sin cambiar el preregistro, se añade un análisis de sensibilidad
+  (`scripts/funnel_control_sensitivity.py`): deriva del precio de cada mundo, puesto de la plantada en el pool y DSR de la plantada con
+  la Var[SR] del mundo nulo. Solo informativo; no altera ningún resultado ni umbral.
+- **Resultado del control de la fábrica** (`docs/reports/funnel_control.md`):
+  - Supervivencia 0 % para T y R en todos los tamaños (Sharpe realizado 0,26–1,16); FPR nula 0/10.
+  - La etapa básica mata a los edges pequeños y el DSR a todos los grandes (SR\* ≈ 2,6 anual).
+  - El genético no encuentra la plantada (correlación máxima 0,61).
+  - N_eff por clustering ≈ 66.000, sin efecto práctico.
+  - Diagnóstico en `docs/BLOCKERS.md`. Ningún umbral cambiado. md5 de `trials/ledger.jsonl` sin cambios. Merge a `main`.
