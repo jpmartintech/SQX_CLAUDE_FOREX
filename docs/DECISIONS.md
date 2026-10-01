@@ -235,3 +235,33 @@ Formato: fecha — decisión. Alternativas. Motivo.
   sin retornos. Criterio de sistema cumplido (4,1–4,3 cambios por 100 H1 frente a un máximo de 15). Incumplimiento por timeframe:
   EURUSD D1, duración mínima 2,64 < 3; se reporta tal cual. Quedan fijados **15 estados × 3 horizontes = 45 tests** en EURUSD
   antes de leer ningún retorno.
+
+## 2026-10-01 — Fase S, Parte 2: registro ANTES de ejecutar (instrucción de Jaime vía /goal)
+- **Preregistro intacto:** `configs/states_ribbon.yaml` en HEAD es idéntico al de `1748f2d` (`git diff` vacío).
+- **Desviación conocida:** en EURUSD D1, un estado con ≥ 1 % del tiempo tiene una duración media de 2,64 barras, por debajo del
+  mínimo propuesto de 3. Se acepta como desviación conocida y no se cambia ningún umbral. El criterio que detiene la fase es el de
+  sistema (≤ 15 cambios por 100 H1) y se cumple (4,26 en EURUSD).
+- **Swap:** se mantiene `configs/swap.yaml` conservador (1 pip/noche que pagan largos y cortos, triple el jueves), **pendiente de
+  verificar con el broker**; no bloquea.
+- **Tests predictivos fijados antes de leer retornos:** EURUSD, 15 estados utilizables con dirección (0, 1, 3, 4, 8, 9, 10, 16, 17,
+  18, 19, 22, 23, 25, 26) × 3 horizontes (6, 24, 120 H1) = **45 pares estado-horizonte**. Holm sobre los 45. Réplica: los mismos 45
+  en cada uno de los 5 pares restantes (validación, no selección).
+- **Pares efectivos** (antes de evaluar ninguna estrategia): PCA de los retornos diarios logarítmicos de los cierres D1 completos de
+  los 6 pares en desarrollo (2004–2014, 2.753 días comunes): autovalores 3,27 · 1,29 · 0,50 · 0,43 · 0,35 · 0,17; participation
+  ratio **2,78** (`docs/reports/states_effective_pairs.json`). **N del DSR = 5 estrategias × 2,78 = 13,92.**
+- **Detalles de implementación que el YAML no fija** (decididos ahora, sin ver resultados; ninguno toca un umbral):
+  - Regla simétrica: las patas larga y corta se evalúan como dos subcuentas independientes con 0,5 % de riesgo cada una y se
+    agrupan sus trades. En R1, R2 y R4 no pueden coincidir (los regímenes se excluyen); en R3 sí (régimen 0).
+  - Espejos de las salidas: R1 corto sale si régimen ≠ −1 o pendiente H4 = +1; R2 corto sale si régimen ≠ −1.
+  - Transiciones ("cambia a", "deja", "sale de"): valor en la barra H1 t distinto del de t−1, sobre los valores alineados de barras cerradas.
+  - Años positivos: por año de entrada del trade. Pares positivos: mean R ×1 > 0 con ≥ 20 trades.
+  - DSR: retornos diarios de la cartera equiponderada de los 6 pares (subcuentas de 0,5 % por par); Var[SR] = varianza del Sharpe
+    diario de las 30 combinaciones estrategia × par, como dice el YAML.
+  - p del bootstrap tal cual dice el YAML: fracción de las 10.000 medias remuestreadas ≤ 0 (semilla 20261002), con un bloque circular
+    de max(5·h, 120) barras H1 sobre la serie completa de validación (todas las barras con retorno futuro disponible).
+  - Retorno futuro: entrada en la apertura de la barra H1 t+1 y salida en el cierre de la barra t+h (h barras H1 existentes); se
+    descarta si t+h no existe antes del 2019-01-01. Coste: 1,5 pips con el pip de cada par.
+  - Control aleatorio emparejado (solo informativo; lo pide la instrucción y no es un criterio del YAML): 200 réplicas por estrategia,
+    entradas aleatorias entre las barras operables de la validación, mismo número de trades, sentido, barras mantenidas y distancia de
+    stop en fracción del precio, salida por tiempo, mismos costes y swap.
+  - Ventana: señales en [2015-01-01, 2019-01-01) local; posiciones abiertas al final se cierran en la última barra (END).
