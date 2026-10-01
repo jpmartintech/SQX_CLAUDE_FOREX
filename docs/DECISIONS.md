@@ -273,3 +273,15 @@ Formato: fecha — decisión. Alternativas. Motivo.
   **Decisión:** no se cambia la regla. R2 se evalúa tal cual (0 trades, falla el mínimo de trades) y cuenta como ensayo. El único
   cambio es de robustez del código (agregar una estrategia sin trades). La reejecución es la misma pasada: mismo config, mismas
   semillas, y el cálculo es determinista. No es una repetición con otros parámetros.
+
+## 2026-10-01 — Fase S, Parte 2: resultado y cierre
+- **Pasada única ejecutada** (`states_ribbon_s1`): test predictivo 0/45; calibración con la firma esperada (4/4) pero rentabilidad
+  negativa (−0,090R, PF 0,76); R1–R4 ninguna aceptada (R2 sin trades); DSR ≤ 0,016 (N = 13,92); sin avisos de "demasiado bueno".
+  Informe `docs/reports/phase-s2.md`. No se aflojan umbrales ni se lanzan búsquedas nuevas en esta fase.
+- **Formato:** `results.json` serializó como texto los booleanos de numpy de los criterios predictivos; los veredictos se calcularon
+  en memoria con booleanos reales. La copia `docs/reports/phase-s2_results.json` solo convierte el formato.
+- **Verificación:** el p crudo idéntico del estado 0 en h = 24 y h = 120 (0,3165) se comprobó con el mismo código y semilla: los
+  remuestreos coinciden solo en el 57 %; es una coincidencia.
+- **Cierre:** se cumplen los criterios de la fase (pasada única preregistrada, informe con número de ensayos, tablas completas,
+  criterio a criterio, años, pares, drawdown y limitaciones, y tests en verde). Un resultado negativo es válido (AUTONOMY §1),
+  así que se hace merge a `main` con tag `v0.s2`.

@@ -1,6 +1,11 @@
 # PROGRESS
 
 ## Fase actual
+**Fase S, Parte 2 hecha (`v0.s2`):** pasada única preregistrada en la validación 2015–2018 (`docs/reports/phase-s2.md`). Test predictivo
+0/45 estados-horizonte; calibración H4 con la firma esperada pero −0,090R (PF 0,76); R1–R4 ninguna aceptada (R2 sin trades: su
+condición no se da nunca); DSR ≤ 0,016 con N = 13,92. Contador: 4.489.850 evaluaciones. Swap aún sin verificar con el broker.
+Esperando revisión de Jaime.
+
 **Fase S, Parte 1 hecha (rama `phase-s-states`):** preregistro `configs/states_ribbon.yaml` (`1748f2d`) y swap conservador
 `configs/swap.yaml` (pendiente de verificar con el broker). Fase descriptiva sin retornos: `docs/reports/states_descriptive.md`
 (4,2 cambios por 100 H1; 45 tests fijados en EURUSD). **No se ha ejecutado el test predictivo ni ninguna regla.** Pendiente: revisión
