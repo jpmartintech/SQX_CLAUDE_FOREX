@@ -231,3 +231,7 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Swap:** `configs/swap.yaml` con valor conservador por defecto, 1,0 pip/noche que pagan largos y cortos y triple el jueves a las
   00:00 EET. **Pendiente de verificar con el broker de Jaime.**
 - **Umbrales de persistencia y de aceptación PROPUESTOS por Claude**, pendientes de revisión de Jaime. Parte 1 no lee retornos.
+- **Fase descriptiva ejecutada** después del preregistro (`docs/reports/states_descriptive.md`), solo sobre el periodo de desarrollo y
+  sin retornos. Criterio de sistema cumplido (4,1–4,3 cambios por 100 H1 frente a un máximo de 15). Incumplimiento por timeframe:
+  EURUSD D1, duración mínima 2,64 < 3; se reporta tal cual. Quedan fijados **15 estados × 3 horizontes = 45 tests** en EURUSD
+  antes de leer ningún retorno.
