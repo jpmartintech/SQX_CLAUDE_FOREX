@@ -703,3 +703,27 @@
 {"utc": "2026-10-02T06:49:08.626293+00:00", "purpose": "phase K world planted", "n_evaluations": 99001, "code_version": "0.1.0+7d76a695096a-dirty", "job": ["planted", 19, 73019, "RS_rev_short", "1.0"]}
 {"utc": "2026-10-02T06:50:00.895677+00:00", "purpose": "phase K world planted", "n_evaluations": 99001, "code_version": "0.1.0+7d76a695096a-dirty", "job": ["planted", 19, 73019, "TL_trend_long", "1.5"]}
 {"utc": "2026-10-02T12:40:50.141366+00:00", "purpose": "phase K2 timing probe (seed 99997)", "n_evaluations": 40050}
+{"utc": "2026-10-02T12:46:50.173661+00:00", "purpose": "phase K2 calibration", "n_evaluations": 19, "code_version": "0.1.0+492b5936f472", "strategy": "TS_trend_short", "pair": "NZDUSD"}
+{"utc": "2026-10-02T12:46:54.991065+00:00", "purpose": "phase K2 calibration", "n_evaluations": 23, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TL_trend_long", "pair": "NZDUSD"}
+{"utc": "2026-10-02T12:47:07.407996+00:00", "purpose": "phase K2 calibration", "n_evaluations": 35, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TL_trend_long", "pair": "GBPUSD"}
+{"utc": "2026-10-02T12:47:08.924657+00:00", "purpose": "phase K2 calibration", "n_evaluations": 37, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TS_trend_short", "pair": "USDCHF"}
+{"utc": "2026-10-02T12:47:09.923604+00:00", "purpose": "phase K2 calibration", "n_evaluations": 38, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TS_trend_short", "pair": "EURUSD"}
+{"utc": "2026-10-02T12:47:12.027687+00:00", "purpose": "phase K2 calibration", "n_evaluations": 38, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TS_trend_short", "pair": "USDCAD"}
+{"utc": "2026-10-02T12:47:13.850014+00:00", "purpose": "phase K2 calibration", "n_evaluations": 40, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TS_trend_short", "pair": "GBPUSD"}
+{"utc": "2026-10-02T12:47:15.100950+00:00", "purpose": "phase K2 calibration", "n_evaluations": 41, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TL_trend_long", "pair": "EURUSD"}
+{"utc": "2026-10-02T12:47:15.753898+00:00", "purpose": "phase K2 calibration", "n_evaluations": 42, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TL_trend_long", "pair": "USDCAD"}
+{"utc": "2026-10-02T12:47:15.948435+00:00", "purpose": "phase K2 calibration", "n_evaluations": 41, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TL_trend_long", "pair": "USDCHF"}
+{"utc": "2026-10-02T12:47:16.628940+00:00", "purpose": "phase K2 calibration", "n_evaluations": 43, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TS_trend_short", "pair": "USDJPY"}
+{"utc": "2026-10-02T12:47:16.859293+00:00", "purpose": "phase K2 calibration", "n_evaluations": 43, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "TL_trend_long", "pair": "USDJPY"}
+{"utc": "2026-10-02T12:47:44.684731+00:00", "purpose": "phase K2 calibration", "n_evaluations": 35, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RL_rev_long", "pair": "EURUSD"}
+{"utc": "2026-10-02T12:47:48.330051+00:00", "purpose": "phase K2 calibration", "n_evaluations": 34, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RL_rev_long", "pair": "GBPUSD"}
+{"utc": "2026-10-02T12:47:59.676748+00:00", "purpose": "phase K2 calibration", "n_evaluations": 33, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RL_rev_long", "pair": "USDCHF"}
+{"utc": "2026-10-02T12:48:02.469759+00:00", "purpose": "phase K2 calibration", "n_evaluations": 35, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RL_rev_long", "pair": "NZDUSD"}
+{"utc": "2026-10-02T12:48:03.560230+00:00", "purpose": "phase K2 calibration", "n_evaluations": 34, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RS_rev_short", "pair": "USDCHF"}
+{"utc": "2026-10-02T12:48:03.946484+00:00", "purpose": "phase K2 calibration", "n_evaluations": 39, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RL_rev_long", "pair": "USDJPY"}
+{"utc": "2026-10-02T12:48:04.285427+00:00", "purpose": "phase K2 calibration", "n_evaluations": 38, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RL_rev_long", "pair": "USDCAD"}
+{"utc": "2026-10-02T12:48:04.498180+00:00", "purpose": "phase K2 calibration", "n_evaluations": 35, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RS_rev_short", "pair": "EURUSD"}
+{"utc": "2026-10-02T12:48:05.317102+00:00", "purpose": "phase K2 calibration", "n_evaluations": 35, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RS_rev_short", "pair": "GBPUSD"}
+{"utc": "2026-10-02T12:48:05.977971+00:00", "purpose": "phase K2 calibration", "n_evaluations": 36, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RS_rev_short", "pair": "USDCAD"}
+{"utc": "2026-10-02T12:48:07.335629+00:00", "purpose": "phase K2 calibration", "n_evaluations": 38, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RS_rev_short", "pair": "USDJPY"}
+{"utc": "2026-10-02T12:48:08.640033+00:00", "purpose": "phase K2 calibration", "n_evaluations": 40, "code_version": "0.1.0+492b5936f472-dirty", "strategy": "RS_rev_short", "pair": "NZDUSD"}

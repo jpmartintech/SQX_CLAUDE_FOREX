@@ -1,7 +1,7 @@
 # Phase K2 — combined 6-pair funnel calibrated by simulation. PRE-REGISTERED before any world runs. Previous configs untouched.
 # Synthetic evaluations -> trials/synthetic_ledger.jsonl only; trials/ledger.jsonl md5 before: 451cef5a39a3ac37479bc82cd56dc5aa
 # (identical after the synthetic phase; it changes only if the single real run happens).
-run_name: funnel_k2_r1
+run_name: funnel_k2_r2                 # r1 -> r2: planting amendment for unreachable (strategy, pair) targets, before any world
 pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD]
 data_end: "2019-01-01"                 # parquet-filtering loader: nothing from 2019 on is read
 
@@ -83,6 +83,13 @@ planted:
     bisection (max 30 iterations, +-0.05) inside the FIRST grid interval crossing the target; a target never crossed is
     UNREACHABLE for that (strategy, pair) and the combination is not run; degenerate worlds (price outside [0.05 x min, 20 x
     max] of the null pair, or numeric failure) count as not crossing
+  unreachable_amendment: >-
+    AMENDMENT (r2, committed before any world; calibration of r1 kept): the compensated reversion response peaks below some
+    targets (RL USDCHF max 0.53, RL EURUSD 0.81, RS GBPUSD 0.91, RS USDCHF 0.85, ...). Instead of not running the
+    combination, a (strategy, pair) whose target is unreachable is planted with the delta of its grid MAXIMUM Sharpe
+    ("capped"); the edge is still present in every scenario pair, its realised Sharpe is below the target (conservative:
+    survival can only be harder) and the capped pairs are reported. A (strategy, scenario, target) whose delta vector is
+    identical to that of a lower target is a duplicate and is not run.
   replicas: {count: 20, seed_base: 83000}   # replica r: world seed 83000 + r for every strategy, size and scenario
   pool: "at each boundary: GA archive of the planted world + the planted strategy (EURUSD) inserted"
   survival: >-

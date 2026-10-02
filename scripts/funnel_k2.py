@@ -113,8 +113,14 @@ def load_cal(cfg, out):
             for n in cfg["planted"]["strategies"] for p in cfg["pairs"]}
 
 
-def reachable(cal, name, target, pairs):
-    return all(not cal[(name, p)]["targets"][str(target)]["unreachable"] for p in pairs)
+def delta_for(cal, name, pair, target):
+    """Calibrated delta, or the delta of the grid maximum Sharpe when the target is unreachable (amendment r2)."""
+    c = cal[(name, pair)]
+    t = c["targets"][str(target)]
+    if not t["unreachable"]:
+        return t["delta_pips_per_h1"], False
+    ok = [g for g in c["grid"] if not g["degenerate"]]
+    return max(ok, key=lambda g: g["sharpe"])["delta_pips_per_h1"], True
 
 
 def jobs(cfg, cal):
@@ -126,9 +132,13 @@ def jobs(cfg, cal):
         for sc in p["scenarios"]:
             pairs = cfg["pairs"] if sc == "six_pairs" else ["EURUSD"]
             for name in p["strategies"]:
+                seen = set()
                 for t in p["target_net_sharpe"]:
-                    if reachable(cal, name, t, pairs):
-                        out.append(("planted", r, p["replicas"]["seed_base"] + r, name, str(t), sc))
+                    vec = tuple(delta_for(cal, name, q, t)[0] for q in pairs)
+                    if vec in seen:
+                        continue
+                    seen.add(vec)
+                    out.append(("planted", r, p["replicas"]["seed_base"] + r, name, str(t), sc))
     return out
 
 
@@ -143,7 +153,8 @@ def run_world(cfg, dev, dcfg, cal, job):
     if kind == "planted":
         s = planted(cfg["planted"]["strategies"][name])
         for p in (pairs if sc == "six_pairs" else ["EURUSD"]):
-            shapes[p] = plant_pair(shapes[p], p, s, cal[(name, p)]["targets"][t]["delta_pips_per_h1"], cfg, dcfg)
+            shapes[p] = plant_pair(shapes[p], p, s, delta_for(cal, name, p, t)[0], cfg, dcfg)
+        rec["capped_pairs"] = [p for p in (pairs if sc == "six_pairs" else ["EURUSD"]) if delta_for(cal, name, p, t)[1]]
         rec["price_ratio"] = {p: price_ratio(shapes[p]) for p in pairs}
     markets = {p: pair_market(shapes[p], p, w["cal_start"], w["n_days"], dcfg) for p in pairs}
     evaluated = 0

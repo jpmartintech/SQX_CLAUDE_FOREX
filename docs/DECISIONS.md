@@ -422,3 +422,17 @@ Formato: fecha — decisión. Alternativas. Motivo.
   "estabilidad" de la Fase K no se incluye, porque la instrucción solo mantiene sanidad, costes ×2 y retraso.
 - **Sharpe objetivo de las plantadas:** por par. En el escenario de 6 pares, el Sharpe de la serie combinada será mayor por
   diversificación; se reporta también.
+- **Enmienda K2 (run `funnel_k2_r2`), antes de ejecutar ningún mundo.**
+  - La calibración por par (mundo 89999, regla preregistrada) deja objetivos inalcanzables en las reversiones compensadas:
+    - RL en USDCHF: máximo 0,53, inalcanzable desde 0,6;
+    - RL en EURUSD: 0,81;
+    - RL en GBPUSD: 1,11;
+    - RS en GBPUSD: 0,91;
+    - RS en USDCHF: 0,85;
+    - RS en EURUSD: 1,09.
+  - Con la regla literal, RL no tendría ninguna combinación de 6 pares y la validez fallaría por construcción del instrumento,
+    no por el embudo.
+  - Nueva regla: el par inalcanzable se planta con el delta de su Sharpe máximo en la rejilla ("tope"). El edge sigue en todos los
+    pares del escenario y queda por debajo del objetivo, así que es conservador. Las combinaciones con el mismo vector de deltas
+    que un objetivo menor se omiten.
+  - Criterios de validez sin cambios. La calibración de r1 se reutiliza tal cual (mismo procedimiento): se copia a `runs/funnel_k2_r2/`.
