@@ -376,3 +376,33 @@ Formato: fecha — decisión. Alternativas. Motivo.
   - Supervivencia máxima con Sharpe ≤ 1,0: 20 %. **Embudo v2 NO válido.** Sin pasada real, sin relajar criterios ni repetir semillas.
   - md5 de `trials/ledger.jsonl` sin cambios. Evaluaciones sintéticas de la fase: 57.639.799.
   - Diagnóstico en `docs/BLOCKERS.md`.
+
+## 2026-10-02 — Fase C2: primas estructurales con 5 hipótesis preregistradas (instrucción de Jaime vía /goal)
+- Rama `phase-c2-premia`. Preregistro `configs/premia_c2.yaml` (run `premia_c2_r1`) commiteado antes de calcular nada.
+- **Datos:** cripto solo `until=development` (< 2023-11-01, splits de C1; bloque de selección y holdout sin tocar). Forex hasta
+  2018-12-31 con el cargador que filtra. Spot, perpetuos y funding locales; no hace falta red.
+- **Ventana cripto 2019-09-16 → 2023-10-31:** empieza con el primer perpetuo (BTC). Cada moneda entra cuando existe su perpetuo
+  (fecha de C1) y es líquida: es el "universo listado en cada fecha" que permiten los datos. El sesgo de supervivencia de las 8
+  monedas se declara.
+- **Decisiones de diseño no especificadas en la instrucción**, fijadas sin ver resultados:
+  - comisión spot 0,10 % por lado (taker sin descuento BNB);
+  - vol a 60 días;
+  - terciles con n = floor(N/3) por lado;
+  - rebalanceo semanal en H2 y H4, mensual en H1 y diario en H3 y H5;
+  - H5 con objetivo de volatilidad del 10 % / √N;
+  - bootstrap circular de bloques de 20 días con 10.000 remuestreos;
+  - el control aleatorio asigna dirección aleatoria por tramo de posición.
+- **Potencia** (antes de resultados):
+  - Cripto (4,13 años): SE(Sharpe) 0,49 y Sharpe mínimo detectable ≈ 1,15 (50 % de potencia). Potencia a 0,5: 10 %; a 1,0: 38 %.
+  - Forex (15 años): mínimo detectable ≈ 0,60. Potencia a 0,5: 35 %; a 1,0: 94 %.
+- **Resultado de C2** (pasada única `premia_c2_r1`, `docs/reports/phase-c2.md`):
+  - Pasa 1 de 5: H1, carry de funding, con Sharpe 5,75, p 0,0004, 2 de 3 tercios positivos y ×2 positivo.
+    H2 (p 0,014), H3 (p 0,032), H4 y H5 no pasan.
+  - **H1 superó el umbral "demasiado bueno" y se investigó antes de reportar:**
+    - no tiene señal, así que no hay fuga;
+    - un oráculo independiente confirma las unidades: funding 12,9 %/año con pesos fijos; la diferencia con el 17,7 % del motor es
+      la deriva del nocional entre rebalanceos mensuales;
+    - los costes de las dos patas están incluidos;
+    - la volatilidad es del 2,9 % porque la cobertura spot/perp es casi exacta en el cierre diario.
+    - Se reporta como evidencia condicionada al régimen 2020–21 (último tercio negativo), sin modelar liquidaciones ni contraparte.
+  - Ledger: +1.010 evaluaciones (5 de selección); total 4.490.860. Holdout y bloque de selección cripto sin tocar.
