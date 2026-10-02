@@ -1,6 +1,17 @@
 # PROGRESS
 
 ## Fase actual
+**Fase K (embudo v2 calibrado por simulación) cerrada BLOQUEADA** (`docs/reports/funnel_calibration.md`, run `funnel_v2_k2`):
+- La puerta final por simulación (p95 del máximo OOS 2015–2018 en 200 mundos nulos) da FP 3 % (D1) en 100 nulos independientes.
+- Supervivencia de las 4 plantadas con Sharpe realizado ≤ 1,0: como máximo 20 % (objetivo 80 %). A Sharpe ≈ 2 llega al 60 %.
+- No se aplicó a datos reales. `trials/ledger.jsonl` intacto (4.489.850). Opciones para Jaime en `docs/BLOCKERS.md`:
+  - menos candidatas en la puerta;
+  - OOS más largo o CPCV;
+  - estadístico multi-par;
+  - aceptar un edge mínimo detectable mayor.
+- La reversión compensada no supera un Sharpe de ~1,35 en el mundo de calibración (objetivo 1,5 inalcanzable). La bisección se enmendó
+  antes de ejecutar mundos (DECISIONS).
+
 **Control de la fábrica completa hecho** (`docs/reports/funnel_control.md`):
 - El embudo de la Fase 2 no deja pasar estrategias plantadas con Sharpe neto de hasta ≈ 1,16 (0/80 combinaciones × réplicas sobreviven;
   FPR nula 0/10). La etapa básica mata a los edges pequeños y el DSR (N = 168.590, SR\* ≈ 2,6 anual) a todos los grandes.
