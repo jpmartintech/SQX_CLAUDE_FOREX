@@ -72,3 +72,22 @@ diseño, el test predictivo no tiene capacidad para validar estados en una venta
    por trade, justo en el umbral, y cae por ruido.
 5. **Implicación:** los 0 supervivientes de la Fase 2 no indican ausencia de edges aprovechables (Sharpe 0,6–1,0). Con estos umbrales y
    este N, el embudo no los habría dejado pasar.
+
+## 2026-10-02 — El embudo v2 calibrado por simulación no es válido (Fase K, run `funnel_v2_k2`)
+- **Resultado:**
+  - FP del diseño elegido (D1, t de R): 3 % en 100 mundos nulos independientes. Umbral p95 del máximo nulo: t = 3,65.
+  - Supervivencia ≥ 80 % con Sharpe realizado ≤ 1,0: ninguna plantada. Las mejores fueron RS 1,30 → 20 % y TL 1,16 → 10 %.
+  - Incluso con Sharpe ≈ 2 (TL 1,5) la supervivencia es del 60 %. Informe: `docs/reports/funnel_calibration.md`.
+- **Causa:** con 4 años de OOS, una estrategia con Sharpe ~1 tiene t ≈ 2. El máximo de las ~9.400 candidatas nulas que llegan a la puerta
+  tiene mediana 2,57 y p95 3,65. En muestra, la estabilidad (3 bloques positivos) y los costes ×2 matan los edges ≤ 0,6.
+  El genético no reconstruye la plantada (correlación máxima mediana 0,51).
+- **Consecuencia:** no se aplica a datos reales. Un nulo de este embudo no descartaría edges de Sharpe ≤ ~1,3.
+- **Opciones (decisión de Jaime; cada una requiere un nuevo preregistro):**
+  1. **Reducir el número efectivo de candidatas que llegan a la puerta.**
+     - Elegir en entrenamiento solo las K mejores (p. ej. 10–50) por fitness o por cluster.
+     - El umbral bajaría de forma aproximada con log K.
+  2. **Alargar el OOS.**
+     - Walk-forward con reoptimización (que incluya 2019–2022).
+     - Validación cruzada combinatoria (CPCV) sobre 2004–2018, en lugar de un único bloque de 4 años.
+  3. **Usar el estadístico conjunto de varios pares** como réplica independiente (el t combinado crece con √pares si el edge es común).
+  4. **Aceptar un objetivo de potencia menor** o un edge mínimo detectable mayor (Sharpe ≈ 2). Hay que decirlo explícitamente.

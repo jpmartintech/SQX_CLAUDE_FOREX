@@ -370,3 +370,9 @@ Formato: fecha — decisión. Alternativas. Motivo.
   - Se recalibran las 4 plantadas con la regla nueva.
     Las calibraciones de tendencia de k1 eran monótonas, pero se descartan para aplicar un único procedimiento.
   - El diagnóstico se registró en el contador sintético.
+- **Resultado de la Fase K** (`docs/reports/funnel_calibration.md`, `docs/reports/funnel_calibration_results.json`):
+  - Umbrales p95: D1 3,647 (FP 3 %), D2 1,695 (FP 4 %), D3 3,325 (FP 4 %).
+  - Diseño elegido por la regla: D1 (empate a 0 en supervivencia mínima a 1,0).
+  - Supervivencia máxima con Sharpe ≤ 1,0: 20 %. **Embudo v2 NO válido.** Sin pasada real, sin relajar criterios ni repetir semillas.
+  - md5 de `trials/ledger.jsonl` sin cambios. Evaluaciones sintéticas de la fase: 57.639.799.
+  - Diagnóstico en `docs/BLOCKERS.md`.

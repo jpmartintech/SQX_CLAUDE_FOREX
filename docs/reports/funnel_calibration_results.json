@@ -1,0 +1,885 @@
+{
+ "n_cal": 200,
+ "n_fp": 100,
+ "n_planted": 280,
+ "designs": {
+  "D1_tstat_r": {
+   "threshold": 3.6471300547055256,
+   "null_max_quantiles": {
+    "50": 2.5660709562008357,
+    "90": 3.336733248511806,
+    "95": 3.6471300547055256,
+    "99": 4.017864051274343
+   },
+   "fp_rate": 0.03,
+   "survival": {
+    "TL_trend_long|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 4,
+      "stability": 9,
+      "decision_gate": 4,
+      "sanity": 3
+     },
+     "realised_sharpe_mean": 0.3550555998868321,
+     "realised_sharpe_sd": 0.27947501048088147,
+     "realised_mean_r": 0.04346299928982374,
+     "trades_mean": 1441.55,
+     "price_ratio_mean": 0.9538862425398612,
+     "price_ratio_min": 0.8319912020032908,
+     "price_ratio_max": 1.1148366101297889,
+     "planted_reaches_gate": 0.2,
+     "planted_stat_median": 1.0106646840119946,
+     "ga_found_hash": 0.15
+    },
+    "TL_trend_long|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 7,
+      "decision_gate": 9,
+      "cost_stress": 4
+     },
+     "realised_sharpe_mean": 0.6584476172844397,
+     "realised_sharpe_sd": 0.26880753017605297,
+     "realised_mean_r": 0.08055210033802293,
+     "trades_mean": 1462.35,
+     "price_ratio_mean": 0.953886242539865,
+     "price_ratio_min": 0.8319912020032872,
+     "price_ratio_max": 1.1148366101297915,
+     "planted_reaches_gate": 0.45,
+     "planted_stat_median": 1.9254001746907619,
+     "ga_found_hash": 0.0
+    },
+    "TL_trend_long|1.0": {
+     "replicas": 20,
+     "survival": 0.1,
+     "killers": {
+      "decision_gate": 17,
+      "survived": 2,
+      "stability": 1
+     },
+     "realised_sharpe_mean": 1.1602383925316153,
+     "realised_sharpe_sd": 0.2746711593601812,
+     "realised_mean_r": 0.1423118214409297,
+     "trades_mean": 1509.4,
+     "price_ratio_mean": 0.9538862425398577,
+     "price_ratio_min": 0.8319912020032924,
+     "price_ratio_max": 1.1148366101297817,
+     "planted_reaches_gate": 0.95,
+     "planted_stat_median": 1.9137949468546769,
+     "ga_found_hash": 0.0
+    },
+    "TL_trend_long|1.5": {
+     "replicas": 20,
+     "survival": 0.6,
+     "killers": {
+      "survived": 12,
+      "decision_gate": 8
+     },
+     "realised_sharpe_mean": 2.0684644857648955,
+     "realised_sharpe_sd": 0.3442594715503133,
+     "realised_mean_r": 0.25181892516578563,
+     "trades_mean": 1625.75,
+     "price_ratio_mean": 0.9538862425398588,
+     "price_ratio_min": 0.8319912020032848,
+     "price_ratio_max": 1.1148366101297895,
+     "planted_reaches_gate": 1.0,
+     "planted_stat_median": 4.138979863341878,
+     "ga_found_hash": 0.0
+    },
+    "TS_trend_short|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 11,
+      "sanity": 3,
+      "cost_stress": 4,
+      "decision_gate": 2
+     },
+     "realised_sharpe_mean": 0.2869752349087448,
+     "realised_sharpe_sd": 0.2440659039362039,
+     "realised_mean_r": 0.03499157484779327,
+     "trades_mean": 1459.4,
+     "price_ratio_mean": 0.9538862425398518,
+     "price_ratio_min": 0.8319912020032892,
+     "price_ratio_max": 1.1148366101297809,
+     "planted_reaches_gate": 0.1,
+     "planted_stat_median": 0.40266618289145567,
+     "ga_found_hash": 0.0
+    },
+    "TS_trend_short|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 9,
+      "decision_gate": 8,
+      "cost_stress": 2,
+      "sanity": 1
+     },
+     "realised_sharpe_mean": 0.5171810613231598,
+     "realised_sharpe_sd": 0.24593603574414483,
+     "realised_mean_r": 0.06291863100614709,
+     "trades_mean": 1466.75,
+     "price_ratio_mean": 0.953886242539858,
+     "price_ratio_min": 0.8319912020032889,
+     "price_ratio_max": 1.1148366101297804,
+     "planted_reaches_gate": 0.4,
+     "planted_stat_median": 0.5616129550964061,
+     "ga_found_hash": 0.05
+    },
+    "TS_trend_short|1.0": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 4,
+      "decision_gate": 14,
+      "cost_stress": 2
+     },
+     "realised_sharpe_mean": 0.8868508143444863,
+     "realised_sharpe_sd": 0.2530448393577928,
+     "realised_mean_r": 0.10805598998779702,
+     "trades_mean": 1492.35,
+     "price_ratio_mean": 0.95388624253986,
+     "price_ratio_min": 0.8319912020032919,
+     "price_ratio_max": 1.1148366101297889,
+     "planted_reaches_gate": 0.7,
+     "planted_stat_median": 1.2730075851376434,
+     "ga_found_hash": 0.2
+    },
+    "TS_trend_short|1.5": {
+     "replicas": 20,
+     "survival": 0.35,
+     "killers": {
+      "decision_gate": 13,
+      "survived": 7
+     },
+     "realised_sharpe_mean": 1.6371459840474132,
+     "realised_sharpe_sd": 0.2664925823781459,
+     "realised_mean_r": 0.198154618901441,
+     "trades_mean": 1569.45,
+     "price_ratio_mean": 0.9538862425398544,
+     "price_ratio_min": 0.8319912020032887,
+     "price_ratio_max": 1.1148366101297862,
+     "planted_reaches_gate": 1.0,
+     "planted_stat_median": 2.963900470956531,
+     "ga_found_hash": 0.1
+    },
+    "RL_rev_long|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 13,
+      "sanity": 4,
+      "cost_stress": 3
+     },
+     "realised_sharpe_mean": 0.13810823050638338,
+     "realised_sharpe_sd": 0.1434063707953059,
+     "realised_mean_r": 0.014186777060423959,
+     "trades_mean": 1377.05,
+     "price_ratio_mean": 0.9538862425398525,
+     "price_ratio_min": 0.8319912020032932,
+     "price_ratio_max": 1.1148366101297869,
+     "planted_reaches_gate": 0.0,
+     "planted_stat_median": null,
+     "ga_found_hash": 0.15
+    },
+    "RL_rev_long|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 11,
+      "stability": 8,
+      "decision_gate": 1
+     },
+     "realised_sharpe_mean": 0.4880187574953535,
+     "realised_sharpe_sd": 0.17571305157981612,
+     "realised_mean_r": 0.04967972599528893,
+     "trades_mean": 1375.35,
+     "price_ratio_mean": 0.9538862425398553,
+     "price_ratio_min": 0.8319912020032901,
+     "price_ratio_max": 1.1148366101297873,
+     "planted_reaches_gate": 0.05,
+     "planted_stat_median": -0.2771572063530609,
+     "ga_found_hash": 0.2
+    },
+    "RL_rev_long|1.0": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 5,
+      "stability": 3,
+      "decision_gate": 12
+     },
+     "realised_sharpe_mean": 0.8395972913622198,
+     "realised_sharpe_sd": 0.14956768548746416,
+     "realised_mean_r": 0.08479300556499639,
+     "trades_mean": 1384.75,
+     "price_ratio_mean": 0.9538862425398579,
+     "price_ratio_min": 0.8319912020032821,
+     "price_ratio_max": 1.1148366101297809,
+     "planted_reaches_gate": 0.6,
+     "planted_stat_median": 1.2692238240356213,
+     "ga_found_hash": 0.4
+    },
+    "RS_rev_short|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 9,
+      "cost_stress": 9,
+      "sanity": 2
+     },
+     "realised_sharpe_mean": 0.38800624668316275,
+     "realised_sharpe_sd": 0.20607995936113027,
+     "realised_mean_r": 0.04059685507087603,
+     "trades_mean": 1352.9,
+     "price_ratio_mean": 0.9538862425398567,
+     "price_ratio_min": 0.8319912020032905,
+     "price_ratio_max": 1.1148366101297835,
+     "planted_reaches_gate": 0.0,
+     "planted_stat_median": null,
+     "ga_found_hash": 0.2
+    },
+    "RS_rev_short|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 10,
+      "decision_gate": 7,
+      "cost_stress": 3
+     },
+     "realised_sharpe_mean": 0.6607634631314355,
+     "realised_sharpe_sd": 0.19701783624678648,
+     "realised_mean_r": 0.06897589507878701,
+     "trades_mean": 1350.7,
+     "price_ratio_mean": 0.9538862425398543,
+     "price_ratio_min": 0.8319912020032922,
+     "price_ratio_max": 1.1148366101297855,
+     "planted_reaches_gate": 0.35,
+     "planted_stat_median": 0.921328930182673,
+     "ga_found_hash": 0.4
+    },
+    "RS_rev_short|1.0": {
+     "replicas": 20,
+     "survival": 0.2,
+     "killers": {
+      "decision_gate": 15,
+      "cost_stress": 1,
+      "survived": 4
+     },
+     "realised_sharpe_mean": 1.2957454405451725,
+     "realised_sharpe_sd": 0.1630461959821683,
+     "realised_mean_r": 0.1319439541379671,
+     "trades_mean": 1374.8,
+     "price_ratio_mean": 0.9538862425398543,
+     "price_ratio_min": 0.831991202003298,
+     "price_ratio_max": 1.1148366101297855,
+     "planted_reaches_gate": 0.95,
+     "planted_stat_median": 2.9282823472347754,
+     "ga_found_hash": 0.4
+    }
+   },
+   "min_survival_at_1_0": 0.0
+  },
+  "D2_sharpe": {
+   "threshold": 1.6951885450036526,
+   "null_max_quantiles": {
+    "50": 1.236161825766371,
+    "90": 1.5584233882121379,
+    "95": 1.6951885450036526,
+    "99": 1.792086092780014
+   },
+   "fp_rate": 0.04,
+   "survival": {
+    "TL_trend_long|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 4,
+      "stability": 9,
+      "decision_gate": 4,
+      "sanity": 3
+     },
+     "realised_sharpe_mean": 0.3550555998868321,
+     "realised_sharpe_sd": 0.27947501048088147,
+     "realised_mean_r": 0.04346299928982374,
+     "trades_mean": 1441.55,
+     "price_ratio_mean": 0.9538862425398612,
+     "price_ratio_min": 0.8319912020032908,
+     "price_ratio_max": 1.1148366101297889,
+     "planted_reaches_gate": 0.2,
+     "planted_stat_median": 0.49817721539019816,
+     "ga_found_hash": 0.15
+    },
+    "TL_trend_long|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 7,
+      "decision_gate": 9,
+      "cost_stress": 4
+     },
+     "realised_sharpe_mean": 0.6584476172844397,
+     "realised_sharpe_sd": 0.26880753017605297,
+     "realised_mean_r": 0.08055210033802293,
+     "trades_mean": 1462.35,
+     "price_ratio_mean": 0.953886242539865,
+     "price_ratio_min": 0.8319912020032872,
+     "price_ratio_max": 1.1148366101297915,
+     "planted_reaches_gate": 0.45,
+     "planted_stat_median": 0.9583712194005675,
+     "ga_found_hash": 0.0
+    },
+    "TL_trend_long|1.0": {
+     "replicas": 20,
+     "survival": 0.1,
+     "killers": {
+      "decision_gate": 17,
+      "survived": 2,
+      "stability": 1
+     },
+     "realised_sharpe_mean": 1.1602383925316153,
+     "realised_sharpe_sd": 0.2746711593601812,
+     "realised_mean_r": 0.1423118214409297,
+     "trades_mean": 1509.4,
+     "price_ratio_mean": 0.9538862425398577,
+     "price_ratio_min": 0.8319912020032924,
+     "price_ratio_max": 1.1148366101297817,
+     "planted_reaches_gate": 0.95,
+     "planted_stat_median": 0.9911692225729599,
+     "ga_found_hash": 0.0
+    },
+    "TL_trend_long|1.5": {
+     "replicas": 20,
+     "survival": 0.65,
+     "killers": {
+      "survived": 13,
+      "decision_gate": 7
+     },
+     "realised_sharpe_mean": 2.0684644857648955,
+     "realised_sharpe_sd": 0.3442594715503133,
+     "realised_mean_r": 0.25181892516578563,
+     "trades_mean": 1625.75,
+     "price_ratio_mean": 0.9538862425398588,
+     "price_ratio_min": 0.8319912020032848,
+     "price_ratio_max": 1.1148366101297895,
+     "planted_reaches_gate": 1.0,
+     "planted_stat_median": 2.011195136094404,
+     "ga_found_hash": 0.0
+    },
+    "TS_trend_short|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 11,
+      "sanity": 3,
+      "cost_stress": 4,
+      "decision_gate": 2
+     },
+     "realised_sharpe_mean": 0.2869752349087448,
+     "realised_sharpe_sd": 0.2440659039362039,
+     "realised_mean_r": 0.03499157484779327,
+     "trades_mean": 1459.4,
+     "price_ratio_mean": 0.9538862425398518,
+     "price_ratio_min": 0.8319912020032892,
+     "price_ratio_max": 1.1148366101297809,
+     "planted_reaches_gate": 0.1,
+     "planted_stat_median": 0.19715924583878622,
+     "ga_found_hash": 0.0
+    },
+    "TS_trend_short|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 9,
+      "decision_gate": 8,
+      "cost_stress": 2,
+      "sanity": 1
+     },
+     "realised_sharpe_mean": 0.5171810613231598,
+     "realised_sharpe_sd": 0.24593603574414483,
+     "realised_mean_r": 0.06291863100614709,
+     "trades_mean": 1466.75,
+     "price_ratio_mean": 0.953886242539858,
+     "price_ratio_min": 0.8319912020032889,
+     "price_ratio_max": 1.1148366101297804,
+     "planted_reaches_gate": 0.4,
+     "planted_stat_median": 0.2951989813932247,
+     "ga_found_hash": 0.05
+    },
+    "TS_trend_short|1.0": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 4,
+      "decision_gate": 14,
+      "cost_stress": 2
+     },
+     "realised_sharpe_mean": 0.8868508143444863,
+     "realised_sharpe_sd": 0.2530448393577928,
+     "realised_mean_r": 0.10805598998779702,
+     "trades_mean": 1492.35,
+     "price_ratio_mean": 0.95388624253986,
+     "price_ratio_min": 0.8319912020032919,
+     "price_ratio_max": 1.1148366101297889,
+     "planted_reaches_gate": 0.7,
+     "planted_stat_median": 0.6378444386118054,
+     "ga_found_hash": 0.2
+    },
+    "TS_trend_short|1.5": {
+     "replicas": 20,
+     "survival": 0.45,
+     "killers": {
+      "decision_gate": 11,
+      "survived": 9
+     },
+     "realised_sharpe_mean": 1.6371459840474132,
+     "realised_sharpe_sd": 0.2664925823781459,
+     "realised_mean_r": 0.198154618901441,
+     "trades_mean": 1569.45,
+     "price_ratio_mean": 0.9538862425398544,
+     "price_ratio_min": 0.8319912020032887,
+     "price_ratio_max": 1.1148366101297862,
+     "planted_reaches_gate": 1.0,
+     "planted_stat_median": 1.51297163336345,
+     "ga_found_hash": 0.1
+    },
+    "RL_rev_long|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 13,
+      "sanity": 4,
+      "cost_stress": 3
+     },
+     "realised_sharpe_mean": 0.13810823050638338,
+     "realised_sharpe_sd": 0.1434063707953059,
+     "realised_mean_r": 0.014186777060423959,
+     "trades_mean": 1377.05,
+     "price_ratio_mean": 0.9538862425398525,
+     "price_ratio_min": 0.8319912020032932,
+     "price_ratio_max": 1.1148366101297869,
+     "planted_reaches_gate": 0.0,
+     "planted_stat_median": null,
+     "ga_found_hash": 0.15
+    },
+    "RL_rev_long|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 11,
+      "stability": 8,
+      "decision_gate": 1
+     },
+     "realised_sharpe_mean": 0.4880187574953535,
+     "realised_sharpe_sd": 0.17571305157981612,
+     "realised_mean_r": 0.04967972599528893,
+     "trades_mean": 1375.35,
+     "price_ratio_mean": 0.9538862425398553,
+     "price_ratio_min": 0.8319912020032901,
+     "price_ratio_max": 1.1148366101297873,
+     "planted_reaches_gate": 0.05,
+     "planted_stat_median": -0.13681845667522563,
+     "ga_found_hash": 0.2
+    },
+    "RL_rev_long|1.0": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 5,
+      "stability": 3,
+      "decision_gate": 12
+     },
+     "realised_sharpe_mean": 0.8395972913622198,
+     "realised_sharpe_sd": 0.14956768548746416,
+     "realised_mean_r": 0.08479300556499639,
+     "trades_mean": 1384.75,
+     "price_ratio_mean": 0.9538862425398579,
+     "price_ratio_min": 0.8319912020032821,
+     "price_ratio_max": 1.1148366101297809,
+     "planted_reaches_gate": 0.6,
+     "planted_stat_median": 0.6554837370954829,
+     "ga_found_hash": 0.4
+    },
+    "RS_rev_short|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 9,
+      "cost_stress": 9,
+      "sanity": 2
+     },
+     "realised_sharpe_mean": 0.38800624668316275,
+     "realised_sharpe_sd": 0.20607995936113027,
+     "realised_mean_r": 0.04059685507087603,
+     "trades_mean": 1352.9,
+     "price_ratio_mean": 0.9538862425398567,
+     "price_ratio_min": 0.8319912020032905,
+     "price_ratio_max": 1.1148366101297835,
+     "planted_reaches_gate": 0.0,
+     "planted_stat_median": null,
+     "ga_found_hash": 0.2
+    },
+    "RS_rev_short|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 10,
+      "decision_gate": 7,
+      "cost_stress": 3
+     },
+     "realised_sharpe_mean": 0.6607634631314355,
+     "realised_sharpe_sd": 0.19701783624678648,
+     "realised_mean_r": 0.06897589507878701,
+     "trades_mean": 1350.7,
+     "price_ratio_mean": 0.9538862425398543,
+     "price_ratio_min": 0.8319912020032922,
+     "price_ratio_max": 1.1148366101297855,
+     "planted_reaches_gate": 0.35,
+     "planted_stat_median": 0.4259053937139498,
+     "ga_found_hash": 0.4
+    },
+    "RS_rev_short|1.0": {
+     "replicas": 20,
+     "survival": 0.35,
+     "killers": {
+      "decision_gate": 12,
+      "cost_stress": 1,
+      "survived": 7
+     },
+     "realised_sharpe_mean": 1.2957454405451725,
+     "realised_sharpe_sd": 0.1630461959821683,
+     "realised_mean_r": 0.1319439541379671,
+     "trades_mean": 1374.8,
+     "price_ratio_mean": 0.9538862425398543,
+     "price_ratio_min": 0.831991202003298,
+     "price_ratio_max": 1.1148366101297855,
+     "planted_reaches_gate": 0.95,
+     "planted_stat_median": 1.5273001116214098,
+     "ga_found_hash": 0.4
+    }
+   },
+   "min_survival_at_1_0": 0.0
+  },
+  "D3_tstat_r_x2": {
+   "threshold": 3.3251920687208996,
+   "null_max_quantiles": {
+    "50": 2.2062383264241383,
+    "90": 2.9541791423671127,
+    "95": 3.3251920687208996,
+    "99": 3.6987628096004217
+   },
+   "fp_rate": 0.04,
+   "survival": {
+    "TL_trend_long|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 4,
+      "stability": 9,
+      "decision_gate": 4,
+      "sanity": 3
+     },
+     "realised_sharpe_mean": 0.3550555998868321,
+     "realised_sharpe_sd": 0.27947501048088147,
+     "realised_mean_r": 0.04346299928982374,
+     "trades_mean": 1441.55,
+     "price_ratio_mean": 0.9538862425398612,
+     "price_ratio_min": 0.8319912020032908,
+     "price_ratio_max": 1.1148366101297889,
+     "planted_reaches_gate": 0.2,
+     "planted_stat_median": 0.39345864921474527,
+     "ga_found_hash": 0.15
+    },
+    "TL_trend_long|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 7,
+      "decision_gate": 9,
+      "cost_stress": 4
+     },
+     "realised_sharpe_mean": 0.6584476172844397,
+     "realised_sharpe_sd": 0.26880753017605297,
+     "realised_mean_r": 0.08055210033802293,
+     "trades_mean": 1462.35,
+     "price_ratio_mean": 0.953886242539865,
+     "price_ratio_min": 0.8319912020032872,
+     "price_ratio_max": 1.1148366101297915,
+     "planted_reaches_gate": 0.45,
+     "planted_stat_median": 1.1763229689461732,
+     "ga_found_hash": 0.0
+    },
+    "TL_trend_long|1.0": {
+     "replicas": 20,
+     "survival": 0.05,
+     "killers": {
+      "decision_gate": 18,
+      "survived": 1,
+      "stability": 1
+     },
+     "realised_sharpe_mean": 1.1602383925316153,
+     "realised_sharpe_sd": 0.2746711593601812,
+     "realised_mean_r": 0.1423118214409297,
+     "trades_mean": 1509.4,
+     "price_ratio_mean": 0.9538862425398577,
+     "price_ratio_min": 0.8319912020032924,
+     "price_ratio_max": 1.1148366101297817,
+     "planted_reaches_gate": 0.95,
+     "planted_stat_median": 1.307648768521828,
+     "ga_found_hash": 0.0
+    },
+    "TL_trend_long|1.5": {
+     "replicas": 20,
+     "survival": 0.5,
+     "killers": {
+      "survived": 10,
+      "decision_gate": 10
+     },
+     "realised_sharpe_mean": 2.0684644857648955,
+     "realised_sharpe_sd": 0.3442594715503133,
+     "realised_mean_r": 0.25181892516578563,
+     "trades_mean": 1625.75,
+     "price_ratio_mean": 0.9538862425398588,
+     "price_ratio_min": 0.8319912020032848,
+     "price_ratio_max": 1.1148366101297895,
+     "planted_reaches_gate": 1.0,
+     "planted_stat_median": 3.4933012728277753,
+     "ga_found_hash": 0.0
+    },
+    "TS_trend_short|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 11,
+      "sanity": 3,
+      "cost_stress": 4,
+      "decision_gate": 2
+     },
+     "realised_sharpe_mean": 0.2869752349087448,
+     "realised_sharpe_sd": 0.2440659039362039,
+     "realised_mean_r": 0.03499157484779327,
+     "trades_mean": 1459.4,
+     "price_ratio_mean": 0.9538862425398518,
+     "price_ratio_min": 0.8319912020032892,
+     "price_ratio_max": 1.1148366101297809,
+     "planted_reaches_gate": 0.1,
+     "planted_stat_median": -0.325788324356768,
+     "ga_found_hash": 0.0
+    },
+    "TS_trend_short|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 9,
+      "decision_gate": 8,
+      "cost_stress": 2,
+      "sanity": 1
+     },
+     "realised_sharpe_mean": 0.5171810613231598,
+     "realised_sharpe_sd": 0.24593603574414483,
+     "realised_mean_r": 0.06291863100614709,
+     "trades_mean": 1466.75,
+     "price_ratio_mean": 0.953886242539858,
+     "price_ratio_min": 0.8319912020032889,
+     "price_ratio_max": 1.1148366101297804,
+     "planted_reaches_gate": 0.4,
+     "planted_stat_median": -0.12320746853497823,
+     "ga_found_hash": 0.05
+    },
+    "TS_trend_short|1.0": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 4,
+      "decision_gate": 14,
+      "cost_stress": 2
+     },
+     "realised_sharpe_mean": 0.8868508143444863,
+     "realised_sharpe_sd": 0.2530448393577928,
+     "realised_mean_r": 0.10805598998779702,
+     "trades_mean": 1492.35,
+     "price_ratio_mean": 0.95388624253986,
+     "price_ratio_min": 0.8319912020032919,
+     "price_ratio_max": 1.1148366101297889,
+     "planted_reaches_gate": 0.7,
+     "planted_stat_median": 0.5173759525300969,
+     "ga_found_hash": 0.2
+    },
+    "TS_trend_short|1.5": {
+     "replicas": 20,
+     "survival": 0.2,
+     "killers": {
+      "decision_gate": 16,
+      "survived": 4
+     },
+     "realised_sharpe_mean": 1.6371459840474132,
+     "realised_sharpe_sd": 0.2664925823781459,
+     "realised_mean_r": 0.198154618901441,
+     "trades_mean": 1569.45,
+     "price_ratio_mean": 0.9538862425398544,
+     "price_ratio_min": 0.8319912020032887,
+     "price_ratio_max": 1.1148366101297862,
+     "planted_reaches_gate": 1.0,
+     "planted_stat_median": 2.243321825747153,
+     "ga_found_hash": 0.1
+    },
+    "RL_rev_long|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 13,
+      "sanity": 4,
+      "cost_stress": 3
+     },
+     "realised_sharpe_mean": 0.13810823050638338,
+     "realised_sharpe_sd": 0.1434063707953059,
+     "realised_mean_r": 0.014186777060423959,
+     "trades_mean": 1377.05,
+     "price_ratio_mean": 0.9538862425398525,
+     "price_ratio_min": 0.8319912020032932,
+     "price_ratio_max": 1.1148366101297869,
+     "planted_reaches_gate": 0.0,
+     "planted_stat_median": null,
+     "ga_found_hash": 0.15
+    },
+    "RL_rev_long|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 11,
+      "stability": 8,
+      "decision_gate": 1
+     },
+     "realised_sharpe_mean": 0.4880187574953535,
+     "realised_sharpe_sd": 0.17571305157981612,
+     "realised_mean_r": 0.04967972599528893,
+     "trades_mean": 1375.35,
+     "price_ratio_mean": 0.9538862425398553,
+     "price_ratio_min": 0.8319912020032901,
+     "price_ratio_max": 1.1148366101297873,
+     "planted_reaches_gate": 0.05,
+     "planted_stat_median": -1.2249030037103144,
+     "ga_found_hash": 0.2
+    },
+    "RL_rev_long|1.0": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "cost_stress": 5,
+      "stability": 3,
+      "decision_gate": 12
+     },
+     "realised_sharpe_mean": 0.8395972913622198,
+     "realised_sharpe_sd": 0.14956768548746416,
+     "realised_mean_r": 0.08479300556499639,
+     "trades_mean": 1384.75,
+     "price_ratio_mean": 0.9538862425398579,
+     "price_ratio_min": 0.8319912020032821,
+     "price_ratio_max": 1.1148366101297809,
+     "planted_reaches_gate": 0.6,
+     "planted_stat_median": 0.21352874295437677,
+     "ga_found_hash": 0.4
+    },
+    "RS_rev_short|0.3": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 9,
+      "cost_stress": 9,
+      "sanity": 2
+     },
+     "realised_sharpe_mean": 0.38800624668316275,
+     "realised_sharpe_sd": 0.20607995936113027,
+     "realised_mean_r": 0.04059685507087603,
+     "trades_mean": 1352.9,
+     "price_ratio_mean": 0.9538862425398567,
+     "price_ratio_min": 0.8319912020032905,
+     "price_ratio_max": 1.1148366101297835,
+     "planted_reaches_gate": 0.0,
+     "planted_stat_median": null,
+     "ga_found_hash": 0.2
+    },
+    "RS_rev_short|0.6": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "stability": 10,
+      "decision_gate": 7,
+      "cost_stress": 3
+     },
+     "realised_sharpe_mean": 0.6607634631314355,
+     "realised_sharpe_sd": 0.19701783624678648,
+     "realised_mean_r": 0.06897589507878701,
+     "trades_mean": 1350.7,
+     "price_ratio_mean": 0.9538862425398543,
+     "price_ratio_min": 0.8319912020032922,
+     "price_ratio_max": 1.1148366101297855,
+     "planted_reaches_gate": 0.35,
+     "planted_stat_median": 0.011397757544053127,
+     "ga_found_hash": 0.4
+    },
+    "RS_rev_short|1.0": {
+     "replicas": 20,
+     "survival": 0.0,
+     "killers": {
+      "decision_gate": 19,
+      "cost_stress": 1
+     },
+     "realised_sharpe_mean": 1.2957454405451725,
+     "realised_sharpe_sd": 0.1630461959821683,
+     "realised_mean_r": 0.1319439541379671,
+     "trades_mean": 1374.8,
+     "price_ratio_mean": 0.9538862425398543,
+     "price_ratio_min": 0.831991202003298,
+     "price_ratio_max": 1.1148366101297855,
+     "planted_reaches_gate": 0.95,
+     "planted_stat_median": 1.8729016236431377,
+     "ga_found_hash": 0.4
+    }
+   },
+   "min_survival_at_1_0": 0.0
+  }
+ },
+ "chosen_design": "D1_tstat_r",
+ "validity": {
+  "fp_ok": true,
+  "per_strategy_targets_meeting": {
+   "TL_trend_long": [],
+   "TS_trend_short": [],
+   "RL_rev_long": [],
+   "RS_rev_short": []
+  },
+  "valid": false
+ },
+ "phase2_comparison": {
+  "null_worlds": 30,
+  "null_fp": 0.0,
+  "planted": {
+   "TL_trend_long|0.3": 0.0,
+   "TL_trend_long|0.6": 0.0,
+   "TL_trend_long|1.0": 0.0,
+   "TL_trend_long|1.5": 0.0,
+   "TS_trend_short|0.3": 0.0,
+   "TS_trend_short|0.6": 0.0,
+   "TS_trend_short|1.0": 0.0,
+   "TS_trend_short|1.5": 0.0,
+   "RL_rev_long|0.3": 0.0,
+   "RL_rev_long|0.6": 0.0,
+   "RL_rev_long|1.0": 0.0,
+   "RS_rev_short|0.3": 0.0,
+   "RS_rev_short|0.6": 0.0,
+   "RS_rev_short|1.0": 0.0
+  }
+ },
+ "null_counts_mean": {
+  "pool": 99000.0,
+  "sanity": 36636.64,
+  "stability": 16958.88,
+  "cost_stress": 10223.02,
+  "execution_stress": 9446.255,
+  "out_of_sample": 9446.225
+ }
+}

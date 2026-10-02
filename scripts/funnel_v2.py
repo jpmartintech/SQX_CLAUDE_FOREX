@@ -248,8 +248,9 @@ def report():
     fig, ax = plt.subplots(1, 2, figsize=(12, 4.5))
     d = chosen or "D1_tstat_r"
     for name in strategies:
-        xs = [out["designs"][d]["survival"][f"{name}|{t}"]["realised_sharpe_mean"] for t in targets]
-        ys = [out["designs"][d]["survival"][f"{name}|{t}"]["survival"] for t in targets]
+        ks = [f"{name}|{t}" for t in targets if f"{name}|{t}" in out["designs"][d]["survival"]]
+        xs = [out["designs"][d]["survival"][k]["realised_sharpe_mean"] for k in ks]
+        ys = [out["designs"][d]["survival"][k]["survival"] for k in ks]
         ax[0].plot(xs, ys, "o-", label=name)
     ax[0].axhline(0.8, color="grey", ls=":")
     ax[0].axvline(1.0, color="grey", ls=":")
@@ -264,6 +265,34 @@ def report():
     ax[1].legend()
     fig.tight_layout()
     fig.savefig(PROJECT_ROOT / "docs/reports/figures/k_survival_threshold.png", dpi=120)
+    fig, ax = plt.subplots(figsize=(12, 4.5))
+    keys = list(out["designs"][d]["survival"])
+    stages = ["sanity", "stability", "cost_stress", "execution_stress", "out_of_sample", "decision_gate", "survived"]
+    colors = plt.cm.viridis(np.linspace(0, 1, len(stages)))
+    bottom = np.zeros(len(keys))
+    for st, col in zip(stages, colors, strict=True):
+        v = np.array([out["designs"][d]["survival"][k]["killers"].get(st, 0) for k in keys], float)
+        ax.bar(range(len(keys)), v, bottom=bottom, color=col, label=st)
+        bottom += v
+    ax.set_xticks(range(len(keys)), [k.replace("|", "\n") for k in keys], fontsize=7)
+    ax.set_ylabel("réplicas")
+    ax.set_title(f"Etapa que elimina a la plantada ({d})")
+    ax.legend(fontsize=7, ncol=4)
+    fig.tight_layout()
+    fig.savefig(PROJECT_ROOT / "docs/reports/figures/k_killers.png", dpi=120)
+    fig, ax = plt.subplots(figsize=(12, 4.5))
+    for x, k in enumerate(keys):
+        name, t = k.split("|")
+        v = [r["planted_stat"][d] for r in pl if r["job"][3] == name and r["job"][4] == t and r["planted_stat"][d] is not None]
+        ax.scatter(np.full(len(v), x) + np.linspace(-0.2, 0.2, max(len(v), 1))[:len(v)], v, s=12, color="tab:cyan")
+    ax.axhline(out["designs"][d]["threshold"], color="tab:orange", label=f"umbral p95 nulo ({out['designs'][d]['threshold']:.2f})")
+    ax.axhline(out["designs"][d]["null_max_quantiles"][50], color="grey", ls=":", label="mediana del máximo nulo")
+    ax.set_xticks(range(len(keys)), [k.replace("|", "\n") for k in keys], fontsize=7)
+    ax.set_ylabel(f"estadístico OOS 2015-2018 ({d})")
+    ax.set_title("Plantada que llega a la puerta: estadístico fuera de muestra frente al umbral")
+    ax.legend(fontsize=8)
+    fig.tight_layout()
+    fig.savefig(PROJECT_ROOT / "docs/reports/figures/k_planted_vs_threshold.png", dpi=120)
     print(json.dumps({k: v for k, v in out.items() if k != "designs"}, indent=1, default=float))
     for dd in DESIGNS:
         print(dd, "thr", out["designs"][dd]["threshold"], "fp", out["designs"][dd]["fp_rate"], "min surv 1.0",
