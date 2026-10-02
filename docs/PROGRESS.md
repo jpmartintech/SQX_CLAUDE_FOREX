@@ -1,6 +1,15 @@
 # PROGRESS
 
 ## Fase actual
+**Fase C2 (primas estructurales, 5 hipótesis preregistradas) cerrada** (`docs/reports/phase-c2.md`, `v0.c2`):
+- **H1, carry de funding cripto** (largo spot y corto perpetuo): pasa. Sharpe 5,75, p 0,0004, CAGR 18 %, max DD −4,1 %.
+  - Es evidencia de régimen: +21,6 % en 2020, +62,3 % en 2021, −2,8 % en 2022 y +2,2 % en 2023; el último tercio tiene Sharpe −0,27.
+  - No modela liquidaciones ni contraparte (bruta máxima 5,35x). Investigado como "demasiado bueno": sin fuga ni error de unidades.
+- **H2, funding extremo** (Sharpe 0,76, p 0,014) y **H3, tendencia temporal cripto** (0,98, p 0,032): no pasan con p ≤ 0,01.
+  La potencia de cripto es baja (mínimo detectable ≈ 1,15).
+- **H4, momentum XS cripto** (0,21) y **H5, tendencia forex** (−0,32; el swap conservador cuesta ~5,6 %/año): no pasan.
+- Contador: 4.490.860. Esperando revisión de Jaime. Pendiente: verificar el swap real y las comisiones spot/perp.
+
 **Fase K (embudo v2 calibrado por simulación) cerrada BLOQUEADA** (`docs/reports/funnel_calibration.md`, run `funnel_v2_k2`):
 - La puerta final por simulación (p95 del máximo OOS 2015–2018 en 200 mundos nulos) da FP 3 % (D1) en 100 nulos independientes.
 - Supervivencia de las 4 plantadas con Sharpe realizado ≤ 1,0: como máximo 20 % (objetivo 80 %). A Sharpe ≈ 2 llega al 60 %.

@@ -395,3 +395,14 @@ Formato: fecha — decisión. Alternativas. Motivo.
 - **Potencia** (antes de resultados):
   - Cripto (4,13 años): SE(Sharpe) 0,49 y Sharpe mínimo detectable ≈ 1,15 (50 % de potencia). Potencia a 0,5: 10 %; a 1,0: 38 %.
   - Forex (15 años): mínimo detectable ≈ 0,60. Potencia a 0,5: 35 %; a 1,0: 94 %.
+- **Resultado de C2** (pasada única `premia_c2_r1`, `docs/reports/phase-c2.md`):
+  - Pasa 1 de 5: H1, carry de funding, con Sharpe 5,75, p 0,0004, 2 de 3 tercios positivos y ×2 positivo.
+    H2 (p 0,014), H3 (p 0,032), H4 y H5 no pasan.
+  - **H1 superó el umbral "demasiado bueno" y se investigó antes de reportar:**
+    - no tiene señal, así que no hay fuga;
+    - un oráculo independiente confirma las unidades: funding 12,9 %/año con pesos fijos; la diferencia con el 17,7 % del motor es
+      la deriva del nocional entre rebalanceos mensuales;
+    - los costes de las dos patas están incluidos;
+    - la volatilidad es del 2,9 % porque la cobertura spot/perp es casi exacta en el cierre diario.
+    - Se reporta como evidencia condicionada al régimen 2020–21 (último tercio negativo), sin modelar liquidaciones ni contraparte.
+  - Ledger: +1.010 evaluaciones (5 de selección); total 4.490.860. Holdout y bloque de selección cripto sin tocar.
