@@ -72,7 +72,12 @@ class StrategyDefinition:
 
     @property
     def canonical_hash(self) -> str:
-        return hashlib.sha256(self.canonical_json.encode()).hexdigest()
+        """SHA256 of the canonical JSON; cached on the (immutable) instance, outside the dataclass fields."""
+        h = self.__dict__.get("_canonical_hash")
+        if h is None:
+            h = hashlib.sha256(self.canonical_json.encode()).hexdigest()
+            object.__setattr__(self, "_canonical_hash", h)
+        return h
 
     @property
     def readable_id(self) -> str:
