@@ -1,0 +1,104 @@
+# Phase C2 — structural premia with FEW pre-registered hypotheses. PRE-REGISTERED before computing anything.
+# Exactly 5 hypotheses; each counts as one trial (Bonferroni over 5: one-sided p <= 0.01). No fitting, no parameter search,
+# no relaunch with another seed; a change needs a DECISIONS.md entry and a new run_name.
+run_name: premia_c2_r1
+seed: 20261004                       # bootstrap and matched random control
+data:
+  crypto_contract: configs/crypto_data.yaml   # C1 splits: everything < 2023-11-01 (development); selection block and
+                                              # holdout (>= 2024-11-01) never loaded (filtering loader, until=development)
+  crypto_prices: hybrid_spot_then_perp        # signals/volatility on spot history before the perpetual exists (causal);
+  perp_from_utc: configs/crypto_c1.yaml#prices.perp_from_utc   # P&L of perpetual legs only from these dates
+  crypto_universe: [BTCUSDT, ETHUSDT, BNBUSDT, LINKUSDT, ADAUSDT, SOLUSDT, DOGEUSDT, AVAXUSDT]   # TRX excluded (C1)
+  forex_pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD]
+  forex_until: "2019-01-01"          # parquet-filtering loader; nothing from 2019 on is read
+evaluation_windows:                  # daily net returns are evaluated ONLY inside these windows
+  crypto: ["2019-09-16", "2023-11-01"]    # first perpetual (BTC) -> end of C1 development data; 4.13 years
+  forex: ["2004-01-01", "2019-01-01"]     # 15.0 years (2003 = warm-up)
+  subperiods: 3                      # equal thirds (by calendar days) of each window
+daily_bars:
+  crypto: "UTC day, close at 00:00 UTC (sqxf.crypto.data.build_bars 1D)"
+  forex: "FX trading day, NY close (sqxf.states.bars.build_local_bars D1)"
+  missing_days: "an asset without a bar on a date keeps its last close (0 return that day, the move is booked on the next
+                 bar); the count of such asset-days is reported"
+universe_rule:                       # "listed universe at each date" (as far as the data allows)
+  crypto_eligible: >-
+    on date t: the perpetual exists (t >= perp_from_utc), >= 120 days of (hybrid) price history, and the trailing 90-day
+    median of daily SPOT USD volume (up to the previous day) >= 20M USD
+  forex_eligible: ">= 120 D1 bars of history"
+  survivorship: >-
+    the 8 coins are survivors chosen in 2026 (delisted / collapsed coins such as LUNA or FTT are absent): declared bias
+portfolio_engine: >-
+  holdings as signed notional / equity; each day P&L = sum h * (price return + carry); holdings drift with prices; at a
+  rebalance (close of day t, information <= close t) the targets are set and the cost |delta notional| x cost rate is paid;
+  the new holdings earn from day t+1. Equity compounds; drawdown in % of equity.
+sizing:
+  vol_estimator: "std of daily log returns over the last 60 days (needs 60), annualised sqrt(365) crypto / sqrt(260) forex"
+costs:
+  perp_fee_per_side: 0.0005          # configs/crypto_data.yaml
+  spot_fee_per_side: 0.0010          # Binance spot taker, no BNB discount (assumption, conservative)
+  crypto_slippage: liquidity_bands   # per side, configs/crypto_data.yaml (by the trailing spot-volume median)
+  funding: "historical 8h events; event at time tau is paid by the position held over [day start, day end] with
+            tau in (day start, day end]; longs pay positive rates"
+  forex_cost_per_side: "(spread_pips / 2 + slippage_pips_per_side) * pip / price  (configs/costs.yaml)"
+  forex_swap: "configs/swap.yaml conservative (both sides pay 1 pip/night); nights per D1 bar: Mon 0, Tue 1, Wed 1, Thu 3, Fri 1"
+  stress_x2: "trading costs x2 AND funding/swap PAYMENTS x2 (receipts unchanged)"
+
+hypotheses:
+  H1_funding_carry:
+    description: long spot + short perpetual, equal notional per coin, every eligible coin, equal capital across coins
+    rebalance: monthly (close of the last UTC day of each month)
+    pnl: "spot return - perp return (basis) + funding received by the short perp - fees and slippage of BOTH legs"
+    exposure: "per coin +1/n spot, -1/n perp (net 0); spot holdings assumed usable as perp collateral (declared)"
+  H2_funding_extreme_xs:
+    description: weekly cross-section on perpetuals; long the LOWEST trailing-7-day mean funding, short the HIGHEST
+    rebalance: weekly (close of Sunday, UTC)
+    groups: "n = floor(N_eligible / 3) per side (>= 1), needs N_eligible >= 3, else flat"
+    weights: "inverse volatility within each side, each side 0.5 gross (gross 1x, dollar neutral)"
+  H3_tsmom_crypto:
+    description: time-series trend, signal = mean(sign(r20), sign(r60), sign(r120)) of the daily close, all eligible coins
+    rebalance: daily
+    weights: "w_i = s_i * (1/vol_i) / sum_j(1/vol_j) over eligible coins (gross <= 1x); perpetuals with real funding"
+  H4_xsmom_crypto:
+    description: cross-sectional momentum, rank by the return from t-28 to t-7 days; long top third, short bottom third
+    rebalance: weekly (close of Sunday, UTC)
+    groups: "n = floor(N_eligible / 3) per side (>= 1), needs N_eligible >= 3, else flat"
+    weights: "inverse volatility within each side, each side 0.5 gross (gross 1x); perpetuals with real funding"
+  H5_tsmom_forex:
+    description: time-series trend on the 6 forex pairs, D1 NY-close bars, same signal as H3
+    rebalance: daily
+    weights: "w_i = s_i * (0.10 / sqrt(N_eligible)) / vol_i, |w_i| <= 5 (equal volatility, ~10 % annual if uncorrelated)"
+    note: "P&L of each pair as a fraction of its notional (quote currency ~ account currency; JPY/CHF/CAD conversion ignored)"
+
+statistics:
+  returns: daily net returns of the portfolio (costs, funding/swap included), inside the evaluation window
+  bootstrap: {method: circular_block, block_days: 20, resamples: 10000}
+  p_value: "one-sided: (1 + #{bootstrap mean of the DEMEANED series >= observed mean}) / (1 + resamples)"
+  t_stat: "observed mean / bootstrap standard error of the mean"
+  sharpe: "mean / std * sqrt(observations per year); 95 % bootstrap interval reported"
+  effective_series: "PCA participation ratio (sum lambda)^2 / sum lambda^2 of daily-return correlations: crypto coins,
+                     forex pairs, and the overlapping hypothesis series"
+acceptance:                          # a hypothesis PASSES only if all hold
+  p_value_one_sided_le: 0.01         # Bonferroni 0.05 / 5
+  positive_subperiods_min: 2         # mean daily net return > 0 in >= 2 of the 3 subperiods
+  stress_x2_mean_gt: 0.0             # mean daily net return with costs and funding/swap payments x2 > 0
+too_good: {max_sharpe: 3.0, max_profit_factor_daily: 2.0}   # look for leakage / costs / units before reporting
+
+power:                               # reported BEFORE any result; SE(Sharpe) ~ 1 / sqrt(years), one-sided alpha 0.01
+  crypto: {years: 4.126, se_sharpe: 0.492, min_detectable_sharpe_50pct_power: 1.145, min_detectable_sharpe_80pct_power: 1.56,
+           power_at_sharpe_0_5: 0.095, power_at_sharpe_1_0: 0.384}
+  forex: {years: 15.001, se_sharpe: 0.258, min_detectable_sharpe_50pct_power: 0.601, min_detectable_sharpe_80pct_power: 0.818,
+          power_at_sharpe_0_5: 0.348, power_at_sharpe_1_0: 0.939}
+  verdict: >-
+    crypto (H1-H4): cannot detect Sharpe 0.5 (power 10 %) nor reliably 1.0 (38 %); a pass needs a realised Sharpe >= ~1.15.
+    forex (H5): detects Sharpe 1.0 (94 %) but not 0.5 (35 %). A crypto pass with power this low is weak evidence.
+
+control_matched_random:              # diagnostic, not a gate
+  replicas: 200
+  rule: >-
+    same |weight| path, same number of positions and exposure; each position spell (maximal run of an asset's target
+    weight with a constant non-zero sign) gets a random direction; same costs and funding/swap rules
+  statistic: annualised Sharpe of daily net returns; reported as the observed percentile among the replicas
+final_step_informative:              # only for the hypotheses that pass; no weight optimisation
+  correlation: daily-return correlation between passing hypotheses (overlapping dates)
+  naive_portfolio: equal risk (each series scaled to the same full-sample volatility; ex post, informative only)
+ledger: "trials/ledger.jsonl: 5 hypothesis evaluations (selection) + x2 stresses and 200 x 5 control replicas (not selection)"
