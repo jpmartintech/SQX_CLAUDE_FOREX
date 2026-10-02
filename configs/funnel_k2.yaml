@@ -1,0 +1,103 @@
+# Phase K2 — combined 6-pair funnel calibrated by simulation. PRE-REGISTERED before any world runs. Previous configs untouched.
+# Synthetic evaluations -> trials/synthetic_ledger.jsonl only; trials/ledger.jsonl md5 before: 451cef5a39a3ac37479bc82cd56dc5aa
+# (identical after the synthetic phase; it changes only if the single real run happens).
+run_name: funnel_k2_r1
+pairs: [EURUSD, GBPUSD, USDJPY, USDCHF, USDCAD, NZDUSD]
+data_end: "2019-01-01"                 # parquet-filtering loader: nothing from 2019 on is read
+
+world:                                 # 6-pair null world
+  pool: complete development days 2004-2018 common to the 6 pairs (sqxf.control.synthetic.load_dev_shapes)
+  construction: >-
+    pool days permuted, then (3911 - pool) extra days drawn with replacement; the SAME day order for all 6 pairs (keeps
+    the cross-pair correlation); synthetic weekday calendar from 2004-01-05 (3911 days -> 2018-12-31)
+  cal_start: "2004-01-05"
+  n_days: 3911
+
+generator:                             # "current genetic" of the walk-forward procedure (configs/wf_procedure.yaml#genetic)
+  genetic: {population: 500, generations: 40, max_unique_evaluations: 20000, elite: 10, tournament: 4, crossover_rate: 0.7,
+            mutation_rate: 0.4, immigrant_rate: 0.1, max_predicates: 4}
+  fitness: worst per-block t-statistic of R (costs x1), EURUSD training only
+  train_start_year: 2004               # expanding: boundary b trains on [2004-01-01, b-01-01)
+  train_blocks: 3                      # edges = round(linspace(2004, b, 4)) years
+  min_trades_per_block: 20
+  exec_timeframe: H1                   # generation, gates and preselection inside the training window
+  seed_rule: "boundary i (index in boundaries_all) of world seed s uses GA seed s * 16 + i"
+  seed_real: 20261005                  # the single real run (only if valid): seed_real * 16 + i
+
+gates:                                 # inside the training window (EURUSD, H1), as Phase K
+  sanity: {min_trades: 200, min_mean_r: 0.0, min_profit_factor: 1.0}          # strict: n >= 200, mean R > 0, PF > 1.0
+  cost_stress: {cost_multiplier: 2.0, min_profit_factor: 1.05, min_mean_r: 0.0} # configs/funnel.yaml#stages.cost_stress
+  execution_stress: {entry_delay: 1, min_profit_factor: 1.05, min_mean_r: 0.0}  # configs/funnel.yaml#stages.execution_stress
+
+preselection:
+  rank_by: training fitness (GA archive value) among the gate survivors
+  k_values: [20, 35, 50]               # chosen in simulation only
+
+walk_forward:
+  boundaries_all: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]
+  designs:                             # max 3 window designs; OOS segments concatenated, 2009-01-01 .. 2019-01-01
+    W5x2: [[2009, 2011], [2011, 2013], [2013, 2015], [2015, 2017], [2017, 2019]]
+    W10x1: [[2009, 2010], [2010, 2011], [2011, 2012], [2012, 2013], [2013, 2014], [2014, 2015], [2015, 2016], [2016, 2017],
+            [2017, 2018], [2018, 2019]]
+    W4: [[2009, 2011], [2011, 2013], [2013, 2015], [2015, 2019]]
+  segment_rule: "segment [a, b) is traded by the top-K selected at boundary a (training [2004, a))"
+
+statistic:
+  series: >-
+    per rule: daily returns (M15 execution, costs x1, 0.5 % fractional risk, closed-trade equity) on each of the 6 pairs,
+    SAME rule (no per-pair re-selection), averaged over the pairs per date; in a segment where the rule was not in the
+    top-K the series is 0
+  t: "mean / SE, SE = circular block bootstrap standard error of the mean (block 20 days, closed form = exact CBB expectation)"
+  candidates: "every rule preselected in at least one segment (union over segments, <= n_segments x K rules)"
+decision_gate:
+  rule: >-
+    threshold = 95th percentile (numpy linear) over the 200 calibration null worlds of the MAXIMUM t among the candidates;
+    a rule passes iff its t > threshold; per (window design, K)
+  design_choice: >-
+    among the 9 (window design x K) combinations whose false-positive rate on the 100 independent null worlds is <= 0.05,
+    the one with the highest MINIMUM (over the 4 planted strategies) survival in the six_pairs scenario at target 1.0;
+    ties -> order W5x2, W10x1, W4 then smaller K. Synthetic worlds only, never real data.
+  deflated_sharpe: diagnostic only (real run)
+
+null_worlds:
+  calibration: {count: 200, seed_base: 81000}
+  false_positive: {count: 100, seed_base: 82000}
+
+planted:
+  strategies:                          # the 4 Phase K strategies (configs/funnel_calibrated.yaml), re-paired per pair
+    TL_trend_long:  {direction: LONG,  predicates: [["trend.ema_pair.20.100", ">", 0.0], ["trend.breakout_high.20", ">", 0.0]],
+                     sl_atr: 2.0, tp_atr: 3.0, max_bars: 48}
+    TS_trend_short: {direction: SHORT, predicates: [["trend.ema_pair.20.100", "<", 0.0], ["trend.breakout_low.20", "<", 0.0]],
+                     sl_atr: 2.0, tp_atr: 3.0, max_bars: 48}
+    RL_rev_long:    {direction: LONG,  predicates: [["momentum.rsi.14", "<", 30.0], ["volatility.bb_lower.20.2", "<", 0.0]],
+                     sl_atr: 1.5, tp_atr: 1.5, max_bars: 24}
+    RS_rev_short:   {direction: SHORT, predicates: [["momentum.rsi.14", ">", 70.0], ["volatility.bb_upper.20.2", ">", 0.0]],
+                     sl_atr: 1.5, tp_atr: 1.5, max_bars: 24}
+  target_net_sharpe: [0.6, 1.0, 1.5]   # PER PAIR: annualised daily Sharpe 2004-2018, M15, costs x1, 0.5 % risk
+  scenarios:
+    six_pairs: edge planted in all 6 pairs (each pair's own null-world signal and its own calibrated delta)
+    eurusd_only: edge planted in EURUSD only (the other 5 pairs stay null)
+  edge_rule: "localised and compensated, identical to Phase K (sqxf.control.funnel_v2.plant_edge_compensated)"
+  calibration: >-
+    per (strategy, pair) on a dedicated 6-pair world (seed 89999): Sharpe scanned on the grid 0, 0.25, .., 8 pips/H1, then
+    bisection (max 30 iterations, +-0.05) inside the FIRST grid interval crossing the target; a target never crossed is
+    UNREACHABLE for that (strategy, pair) and the combination is not run; degenerate worlds (price outside [0.05 x min, 20 x
+    max] of the null pair, or numeric failure) count as not crossing
+  replicas: {count: 20, seed_base: 83000}   # replica r: world seed 83000 + r for every strategy, size and scenario
+  pool: "at each boundary: GA archive of the planted world + the planted strategy (EURUSD) inserted"
+  survival: >-
+    the planted strategy's own t (membership from its own preselection) > threshold, OR a candidate whose UNMASKED 6-pair
+    daily series 2009-2018 has correlation > 0.8 with the planted one has t > threshold
+  realised_sharpe: "mean over replicas of the mean over the planted pairs of the per-pair Sharpe (2004-2018)"
+
+validity:                              # VALID only if BOTH hold for the chosen design
+  false_positive_rate_max: 0.05
+  six_pairs_survival_min: 0.80         # for EACH of the 4 planted strategies at some target whose realised Sharpe <= 1.0
+  realised_sharpe_max: 1.0
+  if_invalid: "no real run; diagnosis + minimum detectable edge in docs/BLOCKERS.md; no criterion relaxed, no new seeds"
+
+comparison_phase_k: "survival curves of Phase K (docs/reports/funnel_calibration_results.json, design D1) vs K2 six_pairs"
+
+real_run:                              # ONLY if valid; exactly once
+  data: 6 pairs M15 2003-2018 via the parquet-filtering loader
+  report: [survivors, net R x1/x2, PF, MTM drawdown %, by year, by pair, DSR (informative), matched random control]

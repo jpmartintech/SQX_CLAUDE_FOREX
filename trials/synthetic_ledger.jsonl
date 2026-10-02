@@ -702,3 +702,4 @@
 {"utc": "2026-10-02T06:48:58.044813+00:00", "purpose": "phase K world planted", "n_evaluations": 99001, "code_version": "0.1.0+7d76a695096a-dirty", "job": ["planted", 19, 73019, "RS_rev_short", "0.3"]}
 {"utc": "2026-10-02T06:49:08.626293+00:00", "purpose": "phase K world planted", "n_evaluations": 99001, "code_version": "0.1.0+7d76a695096a-dirty", "job": ["planted", 19, 73019, "RS_rev_short", "1.0"]}
 {"utc": "2026-10-02T06:50:00.895677+00:00", "purpose": "phase K world planted", "n_evaluations": 99001, "code_version": "0.1.0+7d76a695096a-dirty", "job": ["planted", 19, 73019, "TL_trend_long", "1.5"]}
+{"utc": "2026-10-02T12:40:50.141366+00:00", "purpose": "phase K2 timing probe (seed 99997)", "n_evaluations": 40050}

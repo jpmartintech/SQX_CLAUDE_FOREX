@@ -406,3 +406,19 @@ Formato: fecha — decisión. Alternativas. Motivo.
     - la volatilidad es del 2,9 % porque la cobertura spot/perp es casi exacta en el cierre diario.
     - Se reporta como evidencia condicionada al régimen 2020–21 (último tercio negativo), sin modelar liquidaciones ni contraparte.
   - Ledger: +1.010 evaluaciones (5 de selección); total 4.490.860. Holdout y bloque de selección cripto sin tocar.
+
+## 2026-10-02 — Fase K2: embudo combinado de 6 pares con potencia por diseño (instrucción de Jaime vía /goal)
+- Rama `phase-k2-calibration`. Preregistro `configs/funnel_k2.yaml` (run `funnel_k2_r1`) antes de ejecutar ningún mundo.
+  md5 de `trials/ledger.jsonl` antes: `451cef5a39a3ac37479bc82cd56dc5aa`.
+- **Genético:** se usa el del walk-forward (`wf_procedure.yaml`, 20.000 evaluaciones por tramo), no el de 100.000 de la Fase K.
+  Hay 10 reoptimizaciones por mundo. Una sonda sintética (semilla 99997, anotada) mide 6–8 s por genético en un hilo: ~2 min
+  por mundo frente a ~10 con 100k. La fitness y las puertas se calculan solo con EURUSD en entrenamiento (H1).
+  La evaluación fuera de muestra usa los 6 pares, M15 y la misma regla.
+- **Estadístico:** t de la serie diaria media de los 6 pares, con el error típico del bootstrap circular por bloques (20 días) en
+  forma cerrada. Es la esperanza exacta de la varianza CBB: determinista, sin semilla, y evita ~10⁹ remuestreos por mundo.
+- **Pertenencia por tramo:** una regla solo opera en un tramo si estaba en el top-K del límite que lo abre. Fuera de esos tramos su
+  serie vale 0, así que la serie concatenada es fuera de muestra para cualquier regla.
+- **Diseños:** 3 de ventanas (5×2 años, 10×1 año, 4 tramos) × K ∈ {20, 35, 50}, elegidos solo con mundos sintéticos. La
+  "estabilidad" de la Fase K no se incluye, porque la instrucción solo mantiene sanidad, costes ×2 y retraso.
+- **Sharpe objetivo de las plantadas:** por par. En el escenario de 6 pares, el Sharpe de la serie combinada será mayor por
+  diversificación; se reporta también.
